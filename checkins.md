@@ -2,19 +2,19 @@
 
 ### This week I worked on:
 
-[Your answer here]
+I came up with my senior thesis idea. It will be a web-based application to allow my friends to play Catan with each other online.
 
 ### This week I learned:
 
-[Your answer here]
+AJ told me about Docker to host the server.
 
 ### My successes this week were:
 
-[Your answer here]
+Idea is ready
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+Time to learn
 
 ---
 
