@@ -1,4 +1,4 @@
-## Week 1 Summary (MM/DD/YYYY)
+## Week 1 Summary (09/15/2025)
 
 ### This week I worked on:
 
@@ -18,7 +18,7 @@ Time to learn
 
 ---
 
-## Week 2 Summary (MM/DD/YYYY)
+## Week 2 Summary (09/22/2025)
 ### This week I worked on:
 
 [Your answer here]
