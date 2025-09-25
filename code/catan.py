@@ -113,6 +113,17 @@ def drawGame():
     screen.blit(my_font.render(str(resourceTokens[17]), False, (0, 0, 0)), (385, 345))
     screen.blit(my_font.render(str(resourceTokens[18]), False, (0, 0, 0)), (495, 345))
 
+    #draw ports
+    pygame.draw.rect(screen, (0, 0, 0), (300, 30, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (520, 30, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (180, 230, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (710, 140, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (180, 430, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (820, 330, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (300, 610, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (500, 610, 50, 50), width=3)
+    pygame.draw.rect(screen, (0, 0, 0), (710, 500, 50, 50), width=3)
+
     pygame.display.flip()
 
 #pygame is running
@@ -124,5 +135,7 @@ while running:
             running = False
 
     drawGame()
+
+    #players loop
 
 pygame.quit()
