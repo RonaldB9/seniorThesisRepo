@@ -42,32 +42,23 @@ desert_index = resourceTiles.index((209, 206, 151))
 # Insert the desert token (0) at the same index
 resourceTokens.insert(desert_index, 0)
 
-
 #font to write text in pygame
 pygame.font.init()
 my_font = pygame.font.SysFont('Comic Sans MS', 20)
 
-#pygame is running
-running = True
-while running:
-    for event in pygame.event.get():
-        #if the player quits/exits
-        if event.type == pygame.QUIT:
-            running = False
-
+def drawGame():
     #Clear screen with white
     screen.fill((3, 65, 252))
+    
     #draw island
     draw_hexagons(screen, (194, 178, 128), (500, 350), 300, 0)
     
     #draw the hexigons for the board in a circle
     x = 390
-    tiletracker = 0
     for i in range(3):
-        draw_hexagons(screen, resourceTiles[tiletracker], (x, 160), 60, -30)
+        draw_hexagons(screen, resourceTiles[i], (x, 160), 60, -30)
         pygame.draw.circle(screen, (255, 255, 255), (x, 170), 25, 25)
         x = x + 110
-        tiletracker = tiletracker + 1
     draw_hexagons(screen, resourceTiles[3], (665, 255), 60, -30)
     pygame.draw.circle(screen, (255, 255, 255), (665, 265), 25, 25)
     draw_hexagons(screen, resourceTiles[4], (720, 350), 60, -30)
@@ -124,6 +115,14 @@ while running:
 
     pygame.display.flip()
 
+#pygame is running
+running = True
+while running:
+    for event in pygame.event.get():
+        #if the player quits/exits
+        if event.type == pygame.QUIT:
+            running = False
 
+    drawGame()
 
 pygame.quit()
