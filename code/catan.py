@@ -13,6 +13,28 @@ center_x = screen_width // 2
 center_y = screen_height // 2
 pygame.display.set_caption("Catan")
 
+houseOptions = [
+    (660, 222), (608, 252), (556, 222), (556, 162), (608, 132),
+    (770, 222), (718, 252), (666, 162), (718, 132),
+    (880, 222), (828, 252), (776, 162), (828, 132), (880, 162),
+    (935, 317), (883, 347), (935, 257),
+    (990, 412), (938, 442), (886, 412), (990, 352),
+    (935, 507), (883, 537), (831, 507),
+    (880, 602), (828, 632),
+    (770, 602), (718, 632),
+    (660, 602), (608, 632), (556, 602), (556, 542),
+    (501, 507), 
+    (498, 442), (446, 412), (446, 352),
+    (605, 317), (553, 347), (501, 317), (501, 257),
+    (715, 317), (663, 347),
+    (825, 317), (773, 347),
+    (828, 442),
+    (773, 537),
+    (715, 507), (663, 537), (611, 507),
+    (660, 412), (608, 442), (556, 412),
+    (770, 412), (718, 442)
+]
+
 #draws hexigons
 def draw_hexagons(surface, fill_color, center, size, angle, border_width=2):
     def darken_color(color, amount=0.6):
@@ -27,6 +49,7 @@ def draw_hexagons(surface, fill_color, center, size, angle, border_width=2):
         px = x + size * math.cos(angle_rad)
         py = y + size * math.sin(angle_rad)
         points.append((px, py))
+    
     # Fill color
     pygame.draw.polygon(surface, fill_color, points, 0)
     # Darker border
@@ -48,6 +71,10 @@ resourceTokens.insert(desert_tile, '')
 #font to write text in pygame
 pygame.font.init()
 my_font = pygame.font.SysFont('Comic Sans MS', 20)
+
+#dice
+dice_rect = pygame.Rect(center_x + 300, center_y + 250, 100, 100)
+dice_rolled = False
 
 def drawGame():
     screen.fill((3, 65, 252))  # Clear screen
@@ -96,18 +123,44 @@ def drawGame():
         port_y = center_y + dy
         pygame.draw.rect(screen, (0, 0, 0), (port_x - 25, port_y - 25, 50, 50), width=3)
 
+    #draw Dice
+    pygame.draw.rect(screen, (0, 0, 0), dice_rect, width=3)
+
     pygame.display.flip()
 
+def rollDice(event):
+    global dice_rolled
+    if event.type == pygame.MOUSEBUTTONDOWN and not dice_rolled:
+            if dice_rect.collidepoint(event.pos):  # Check if click is inside the rect
+                rand_num = random.randint(1, 6)
+                rand_num2 = random.randint(1, 6)
+                diceRoll = rand_num + rand_num2
+
+                # Draw dice number
+                text_surface = my_font.render(str(diceRoll), True, (0, 0, 0))
+                text_rect = text_surface.get_rect(center=dice_rect.center)
+                screen.blit(text_surface, text_rect)
+
+                # Update only the dice area
+                pygame.display.update(dice_rect)
+                dice_rolled = True
+
+def player1Turn(event):
+    rollDice(event)
+    for x, y in houseOptions:
+        pygame.draw.circle(screen, (255, 0, 0), (x, y), 5)
+    pygame.display.update()
+ 
 #pygame is running
 running = True
+drawGame()
 while running:
     for event in pygame.event.get():
         #if the player quits/exits
         if event.type == pygame.QUIT:
             running = False
+        #players loop
+        player1Turn(event)
 
-    drawGame()
-
-    #players loop
 
 pygame.quit()
