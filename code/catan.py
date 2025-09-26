@@ -5,9 +5,12 @@ import random
 pygame.init()
 
 #screen setup
-screen_width = 1000
-screen_height = 700
+display_info = pygame.display.Info()
+screen_width = display_info.current_w - 100
+screen_height = display_info.current_h - 100
 screen = pygame.display.set_mode((screen_width, screen_height))
+center_x = screen_width // 2
+center_y = screen_height // 2
 pygame.display.set_caption("Catan")
 
 #draws hexigons
@@ -38,91 +41,60 @@ random.shuffle(resourceTiles)
 #List of resource tokens for each tile. Randomly insert the desert token into the array
 resourceTokens = [8, 3, 6, 2, 5, 10, 8, 4, 11, 12, 9, 10, 5, 4, 9, 3, 6, 11]
 # Find the index of the desert tile color
-desert_index = resourceTiles.index((209, 206, 151))
+desert_tile = resourceTiles.index((209, 206, 151))
 # Insert the desert token (0) at the same index
-resourceTokens.insert(desert_index, 0)
+resourceTokens.insert(desert_tile, '')
 
 #font to write text in pygame
 pygame.font.init()
 my_font = pygame.font.SysFont('Comic Sans MS', 20)
 
 def drawGame():
-    #Clear screen with white
-    screen.fill((3, 65, 252))
-    
-    #draw island
-    draw_hexagons(screen, (194, 178, 128), (500, 350), 300, 0)
-    
-    #draw the hexigons for the board in a circle
-    x = 390
-    for i in range(3):
-        draw_hexagons(screen, resourceTiles[i], (x, 160), 60, -30)
-        pygame.draw.circle(screen, (255, 255, 255), (x, 170), 25, 25)
-        x = x + 110
-    draw_hexagons(screen, resourceTiles[3], (665, 255), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (665, 265), 25, 25)
-    draw_hexagons(screen, resourceTiles[4], (720, 350), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (720, 360), 25, 25)
-    draw_hexagons(screen, resourceTiles[5], (665, 445), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (665, 455), 25, 25)
-    draw_hexagons(screen, resourceTiles[6], (610, 540), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (610, 550), 25, 25)
-    draw_hexagons(screen, resourceTiles[7], (500, 540), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (500, 550), 25, 25)
-    draw_hexagons(screen, resourceTiles[8], (390, 540), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (390, 550), 25, 25)
-    draw_hexagons(screen, resourceTiles[9], (335, 445), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (335, 455), 25, 25)
-    draw_hexagons(screen, resourceTiles[10], (280, 350), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (280, 360), 25, 25)
-    draw_hexagons(screen, resourceTiles[11], (335, 255), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (335, 265), 25, 25)
-    draw_hexagons(screen, resourceTiles[12], (445, 255), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (445, 265), 25, 25)
-    draw_hexagons(screen, resourceTiles[13], (555, 255), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (555, 265), 25, 25)
-    draw_hexagons(screen, resourceTiles[14], (610, 350), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (610, 360), 25, 25)
-    draw_hexagons(screen, resourceTiles[15], (555, 445), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (555, 455), 25, 25)
-    draw_hexagons(screen, resourceTiles[16], (445, 445), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (445, 455), 25, 25)
-    draw_hexagons(screen, resourceTiles[17], (390, 350), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (390, 360), 25, 25)
-    draw_hexagons(screen, resourceTiles[18], (500, 350), 60, -30)
-    pygame.draw.circle(screen, (255, 255, 255), (500, 360), 25, 25)
-    
-    #place tokens
-    screen.blit(my_font.render(str(resourceTokens[0]), False, (0, 0, 0)), (385, 155))
-    screen.blit(my_font.render(str(resourceTokens[1]), False, (0, 0, 0)), (495, 155))
-    screen.blit(my_font.render(str(resourceTokens[2]), False, (0, 0, 0)), (605, 155))
-    screen.blit(my_font.render(str(resourceTokens[3]), False, (0, 0, 0)), (660, 250))
-    screen.blit(my_font.render(str(resourceTokens[4]), False, (0, 0, 0)), (715, 345))
-    screen.blit(my_font.render(str(resourceTokens[5]), False, (0, 0, 0)), (660, 440))
-    screen.blit(my_font.render(str(resourceTokens[6]), False, (0, 0, 0)), (605, 535))
-    screen.blit(my_font.render(str(resourceTokens[7]), False, (0, 0, 0)), (495, 535))
-    screen.blit(my_font.render(str(resourceTokens[8]), False, (0, 0, 0)), (385, 535))
-    screen.blit(my_font.render(str(resourceTokens[9]), False, (0, 0, 0)), (330, 440))
-    screen.blit(my_font.render(str(resourceTokens[10]), False, (0, 0, 0)), (275, 345))
-    screen.blit(my_font.render(str(resourceTokens[11]), False, (0, 0, 0)), (330, 250))
-    screen.blit(my_font.render(str(resourceTokens[12]), False, (0, 0, 0)), (440, 250))
-    screen.blit(my_font.render(str(resourceTokens[13]), False, (0, 0, 0)), (550, 250))
-    screen.blit(my_font.render(str(resourceTokens[14]), False, (0, 0, 0)), (605, 345))
-    screen.blit(my_font.render(str(resourceTokens[15]), False, (0, 0, 0)), (550, 440))
-    screen.blit(my_font.render(str(resourceTokens[16]), False, (0, 0, 0)), (440, 440))
-    screen.blit(my_font.render(str(resourceTokens[17]), False, (0, 0, 0)), (385, 345))
-    screen.blit(my_font.render(str(resourceTokens[18]), False, (0, 0, 0)), (495, 345))
+    screen.fill((3, 65, 252))  # Clear screen
+
+    # Get center of screen
+    center_x = screen.get_width() // 2
+    center_y = screen.get_height() // 2
+
+    # Draw big background island
+    draw_hexagons(screen, (194, 178, 128), (center_x, center_y), 300, 0)
+
+    # Hex grid layout offsets (x, y from center)
+    hex_offsets = [
+        (-110, -190), (0, -190), (110, -190),
+        (165, -95), (220, 0), (165, 95),
+        (110, 190), (0, 190), (-110, 190),
+        (-165, 95), (-220, 0), (-165, -95),
+        (-55, -95), (55, -95),
+        (110, 0), (55, 95), (-55, 95),
+        (-110, 0), (0, 0)
+    ]
+
+    for i, (dx, dy) in enumerate(hex_offsets):
+        tile_x = center_x + dx
+        tile_y = center_y + dy
+
+        # Draw hex tile
+        draw_hexagons(screen, resourceTiles[i], (tile_x, tile_y), 60, -30)
+
+        # Draw circle for token background
+        pygame.draw.circle(screen, (255, 255, 255), (tile_x, tile_y + 10), 25, 25)
+
+        # Draw resource token number
+        token_text = str(resourceTokens[i])
+        text_surface = my_font.render(token_text, True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=(tile_x, tile_y + 10))
+        screen.blit(text_surface, text_rect)
 
     #draw ports
-    pygame.draw.rect(screen, (0, 0, 0), (300, 30, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (520, 30, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (180, 230, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (710, 140, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (180, 430, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (820, 330, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (300, 610, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (500, 610, 50, 50), width=3)
-    pygame.draw.rect(screen, (0, 0, 0), (710, 500, 50, 50), width=3)
+    port_offsets = [
+    (-200, -300), (50, -310), (-290, -120), (260, -170),
+    (320, 0), (240, 170), (50, 300), (-200, 270), (-320, 100)]
+
+    for dx, dy in port_offsets:
+        port_x = center_x + dx
+        port_y = center_y + dy
+        pygame.draw.rect(screen, (0, 0, 0), (port_x - 25, port_y - 25, 50, 50), width=3)
 
     pygame.display.flip()
 
