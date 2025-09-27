@@ -40,25 +40,25 @@ dice_rect_end_turn = pygame.Rect(center_x + 430, center_y + 270, 75, 50)
 ended_turn = False
 #house options coordinates
 houseOptions = [
-    (660, 222), (608, 252), (556, 222), (556, 162), (608, 132),
-    (770, 222), (718, 252), (666, 162), (718, 132),
-    (880, 222), (828, 252), (776, 162), (828, 132), (880, 162),
-    (935, 317), (883, 347), (935, 257),
-    (990, 412), (938, 442), (886, 412), (990, 352),
-    (935, 507), (883, 537), (831, 507),
-    (880, 602), (828, 632),
-    (770, 602), (718, 632),
-    (660, 602), (608, 632), (556, 602), (556, 542),
-    (501, 507), 
-    (498, 442), (446, 412), (446, 352),
-    (605, 317), (553, 347), (501, 317), (501, 257),
-    (715, 317), (663, 347),
-    (825, 317), (773, 347),
-    (828, 442),
-    (773, 537),
-    (715, 507), (663, 537), (611, 507),
-    (660, 412), (608, 442), (556, 412),
-    (770, 412), (718, 442)
+    (660, 220), (610, 250), (560, 220), (560, 160), (610, 130),
+    (770, 220), (720, 250), (670, 160), (720, 130),
+    (880, 220), (830, 250), (780, 160), (830, 130), (880, 160),
+    (940, 320), (880, 350), (940, 260),
+    (990, 410), (940, 440), (890, 410), (990, 350),
+    (940, 510), (880, 540), (830, 510),
+    (880, 600), (830, 630),
+    (770, 600), (720, 630),
+    (660, 600), (610, 630), (560, 600), (560, 540),
+    (500, 510), 
+    (500, 440), (440, 410), (450, 350),
+    (610, 320), (550, 350), (500, 320), (500, 260),
+    (720, 320), (660, 350),
+    (830, 320), (770, 350),
+    (830, 440),
+    (770, 540),
+    (720, 510), (660, 540), (610, 510),
+    (660, 410), (610, 440), (560, 410),
+    (770, 410), (720, 440)
 ]
 houseOption_choices = []
 housesPlayer1 = []
@@ -141,11 +141,11 @@ def drawGame(housesPlayer1, housesPlayer2):
     #draw houses taken
     for house in housesPlayer1:
         x, y = house['position']
-        pygame.draw.rect(screen, (255, 0, 0), (x - 5, y - 5, 15, 15))
+        pygame.draw.rect(screen, (255, 0, 0), (x - 5, y - 5, 20, 20))
 
     for house in housesPlayer2:
         x, y = house['position']
-        pygame.draw.rect(screen, (0, 255, 0), (x - 5, y - 5, 15, 15))
+        pygame.draw.rect(screen, (0, 255, 0), (x - 5, y - 5, 20, 20))
 
     #draw Dice
     pygame.draw.rect(screen, (0, 0, 0), dice_rect, width=3)
@@ -189,9 +189,21 @@ def selectHouse(mouse_pos, color):
         x, y = house['position']
         if house == selectedHouse:
             #Draw rectangle in place of selected circle
-            pygame.draw.rect(screen, color, (x - 5, y - 5, 15, 15))
+            pygame.draw.rect(screen, color, (x - 5, y - 5, 20, 20))
             #remove it from the choices
             houseOption_choices.remove(house)
+            #remove house options that are too close
+            selected_x, selected_y = selectedHouse['position']
+            new_house_options = []
+            for house in houseOption_choices:
+                x, y = house['position']
+                dist_squared = (x - selected_x) ** 2 + (y - selected_y) ** 2
+                if dist_squared > 75 ** 2:  # Keep only if far enough
+                    new_house_options.append(house)
+            # Update global list
+            houseOption_choices.clear()
+            houseOption_choices.extend(new_house_options)
+            
     pygame.display.update()
     return selectedHouse
 
@@ -203,6 +215,7 @@ def player1Turn(event):
         for house in houseOption_choices:
             x, y = house['position']
             pygame.draw.circle(screen, (255, 0, 0), (x, y), 5)
+            #pygame.draw.rect(screen, (0, 0, 0), (x-65, y-65, 130, 130), width=1)
         pygame.display.update()
         house_options_drawn = True
 
@@ -264,6 +277,6 @@ while running:
             if player2Turn(event):
                 house_options_drawn = False
                 selectedHouse = None
-                current_player = 1  #Loop back to player 1
+                current_player = 1  #Switch to player 1
 
 pygame.quit()
