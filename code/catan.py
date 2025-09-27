@@ -31,6 +31,7 @@ my_font = pygame.font.SysFont('Comic Sans MS', 20)
 
 #player trackers
 current_player = 1
+number_of_players = 4
 
 #dice
 dice_rect = pygame.Rect(center_x + 300, center_y + 250, 100, 100)
@@ -63,8 +64,12 @@ houseOptions = [
 houseOption_choices = []
 housesPlayer1 = []
 housesPlayer2 = []
+housesPlayer3 = []
+housesPlayer4 = []
+choosing_direction = 1
 house_options_drawn = False
 selectedHouse = None
+endOfChoosingHouses = False
 
 #get every house option
 for x, y in houseOptions:
@@ -91,7 +96,7 @@ def draw_hexagons(surface, fill_color, center, size, angle, border_width=2):
     border_color = darken_color(fill_color)
     pygame.draw.polygon(surface, border_color, points, border_width)
 
-def drawGame(housesPlayer1, housesPlayer2):
+def drawGame(housesPlayer1, housesPlayer2, housePlayer3, housePlayer4):
     screen.fill((3, 65, 252))  # Clear screen
 
     # Get center of screen
@@ -147,6 +152,14 @@ def drawGame(housesPlayer1, housesPlayer2):
         x, y = house['position']
         pygame.draw.rect(screen, (0, 255, 0), (x - 5, y - 5, 20, 20))
 
+    for house in housesPlayer3:
+        x, y = house['position']
+        pygame.draw.rect(screen, (0, 0, 255), (x - 5, y - 5, 20, 20))
+
+    for house in housesPlayer4:
+        x, y = house['position']
+        pygame.draw.rect(screen, (0, 255, 255), (x - 5, y - 5, 20, 20))
+
     #draw Dice
     pygame.draw.rect(screen, (0, 0, 0), dice_rect, width=3)
 
@@ -198,7 +211,7 @@ def selectHouse(mouse_pos, color):
             for house in houseOption_choices:
                 x, y = house['position']
                 dist_squared = (x - selected_x) ** 2 + (y - selected_y) ** 2
-                if dist_squared > 75 ** 2:  # Keep only if far enough
+                if dist_squared > 75 ** 2:  #Keep only if far enough
                     new_house_options.append(house)
             # Update global list
             houseOption_choices.clear()
@@ -231,7 +244,7 @@ def player1Turn(event):
             selected = selectHouse(mouse_pos, (255, 0, 0))
             if selected is not None:
                 housesPlayer1.append(selected)
-                drawGame(housesPlayer1, housesPlayer2)
+                drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4)
     return False
 
 def player2Turn(event):
@@ -257,26 +270,97 @@ def player2Turn(event):
             selected = selectHouse(mouse_pos, (0, 255, 0))
             if selected is not None:
                 housesPlayer2.append(selected)
-                drawGame(housesPlayer1, housesPlayer2)
+                drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4)
+    return False
+
+def player3Turn(event):
+    global house_options_drawn, selectedHouse
+    rollDice(event)
+    #draw available houses - some will be taken already
+    if not house_options_drawn:
+        for house in houseOption_choices:
+            x, y = house['position']
+            pygame.draw.circle(screen, (0, 0, 255), (x, y), 5)
+        pygame.display.update()
+        house_options_drawn = True
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        mouse_pos = event.pos
+        #end turn
+        if event.button == 1:  #Left mouse button
+            if dice_rect_end_turn.collidepoint(event.pos):
+                print("player 3 ended turn!")
+                return True
+        #Only allow one selection
+        if selectedHouse is None:
+            selected = selectHouse(mouse_pos, (0, 255, 0))
+            if selected is not None:
+                housesPlayer3.append(selected)
+                drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4)
+    return False
+
+def player4Turn(event):
+    global house_options_drawn, selectedHouse
+    rollDice(event)
+    #draw available houses - some will be taken already
+    if not house_options_drawn:
+        for house in houseOption_choices:
+            x, y = house['position']
+            pygame.draw.circle(screen, (0, 255, 255), (x, y), 5)
+        pygame.display.update()
+        house_options_drawn = True
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        mouse_pos = event.pos
+        #end turn
+        if event.button == 1:  #Left mouse button
+            if dice_rect_end_turn.collidepoint(event.pos):
+                print("player 3 ended turn!")
+                return True
+        #Only allow one selection
+        if selectedHouse is None:
+            selected = selectHouse(mouse_pos, (0, 255, 0))
+            if selected is not None:
+                housesPlayer4.append(selected)
+                drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4)
     return False
  
 #pygame is running
 running = True
-drawGame(housesPlayer1, housesPlayer2)
+drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4)
 while running:
     for event in pygame.event.get():
         #if the player quits/exits
         if event.type == pygame.QUIT:
             running = False
-        if current_player == 1:
-            if player1Turn(event):
-                house_options_drawn = False
-                selectedHouse = None
-                current_player = 2  #Switch to player 2
-        elif current_player == 2:
-            if player2Turn(event):
-                house_options_drawn = False
-                selectedHouse = None
-                current_player = 1  #Switch to player 1
-
+        #choosing houses loop
+        if not endOfChoosingHouses:
+            if current_player == 1:
+                if player1Turn(event):
+                    house_options_drawn = False
+                    selectedHouse = None
+                    if choosing_direction == 1:
+                        current_player = 2
+                    else:
+                        endOfChoosingHouses = True
+            elif current_player == 2:
+                if player2Turn(event):
+                    print("b")
+                    house_options_drawn = False
+                    selectedHouse = None
+                    current_player = 3 if choosing_direction == 1 else 1
+            elif current_player == 3:
+                if player3Turn(event):
+                    house_options_drawn = False
+                    selectedHouse = None
+                    current_player = 4 if choosing_direction == 1 else 2
+            elif current_player == 4:
+                if player4Turn(event):
+                    house_options_drawn = False
+                    selectedHouse = None
+                    if choosing_direction == 1:
+                        choosing_direction = -1  #Start going backwards
+                    else:
+                        current_player = 3  #Go to 3 next (reverse)
+            
 pygame.quit()
