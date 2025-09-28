@@ -3,6 +3,7 @@ import random
 
 from drawBoard import drawGame
 from dice import rollDice
+from selectHouses import selectHouse
 
 pygame.init()
 
@@ -77,40 +78,6 @@ endOfChoosingHouses = False
 for x, y in houseOptions:
     houseOption_choices.append({'position': (x, y)})
 
-def selectHouse(mouse_pos, color):
-    global house_options_drawn, selectedHouse
-    for house in houseOption_choices:
-        hx, hy = house['position']
-        radius = 5
-        #Check if click is within circle using distance formula
-        if (mouse_pos[0] - hx) ** 2 + (mouse_pos[1] - hy) ** 2 <= radius ** 2:
-            selectedHouse = house
-            #redraw game
-            screen.fill((255, 255, 255))
-            #drawGame(housesPlayer1, housesPlayer2)
-            break
-    for house in houseOption_choices:
-        x, y = house['position']
-        if house == selectedHouse:
-            #Draw rectangle in place of selected circle
-            pygame.draw.rect(screen, color, (x - 5, y - 5, 20, 20))
-            #remove it from the choices
-            houseOption_choices.remove(house)
-            #remove house options that are too close
-            selected_x, selected_y = selectedHouse['position']
-            new_house_options = []
-            for house in houseOption_choices:
-                x, y = house['position']
-                dist_squared = (x - selected_x) ** 2 + (y - selected_y) ** 2
-                if dist_squared > 75 ** 2:  #Keep only if far enough
-                    new_house_options.append(house)
-            # Update global list
-            houseOption_choices.clear()
-            houseOption_choices.extend(new_house_options)
-            
-    pygame.display.update()
-    return selectedHouse
-
 def player1Turn(event):
     global house_options_drawn, selectedHouse
     #draw available houses - some will be taken already
@@ -131,7 +98,7 @@ def player1Turn(event):
                 return True
         #Only allow one selection
         if selectedHouse is None:
-            selected = selectHouse(mouse_pos, (255, 0, 0))
+            selected = selectHouse(mouse_pos, (255, 0, 0), houseOption_choices, selectedHouse, screen)
             if selected is not None:
                 housesPlayer1.append(selected)
                 drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
@@ -158,7 +125,7 @@ def player2Turn(event):
                 return True
         #Only allow one selection
         if selectedHouse is None:
-            selected = selectHouse(mouse_pos, (0, 255, 0))
+            selected = selectHouse(mouse_pos, (0, 255, 0), houseOption_choices, selectedHouse, screen)
             if selected is not None:
                 housesPlayer2.append(selected)
                 drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
@@ -185,7 +152,7 @@ def player3Turn(event):
                 return True
         #Only allow one selection
         if selectedHouse is None:
-            selected = selectHouse(mouse_pos, (0, 255, 0))
+            selected = selectHouse(mouse_pos, (0, 0, 225), houseOption_choices, selectedHouse, screen)
             if selected is not None:
                 housesPlayer3.append(selected)
                 drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
@@ -212,7 +179,7 @@ def player4Turn(event):
                 return True
         #Only allow one selection
         if selectedHouse is None:
-            selected = selectHouse(mouse_pos, (0, 255, 0))
+            selected = selectHouse(mouse_pos, (0, 255, 255), houseOption_choices, selectedHouse, screen)
             if selected is not None:
                 housesPlayer4.append(selected)
                 drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
