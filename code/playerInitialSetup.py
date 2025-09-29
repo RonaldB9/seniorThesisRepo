@@ -1,11 +1,12 @@
 import pygame
 from selectHouses import selectHouse
 from drawBoard import drawGame
+from resources import addResources
 
 def playerTurn(event, player_num, color, houseOption_choices, selectedHouse, house_options_drawn, housesPlayers,
                housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
                resourceTiles, resourceTokens,
-               dice_rect, dice_rect_end_turn, screen, my_font):
+               dice_rect, dice_rect_end_turn, screen, my_font, playerResources, house_to_tile_map, housePlacements):
     # Draw available houses - some will be taken already
     if not house_options_drawn:
         for house in houseOption_choices:
@@ -27,6 +28,8 @@ def playerTurn(event, player_num, color, houseOption_choices, selectedHouse, hou
                 selected = selectHouse(mouse_pos, color, houseOption_choices, selectedHouse, screen)
                 if selected is not None:
                     housesPlayers.append(selected)
+                    if housePlacements == 1:
+                        addResources(selected['position'], resourceTiles, house_to_tile_map, playerResources)
                     drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
                              resourceTiles, resourceTokens,
                              dice_rect, dice_rect_end_turn, screen, my_font)
