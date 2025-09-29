@@ -21,23 +21,23 @@ Time to learn
 ## Week 2 Summary (09/22/2025)
 ### This week I worked on:
 
-[Your answer here]
+Making Catan. I added the initial setup phase to the game.
 
 ### This week I learned:
 
-[Your answer here]
+About dictionaries and pygame to make the game.
 
 ### My successes this week were:
 
-[Your answer here]
+Making the board, and the initial start of the game.
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+There is so much logicaspects of the game to add
 
 ---
 
-## Week 3 Summary (MM/DD/YYYY)
+## Week 3 Summary (09/29/2025)
 ### This week I worked on:
 
 [Your answer here]
