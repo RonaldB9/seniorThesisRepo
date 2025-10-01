@@ -3,7 +3,6 @@ import random
 
 from drawBoard import drawGame
 from dice import rollDice
-from selectHouses import selectHouse
 from playerInitialSetup import playerTurn
 
 pygame.init()
@@ -29,7 +28,7 @@ desert_tile = resourceTiles.index((209, 206, 151))
 # Insert the desert token (0) at the same index
 resourceTokens.insert(desert_tile, '')
 housePlacements = {
-    1: 0, 2: 0, 3: 0, 4: 0
+    1: 0, 2: 0, 3: 0, 4: 0 #make dynamic
 }
 
 #font to write text in pygame
@@ -38,7 +37,7 @@ my_font = pygame.font.SysFont('Comic Sans MS', 20)
 
 #player trackers
 current_player = 1
-number_of_players = 4
+number_of_players = 4 #make dynamic
 player1Resources = []
 player2Resources = []
 player3Resources = []
@@ -54,25 +53,12 @@ ended_turn = False
 
 #house options coordinates
 houseOptions = [
-    (660, 220), (610, 250), (560, 220), (560, 160), (610, 130),
-    (770, 220), (720, 250), (670, 160), (720, 130),
-    (880, 220), (830, 250), (780, 160), (830, 130), (880, 160),
-    (940, 320), (880, 350), (940, 260),
-    (990, 410), (940, 440), (890, 410), (990, 350),
-    (940, 510), (880, 540), (830, 510),
-    (880, 600), (830, 630),
-    (770, 600), (720, 630),
-    (660, 600), (610, 630), (560, 600), (560, 540),
-    (500, 510), 
-    (500, 440), (440, 410), (450, 350),
-    (610, 320), (550, 350), (500, 320), (500, 260),
-    (720, 320), (660, 350),
-    (830, 320), (770, 350),
-    (830, 440),
-    (770, 540),
-    (720, 510), (660, 540), (610, 510),
-    (660, 410), (610, 440), (560, 410),
-    (770, 410), (720, 440)
+    (660, 220), (610, 250), (560, 220), (560, 160), (610, 130), (770, 220), (720, 250), (670, 160), (720, 130),
+    (880, 220), (830, 250), (780, 160), (830, 130), (880, 160), (940, 320), (880, 350), (940, 260),
+    (990, 410), (940, 440), (890, 410), (990, 350), (940, 510), (880, 540), (830, 510), (880, 600), (830, 630), (770, 600), 
+    (720, 630), (660, 600), (610, 630), (560, 600), (560, 540), (500, 510), (500, 440), (440, 410), (450, 350), (610, 320), 
+    (550, 350), (500, 320), (500, 260), (720, 320), (660, 350), (830, 320), (770, 350), (830, 440), (770, 540), (720, 510), 
+    (660, 540), (610, 510), (660, 410), (610, 440), (560, 410), (770, 410), (720, 440)
 ]
 house_to_tile_map = {
     (610, 130): [0], (720, 130): [1], (830, 130): [2],
@@ -88,7 +74,6 @@ house_to_tile_map = {
     (560, 600): [8], (660, 600): [7,8], (770, 600): [6,7], (880, 600): [6],
     (610, 630): [8], (720, 630): [7], (830, 630): [6],
 }
-
 
 houseOption_choices = []
 housesPlayer1 = []
@@ -106,9 +91,7 @@ for x, y in houseOptions:
 
 #pygame is running
 running = True
-drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-         resourceTiles, resourceTokens,
-         dice_rect, dice_rect_end_turn, screen, my_font)
+drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4, resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font)
 while running:
     for event in pygame.event.get():
         #if the player quits/exits
@@ -120,8 +103,7 @@ while running:
                 ended, selectedHouse, house_options_drawn = playerTurn(
                     event, 1, (255, 0, 0), houseOption_choices, selectedHouse, house_options_drawn,
                     housesPlayer1, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens,
-                    dice_rect, dice_rect_end_turn, screen, my_font, player1Resources, house_to_tile_map,
+                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player1Resources, house_to_tile_map,
                     housePlacements[1])
                 if ended:
                     selectedHouse = None
@@ -136,8 +118,7 @@ while running:
                 ended, selectedHouse, house_options_drawn = playerTurn(
                     event, 2, (0, 255, 0), houseOption_choices, selectedHouse, house_options_drawn,
                     housesPlayer2, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens,
-                    dice_rect, dice_rect_end_turn, screen, my_font, player2Resources, house_to_tile_map,
+                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player2Resources, house_to_tile_map,
                     housePlacements[2])
                 if ended:
                     selectedHouse = None
@@ -152,8 +133,7 @@ while running:
                 ended, selectedHouse, house_options_drawn = playerTurn(
                     event, 3, (0, 0, 255), houseOption_choices, selectedHouse, house_options_drawn,
                     housesPlayer3, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens,
-                    dice_rect, dice_rect_end_turn, screen, my_font, player3Resources, house_to_tile_map,
+                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player3Resources, house_to_tile_map,
                     housePlacements[3])
                 if ended:
                     selectedHouse = None
@@ -167,14 +147,13 @@ while running:
                 ended, selectedHouse, house_options_drawn = playerTurn(
                     event, 4, (0, 255, 255), houseOption_choices, selectedHouse, house_options_drawn,
                     housesPlayer4, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens,
-                    dice_rect, dice_rect_end_turn, screen, my_font, player4Resources, house_to_tile_map,
+                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player4Resources, house_to_tile_map,
                     housePlacements[4])
                 if ended:
                     selectedHouse = None
                     house_options_drawn = False
                     if choosing_direction == 1:
-                        choosing_direction = -1  # Start going backwards
+                        choosing_direction = -1  #Start going backwards
                         housePlacements[4] += 1
                     else:
                         current_player = 3  # Go to player 3 next
@@ -182,3 +161,13 @@ while running:
             #for future
             #dice_rolled = rollDice(event, dice_rect, dice_rolled, screen, my_font)
 pygame.quit()
+
+#to do
+#must select a house before ended turn
+#add roads
+
+#start main player loop
+#-roll dice, add resources to players
+#player can build city, road, buy card, trade(player or bank)
+#robber stops resources
+#points (houses, city, longest road, victory points, army)
