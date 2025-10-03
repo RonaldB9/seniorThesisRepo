@@ -38,10 +38,15 @@ my_font = pygame.font.SysFont('Comic Sans MS', 20)
 #player trackers
 current_player = 1
 number_of_players = 4 #make dynamic
-player1Resources = []
-player2Resources = []
-player3Resources = []
-player4Resources = []
+players = {
+    1: {'color': (255, 0, 0), 'houses': [], 'resources': [], 'placements': 0},
+    2: {'color': (0, 255, 0), 'houses': [], 'resources': [], 'placements': 0},
+    3: {'color': (0, 0, 255), 'houses': [], 'resources': [], 'placements': 0},
+    4: {'color': (0, 255, 255), 'houses': [], 'resources': [], 'placements': 0},
+}
+
+player_order = list(players.keys())
+current_index = 0
 
 #dice
 dice_rect = pygame.Rect(center_x + 300, center_y + 250, 100, 100)
@@ -76,10 +81,6 @@ house_to_tile_map = {
 }
 
 houseOption_choices = []
-housesPlayer1 = []
-housesPlayer2 = []
-housesPlayer3 = []
-housesPlayer4 = []
 choosing_direction = 1
 house_options_drawn = False
 selectedHouse = None
@@ -91,7 +92,7 @@ for x, y in houseOptions:
 
 #pygame is running
 running = True
-drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4, resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font)
+drawGame(players[1]['houses'], players[2]['houses'], players[3]['houses'], players[4]['houses'], resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font)
 while running:
     for event in pygame.event.get():
         #if the player quits/exits
@@ -99,64 +100,30 @@ while running:
             running = False
         #choosing houses loop
         if not endOfChoosingHouses:
-            if current_player == 1:
-                ended, selectedHouse, house_options_drawn = playerTurn(
-                    event, 1, (255, 0, 0), houseOption_choices, selectedHouse, house_options_drawn,
-                    housesPlayer1, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player1Resources, house_to_tile_map,
-                    housePlacements[1])
-                if ended:
-                    selectedHouse = None
-                    house_options_drawn = False
-                    if choosing_direction == 1:
-                        current_player = 2
-                        housePlacements[1] += 1
-                    else:
-                        endOfChoosingHouses = True
+            current_player_id = player_order[current_index]
+            player_data = players[current_player_id]
 
-            elif current_player == 2:
-                ended, selectedHouse, house_options_drawn = playerTurn(
-                    event, 2, (0, 255, 0), houseOption_choices, selectedHouse, house_options_drawn,
-                    housesPlayer2, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player2Resources, house_to_tile_map,
-                    housePlacements[2])
-                if ended:
-                    selectedHouse = None
-                    house_options_drawn = False
-                    current_player = 3 
-                    if choosing_direction == 1:
-                        housePlacements[2] += 1
-                    else:
-                        current_player = 1
+            ended, selectedHouse, house_options_drawn = playerTurn(
+                event, current_player_id, player_data['color'], houseOption_choices, selectedHouse, house_options_drawn,
+                player_data['houses'], players[1]['houses'], players[2]['houses'], players[3]['houses'], players[4]['houses'],
+                resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font,
+                player_data['resources'], house_to_tile_map, player_data['placements']
+            )
 
-            elif current_player == 3:
-                ended, selectedHouse, house_options_drawn = playerTurn(
-                    event, 3, (0, 0, 255), houseOption_choices, selectedHouse, house_options_drawn,
-                    housesPlayer3, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player3Resources, house_to_tile_map,
-                    housePlacements[3])
-                if ended:
-                    selectedHouse = None
-                    house_options_drawn = False
-                    current_player = 4 
-                    if choosing_direction == 1:
-                        housePlacements[3] += 1
-                    else: current_player = 2
+            if ended:
+                selectedHouse = None
+                house_options_drawn = False
+                players[current_player_id]['placements'] += 1
 
-            elif current_player == 4:
-                ended, selectedHouse, house_options_drawn = playerTurn(
-                    event, 4, (0, 255, 255), houseOption_choices, selectedHouse, house_options_drawn,
-                    housesPlayer4, housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                    resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, player4Resources, house_to_tile_map,
-                    housePlacements[4])
-                if ended:
-                    selectedHouse = None
-                    house_options_drawn = False
-                    if choosing_direction == 1:
-                        choosing_direction = -1  #Start going backwards
-                        housePlacements[4] += 1
-                    else:
-                        current_player = 3  # Go to player 3 next
+                if choosing_direction == 1:
+                    current_index += 1
+                    if current_index >= len(player_order):
+                        choosing_direction = -1
+                        current_index = len(player_order) - 1  # Start backward
+                else:
+                    current_index -= 1
+                    if current_index < 0:
+                        endOfChoosingHouses = True  # Done choosing houses
 
             #for future
             #dice_rolled = rollDice(event, dice_rect, dice_rolled, screen, my_font)

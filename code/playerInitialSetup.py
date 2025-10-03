@@ -31,8 +31,7 @@ def playerTurn(event, player_num, color, houseOption_choices, selectedHouse, hou
                     if housePlacements == 1:
                         addResources(selected['position'], resourceTiles, house_to_tile_map, playerResources)
                     drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
-                             resourceTiles, resourceTokens,
-                             dice_rect, dice_rect_end_turn, screen, my_font)
+                             resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font)
                     selectedHouse = selected
 
     return False, selectedHouse, house_options_drawn
