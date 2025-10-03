@@ -92,6 +92,7 @@ for x, y in houseOptions:
 
 #pygame is running
 running = True
+#draw initial game
 drawGame(players[1]['houses'], players[2]['houses'], players[3]['houses'], players[4]['houses'], resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font)
 while running:
     for event in pygame.event.get():
@@ -102,14 +103,14 @@ while running:
         if not endOfChoosingHouses:
             current_player_id = player_order[current_index]
             player_data = players[current_player_id]
-
+            #player chooses house
             ended, selectedHouse, house_options_drawn = playerTurn(
                 event, current_player_id, player_data['color'], houseOption_choices, selectedHouse, house_options_drawn,
                 player_data['houses'], players[1]['houses'], players[2]['houses'], players[3]['houses'], players[4]['houses'],
                 resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font,
                 player_data['resources'], house_to_tile_map, player_data['placements']
             )
-
+            #after player chooses house
             if ended:
                 selectedHouse = None
                 house_options_drawn = False
