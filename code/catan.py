@@ -16,6 +16,8 @@ screen_height = display_info.current_h - 100
 screen = pygame.display.set_mode((screen_width, screen_height))
 center_x = screen_width // 2
 center_y = screen_height // 2
+print(center_x)
+print(center_y)
 pygame.display.set_caption("Catan")
 
 #Randomize resource tiles
@@ -59,33 +61,34 @@ dice_rect_end_turn = pygame.Rect(center_x + 430, center_y + 270, 75, 50)
 ended_turn = False
 
 #house options coordinates
-houseOptions = [ (610, 130), (720, 130), (830, 130),
-    (560, 160), (670, 160), (780, 160), (880, 160),
-    (560, 220), (660, 220), (770, 220), (880, 220), 
-    (500, 260), (610, 250), (720, 250), (830, 250), (940, 260),
-    (500, 320), (610, 320), (720, 320), (830, 320), (940, 320), 
-    (450, 350), (550, 350), (660, 350), (770, 350), (880, 350), (990, 350),
-    (440, 410), (560, 410), (660, 410), (770, 410), (890, 410), (990, 410), 
-    (500, 440), (610, 440), (720, 440), (830, 440), (940, 440),   
-    (500, 510), (610, 510), (720, 510), (830, 510), (940, 510), 
-    (560, 540), (660, 540), (770, 540), (880, 540),  
-    (560, 600), (660, 600), (770, 600), (880, 600), 
-    (610, 630), (720, 630), (830, 630)]
+houseOptions = [
+                (center_x-110, center_y-252), (center_x+2, center_y-252), (center_x+112, center_y-252),
+            (center_x-163, center_y-222), (center_x-53, center_y-222), (center_x+57, center_y-222), (center_x+167, center_y-222),
+            (center_x-163, center_y-157), (center_x-53, center_y-157), (center_x+57, center_y-157), (center_x+167, center_y-157), 
+        (center_x-218, center_y-127), (center_x-110, center_y-127), (center_x+2, center_y-127), (center_x+112, center_y-127), (center_x+222, center_y-127),
+        (center_x-218, center_y-62), (center_x-110, center_y-62), (center_x+2, center_y-62), (center_x+112, center_y-62), (center_x+222, center_y-62), 
+    (center_x-273, center_y-32), (center_x-163, center_y-32), (center_x-53, center_y-32), (center_x+57, center_y-32), (center_x+167, center_y-32), (center_x+272, center_y-32),
+    (center_x-273, center_y+33), (center_x-163, center_y+33), (center_x-53, center_y+33), (center_x+57, center_y+33), (center_x+167, center_y+33), (center_x+272, center_y+33), 
+        (center_x-218, center_y+58), (center_x-110, center_y+58), (center_x+2, center_y+58), (center_x+112, center_y+58), (center_x+222, center_y+58),   
+        (center_x-218, center_y+128), (center_x-110, center_y+128), (center_x+2, center_y+128), (center_x+112, center_y+128), (center_x+222, center_y+128), 
+            (center_x-163, center_y+158), (center_x-53, center_y+158), (center_x+57, center_y+158), (center_x+167, center_y+158),  
+            (center_x-163, center_y+218), (center_x-53, center_y+218), (center_x+57, center_y+218), (center_x+167, center_y+218), 
+                (center_x-110, center_y+248), (center_x+2, center_y+248), (center_x+112, center_y+248)]
 
 #(house coords) : connected tiles
 house_to_tile_map = {
-    (610, 130): [0], (720, 130): [1], (830, 130): [2],
-    (560, 160): [0], (670, 160): [0,1], (780, 160): [1,2], (880, 160): [2],
-    (560, 220): [0, 11], (660, 220): [0,1,12], (770, 220): [1,2,13], (880, 220): [2,3],
-    (500, 260): [11], (610, 250): [0,11,12], (720, 250): [1,12,13], (830, 250): [2,3,13], (940, 260): [3],
-    (500, 320): [10,11], (610, 320): [11,12,17], (720, 320): [12,13,18], (830, 320): [3,13,14], (940, 320): [3,4],
-    (450, 350): [10], (550, 350): [10,11,17], (660, 350): [12,17,18], (770, 350): [13,14,18], (880, 350): [3,4,14], (990, 350): [4],
-    (440, 410): [10], (560, 410): [9,10,17], (660, 410): [16,17,18], (770, 410): [14,15,18], (890, 410): [4,5,14], (990, 410): [4],
-    (500, 440): [9,10], (610, 440): [9,16,17], (720, 440): [15,16,18], (830, 440): [5,14,15], (940, 440): [4,5],
-    (500, 510): [9], (610, 510): [8,9,16], (720, 510): [7,15,16], (830, 510): [5,6,15], (940, 510): [5],
-    (560, 540): [8,9], (660, 540): [7,8,16], (770, 540): [6,7,15], (880, 540): [5,6],
-    (560, 600): [8], (660, 600): [7,8], (770, 600): [6,7], (880, 600): [6],
-    (610, 630): [8], (720, 630): [7], (830, 630): [6],
+    (center_x-110, center_y-252): [0], (center_x+2, center_y-252): [1], (center_x+112, center_y-252): [2],
+    (center_x-163, center_y-222): [0], (center_x-53, center_y-222): [0,1], (center_x+57, center_y-222): [1,2], (center_x+167, center_y-222): [2],
+    (center_x-163, center_y-157): [0, 11], (center_x-53, center_y-157): [0,1,12], (center_x+57, center_y-157): [1,2,13], (center_x+167, center_y-157): [2,3],
+    (center_x-218, center_y-127): [11], (center_x-110, center_y-127): [0,11,12], (center_x+2, center_y-127): [1,12,13], (center_x+112, center_y-127): [2,3,13], (center_x+222, center_y-127): [3],
+    (center_x-218, center_y-62): [10,11], (center_x-110, center_y-62): [11,12,17], (center_x+2, center_y-62): [12,13,18], (center_x+112, center_y-62): [3,13,14], (center_x+222, center_y-62): [3,4],
+    (center_x-273, center_y-32): [10], (center_x-163, center_y-32): [10,11,17], (center_x-53, center_y-32): [12,17,18], (center_x+57, center_y-32): [13,14,18], (center_x+167, center_y-32): [3,4,14], (center_x+272, center_y-32): [4],
+    (center_x-273, center_y+33): [10], (center_x-163, center_y+33): [9,10,17], (center_x-53, center_y+33): [16,17,18], (center_x+57, center_y+33): [14,15,18], (center_x+167, center_y+33): [4,5,14], (center_x+272, center_y+33): [4],
+    (center_x-218, center_y+58): [9,10], (center_x-110, center_y+58): [9,16,17], (center_x+2, center_y+58): [15,16,18], (center_x+112, center_y+58): [5,14,15], (center_x+222, center_y+58): [4,5],
+    (center_x-218, center_y+128): [9], (center_x-110, center_y+128): [8,9,16], (center_x+2, center_y+128): [7,15,16], (center_x+112, center_y+128): [5,6,15], (center_x+222, center_y+128): [5],
+    (center_x-163, center_y+158): [8,9], (center_x-53, center_y+158): [7,8,16], (center_x+57, center_y+158): [6,7,15], (center_x+167, center_y+158): [5,6],
+    (center_x-163, center_y+218): [8], (center_x-53, center_y+218): [7,8], (center_x+57, center_y+218): [6,7], (center_x+167, center_y+218): [6],
+    (center_x-110, center_y+248): [8], (center_x+2, center_y+248): [7], (center_x+112, center_y+248): [6],
 }
 
 houseOption_choices = []
@@ -98,98 +101,98 @@ endOfChoosingHouses = False
 #roads - (coords) [connected houses] [connected roads]
 road_segments = {
     #top roads
-    ((560, 160), (610, 130)): [ [0,3], [] ],
-    ((610, 130), (670, 160)): [ [0,4], [] ], 
-    ((670, 160), (720, 130)): [ [1,4], [] ],
-    ((720, 130), (780, 160)): [ [1,5], [] ], 
-    ((780, 160), (830, 130)): [ [2,5], [] ], 
-    ((830, 130), (880, 160)): [ [2,6], [] ],
+    ((center_x-163, center_y-222), (center_x-110, center_y-252)): [ [0,3], [] ],
+    ((center_x-110, center_y-252), (center_x-53, center_y-222)): [ [0,4], [] ], 
+    ((center_x-53, center_y-222), (center_x+2, center_y-252)): [ [1,4], [] ],
+    ((center_x+2, center_y-252), (center_x+57, center_y-222)): [ [1,5], [] ], 
+    ((center_x+57, center_y-222), (center_x+112, center_y-252)): [ [2,5], [] ], 
+    ((center_x+112, center_y-252), (center_x+167, center_y-222)): [ [2,6], [] ],
 
     #2nd row vertical roads
-    ((560, 160), (560, 220)): [ [3,7], [] ], 
-    ((670, 160), (670, 220)): [ [4,8], [] ], 
-    ((780, 160), (780, 220)): [ [5,9], [] ], 
-    ((880, 160), (880, 220)): [ [6,10], [] ],
+    ((center_x-163, center_y-222), (center_x-163, center_y-157)): [ [3,7], [] ], 
+    ((center_x-53, center_y-222), (center_x-53, center_y-157)): [ [4,8], [] ], 
+    ((center_x+57, center_y-222), (center_x+57, center_y-157)): [ [5,9], [] ], 
+    ((center_x+167, center_y-222), (center_x+167, center_y-157)): [ [6,10], [] ],
 
     #3rd row
-    ((500, 250), (560, 220)): [ [7,11], [] ],
-    ((560, 220), (620, 250)): [ [7,12], [] ], 
-    ((620, 250), (660, 220)): [ [8,12], [] ],
-    ((660, 220), (720, 250)): [ [8,13], [] ], 
-    ((720, 250), (780, 220)): [ [9,13], [] ], 
-    ((780, 220), (830, 250)): [ [9,14], [] ],
-    ((830, 250), (880, 220)): [ [10,14], [] ], 
-    ((880, 220), (940, 250)): [ [10,15], [] ],
+    ((center_x-218, center_y-127), (center_x-163, center_y-157)): [ [7,11], [] ],
+    ((center_x-163, center_y-157), (center_x-110, center_y-127)): [ [7,12], [] ], 
+    ((center_x-110, center_y-127), (center_x-53, center_y-157)): [ [8,12], [] ],
+    ((center_x-53, center_y-157), (center_x+2, center_y-127)): [ [8,13], [] ], 
+    ((center_x+2, center_y-127), (center_x+57, center_y-157)): [ [9,13], [] ], 
+    ((center_x+57, center_y-157), (center_x+112, center_y-127)): [ [9,14], [] ],
+    ((center_x+112, center_y-127), (center_x+167, center_y-157)): [ [10,14], [] ], 
+    ((center_x+167, center_y-157), (center_x+222, center_y-127)): [ [10,15], [] ],
     
     #4th row
-    ((500, 250), (500, 320)): [ [11,16], [] ],
-    ((610, 250), (610, 320)): [ [12,17], [] ], 
-    ((720, 250), (720, 320)): [ [13,18], [] ], 
-    ((830, 250), (830, 320)): [ [14,19], [] ],
-    ((940, 250), (940, 320)): [ [15,20], [] ],
+    ((center_x-218, center_y-127), (center_x-218, center_y-62)): [ [11,16], [] ],
+    ((center_x-110, center_y-127), (center_x-110, center_y-62)): [ [12,17], [] ], 
+    ((center_x+2, center_y-127), (center_x+2, center_y-62)): [ [13,18], [] ], 
+    ((center_x+112, center_y-127), (center_x+112, center_y-62)): [ [14,19], [] ],
+    ((center_x+222, center_y-127), (center_x+222, center_y-62)): [ [15,20], [] ],
 
     #5th row
-    ((440, 350), (500, 320)): [ [16,21], [] ],
-    ((500, 320), (560, 350)): [ [16,22], [] ], 
-    ((560, 350), (620, 320)): [ [17,22], [] ],
-    ((620, 320), (660, 350)): [ [17,23], [] ], 
-    ((660, 350), (720, 320)): [ [18,23], [] ], 
-    ((720, 320), (780, 350)): [ [18,24], [] ],
-    ((780, 350), (830, 320)): [ [19,24], [] ], 
-    ((830, 320), (880, 350)): [ [19,25], [] ],
-    ((880, 350), (940, 320)): [ [20,25], [] ],
-    ((940, 320), (990, 350)): [ [20,26], [] ],
+    ((center_x-273, center_y-32), (center_x-218, center_y-62)): [ [16,21], [] ],
+    ((center_x-218, center_y-62), (center_x-163, center_y-32)): [ [16,22], [] ], 
+    ((center_x-163, center_y-32), (center_x-110, center_y-62)): [ [17,22], [] ],
+    ((center_x-110, center_y-62), (center_x-53, center_y-32)): [ [17,23], [] ], 
+    ((center_x-53, center_y-32), (center_x+2, center_y-62)): [ [18,23], [] ], 
+    ((center_x+2, center_y-62), (center_x+57, center_y-32)): [ [18,24], [] ],
+    ((center_x+57, center_y-32), (center_x+112, center_y-62)): [ [19,24], [] ], 
+    ((center_x+112, center_y-62), (center_x+167, center_y-32)): [ [19,25], [] ],
+    ((center_x+167, center_y-32), (center_x+222, center_y-62)): [ [20,25], [] ],
+    ((center_x+222, center_y-62), (center_x+272, center_y-32)): [ [20,26], [] ],
 
     #6th row
-    ((440, 350), (440, 420)): [ [21,27], [] ],
-    ((550, 350), (550, 420)): [ [22,28], [] ], 
-    ((660, 350), (660, 420)): [ [23,29], [] ], 
-    ((770, 350), (770, 420)): [ [24,30], [] ],
-    ((880, 350), (880, 420)): [ [25,31], [] ],
-    ((990, 350), (990, 420)): [ [26,32], [] ],
+    ((center_x-273, center_y-32), (center_x-273, center_y+33)): [ [21,27], [] ],
+    ((center_x-163, center_y-32), (center_x-163, center_y+33)): [ [22,28], [] ], 
+    ((center_x-53, center_y-32), (center_x-53, center_y+33)): [ [23,29], [] ], 
+    ((center_x+57, center_y-32), (center_x+57, center_y+33)): [ [24,30], [] ],
+    ((center_x+167, center_y-32), (center_x+167, center_y+33)): [ [25,31], [] ],
+    ((center_x+272, center_y-32), (center_x+272, center_y+33)): [ [26,32], [] ],
 
     #7th row
-    ((440, 420), (500, 440)): [ [27,33], [] ],
-    ((500, 440), (560, 420)): [ [28,33], [] ], 
-    ((560, 420), (620, 440)): [ [28,34], [] ],
-    ((620, 440), (660, 420)): [ [29,34], [] ], 
-    ((660, 420), (720, 440)): [ [29,35], [] ], 
-    ((720, 440), (780, 420)): [ [30,35], [] ],
-    ((780, 420), (830, 440)): [ [30,36], [] ], 
-    ((830, 440), (880, 420)): [ [31,36], [] ],
-    ((880, 420), (940, 440)): [ [31,37], [] ],
-    ((940, 440), (990, 420)): [ [32,37], [] ],
+    ((center_x-273, center_y+33), (center_x-218, center_y+58)): [ [27,33], [] ],
+    ((center_x-218, center_y+58), (center_x-163, center_y+33)): [ [28,33], [] ], 
+    ((center_x-163, center_y+33), (center_x-110, center_y+58)): [ [28,34], [] ],
+    ((center_x-110, center_y+58), (center_x-53, center_y+33)): [ [29,34], [] ], 
+    ((center_x-53, center_y+33), (center_x+2, center_y+58)): [ [29,35], [] ], 
+    ((center_x+2, center_y+58), (center_x+57, center_y+33)): [ [30,35], [] ],
+    ((center_x+57, center_y+33), (center_x+112, center_y+58)): [ [30,36], [] ], 
+    ((center_x+112, center_y+58), (center_x+167, center_y+33)): [ [31,36], [] ],
+    ((center_x+167, center_y+33), (center_x+222, center_y+58)): [ [31,37], [] ],
+    ((center_x+222, center_y+58), (center_x+272, center_y+33)): [ [32,37], [] ],
 
     #8th row
-    ((500, 440), (500, 510)): [ [33,38], [] ],
-    ((610, 440), (610, 510)): [ [34,39], [] ], 
-    ((720, 440), (720, 510)): [ [35,40], [] ], 
-    ((830, 440), (830, 510)): [ [36,41], [] ],
-    ((940, 440), (940, 510)): [ [37,42], [] ],
+    ((center_x-218, center_y+58), (center_x-218, center_y+128)): [ [33,38], [] ],
+    ((center_x-110, center_y+58), (center_x-110, center_y+128)): [ [34,39], [] ], 
+    ((center_x+2, center_y+58), (center_x+2, center_y+128)): [ [35,40], [] ], 
+    ((center_x+112, center_y+58), (center_x+112, center_y+128)): [ [36,41], [] ],
+    ((center_x+222, center_y+58), (center_x+222, center_y+128)): [ [37,42], [] ],
 
     #9th row
-    ((500, 510), (560, 540)): [ [38,43], [] ],
-    ((560, 540), (620, 510)): [ [39,43], [] ], 
-    ((620, 510), (660, 540)): [ [39,44], [] ],
-    ((660, 540), (720, 510)): [ [40,44], [] ], 
-    ((720, 510), (780, 540)): [ [40,45], [] ], 
-    ((780, 540), (830, 510)): [ [41,45], [] ],
-    ((830, 510), (880, 540)): [ [41,46], [] ], 
-    ((880, 540), (940, 510)): [ [42,46], [] ],
+    ((center_x-218, center_y+128), (center_x-163, center_y+158)): [ [38,43], [] ],
+    ((center_x-163, center_y+158), (center_x-110, center_y+128)): [ [39,43], [] ], 
+    ((center_x-110, center_y+128), (center_x-53, center_y+158)): [ [39,44], [] ],
+    ((center_x-53, center_y+158), (center_x+2, center_y+128)): [ [40,44], [] ], 
+    ((center_x+2, center_y+128), (center_x+57, center_y+158)): [ [40,45], [] ], 
+    ((center_x+57, center_y+158), (center_x+112, center_y+128)): [ [41,45], [] ],
+    ((center_x+112, center_y+128), (center_x+167, center_y+158)): [ [41,46], [] ], 
+    ((center_x+167, center_y+158), (center_x+222, center_y+128)): [ [42,46], [] ],
 
     #10th row vertical roads
-    ((560, 540), (560, 600)): [ [43,47], [] ], 
-    ((670, 540), (670, 600)): [ [44,48], [] ], 
-    ((780, 540), (780, 600)): [ [45,49], [] ], 
-    ((880, 540), (880, 600)): [ [46,50], [] ],
+    ((center_x-163, center_y+158), (center_x-163, center_y+218)): [ [43,47], [] ], 
+    ((center_x-53, center_y+158), (center_x-53, center_y+218)): [ [44,48], [] ], 
+    ((center_x+57, center_y+158), (center_x+57, center_y+218)): [ [45,49], [] ], 
+    ((center_x+167, center_y+158), (center_x+167, center_y+218)): [ [46,50], [] ],
 
     #bottom roads
-    ((560, 600), (610, 630)): [ [47,51], [] ],
-    ((610, 630), (670, 600)): [ [48,51], [] ], 
-    ((670, 600), (720, 630)): [ [48,52], [] ],
-    ((720, 630), (780, 600)): [ [49,52], [] ], 
-    ((780, 600), (830, 630)): [ [49,53], [] ], 
-    ((830, 630), (880, 600)): [ [50,53], [] ]
+    ((center_x-163, center_y+218), (center_x-110, center_y+248)): [ [47,51], [] ],
+    ((center_x-110, center_y+248), (center_x-53, center_y+218)): [ [48,51], [] ], 
+    ((center_x-53, center_y+218), (center_x+2, center_y+248)): [ [48,52], [] ],
+    ((center_x+2, center_y+248), (center_x+57, center_y+218)): [ [49,52], [] ], 
+    ((center_x+57, center_y+218), (center_x+112, center_y+248)): [ [49,53], [] ], 
+    ((center_x+112, center_y+248), (center_x+167, center_y+218)): [ [50,53], [] ]
 }
 
 #get every house option and store it

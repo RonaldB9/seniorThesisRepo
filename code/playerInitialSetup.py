@@ -40,7 +40,6 @@ def playerTurn(event, player_num, color, houseOption_choices, selectedHouse, hou
                     for road_coords, (connected_house_indices, _) in road_segments.items():
                         if selected_index in connected_house_indices:
                             roadOption_choices.append(road_coords)
-                            print(roadOption_choices)
                 for road in roadOption_choices: 
                     pygame.draw.line(screen, (0, 0, 0), road[0], road[1], 4) 
                 pygame.display.update()

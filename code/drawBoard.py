@@ -94,8 +94,15 @@ def drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4, resourc
 
     #draw Dice
     pygame.draw.rect(screen, (0, 0, 0), dice_rect, width=3)
+    #Roll Dice text
+    text_surface = my_font.render("Roll Dice", True, (0, 0, 0))
+    text_rect = text_surface.get_rect(center=dice_rect.center)
+    screen.blit(text_surface, text_rect)
 
     #End Turn Button
     pygame.draw.rect(screen, (0, 0, 0), dice_rect_end_turn, width=3)
+    text_surface = my_font.render("End Turn", True, (0, 0, 0))
+    text_rect = text_surface.get_rect(center=dice_rect_end_turn.center)
+    screen.blit(text_surface, text_rect)
 
     pygame.display.flip()
