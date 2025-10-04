@@ -34,3 +34,30 @@ def selectHouse(mouse_pos, color, houseOption_choices, selectedHouse, screen):
 
     pygame.display.update()
     return selectedHouse
+
+def selectRoad(mouse_pos, road_segments, playerRoads, roadsChosen, roadOption_choices):
+    for road in road_segments:
+        start, end = road
+
+        # Check if mouse click is near the line segment
+        mx, my = mouse_pos
+        sx, sy = start
+        ex, ey = end
+
+        # Use distance-to-line formula
+        dx = ex - sx
+        dy = ey - sy
+        if dx == 0 and dy == 0:
+            continue
+
+        t = ((mx - sx) * dx + (my - sy) * dy) / float(dx * dx + dy * dy)
+        t = max(0, min(1, t))
+        closest_x = sx + t * dx
+        closest_y = sy + t * dy
+
+        dist = ((closest_x - mx) ** 2 + (closest_y - my) ** 2) ** 0.5
+        if dist < 10:  # clickable area
+            if road not in roadsChosen and road in roadOption_choices:
+                return road
+
+    return None

@@ -23,7 +23,7 @@ def draw_hexagons(surface, fill_color, center, size, angle, border_width=2):
     pygame.draw.polygon(surface, border_color, points, border_width)
 
 def drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4, resourceTiles, resourceTokens, 
-            dice_rect, dice_rect_end_turn, screen, my_font):
+            dice_rect, dice_rect_end_turn, screen, my_font, road_segments=None, players=None):
     screen.fill((3, 65, 252))  # Clear screen
 
     # Get center of screen
@@ -86,6 +86,11 @@ def drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4, resourc
     for house in housesPlayer4:
         x, y = house['position']
         pygame.draw.rect(screen, (0, 255, 255), (x - 5, y - 5, 20, 20))
+
+    if players:
+        for player in players.values():
+            for road in player['roads']:
+                pygame.draw.line(screen, player['color'], road[0], road[1], 6)
 
     #draw Dice
     pygame.draw.rect(screen, (0, 0, 0), dice_rect, width=3)
