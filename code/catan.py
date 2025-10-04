@@ -5,6 +5,8 @@ from drawBoard import drawGame
 from dice import rollDice
 from playerInitialSetup import playerTurn
 
+#clock to control usage
+clock = pygame.time.Clock()
 pygame.init()
 
 #screen setup
@@ -233,14 +235,14 @@ while running:
                     current_index -= 1
                     if current_index < 0:
                         endOfChoosingHouses = True  # Done choosing houses
-
+    #60 fps
+    clock.tick(60)
             #for future
             #dice_rolled = rollDice(event, dice_rect, dice_rolled, screen, my_font)
 pygame.quit()
 
 #to do
-#add roads
-#make sure roads cant be chosen twice
+#make roads connect to each other
 #fix coords to be relative to screen
 #add clock to game loop
 
