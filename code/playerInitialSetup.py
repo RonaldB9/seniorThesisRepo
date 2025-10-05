@@ -41,7 +41,7 @@ def playerTurn(event, player_num, color, houseOption_choices, selectedHouse, hou
                     player_road_indices = [i for i, road in enumerate(road_segments.keys()) if road in playerRoads]
                     for i, (road_coords, (house_list_1, road_list_2)) in enumerate(road_segments.items()):
                         if selected_index in house_list_1 or any(r in road_list_2 for r in player_road_indices):
-                            if road_coords not in playerRoads:  # Optional: avoid offering roads the player already owns
+                            if road_coords not in playerRoads and road_coords not in roadsChosen:  #avoid offering roads the player already owns
                                 roadOption_choices.append(road_coords)
                 #draw roads 
                 for road in roadOption_choices: 

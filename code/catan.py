@@ -132,67 +132,67 @@ road_segments = {
     ((center_x+222, center_y-127), (center_x+222, center_y-62)): [ [15,20], [17,31,32] ],
 
     #5th row
-    ((center_x-273, center_y-32), (center_x-218, center_y-62)): [ [16,21], [18,24] ],#23
-    ((center_x-218, center_y-62), (center_x-163, center_y-32)): [ [16,22], [18,23,25] ], 
-    ((center_x-163, center_y-32), (center_x-110, center_y-62)): [ [17,22], [19,24,26] ],
-    ((center_x-110, center_y-62), (center_x-53, center_y-32)): [ [17,23], [19,25,27] ], 
-    ((center_x-53, center_y-32), (center_x+2, center_y-62)): [ [18,23], [] ], 
-    ((center_x+2, center_y-62), (center_x+57, center_y-32)): [ [18,24], [] ],
-    ((center_x+57, center_y-32), (center_x+112, center_y-62)): [ [19,24], [] ], 
-    ((center_x+112, center_y-62), (center_x+167, center_y-32)): [ [19,25], [] ],
-    ((center_x+167, center_y-32), (center_x+222, center_y-62)): [ [20,25], [] ],
-    ((center_x+222, center_y-62), (center_x+272, center_y-32)): [ [20,26], [] ],
+    ((center_x-273, center_y-32), (center_x-218, center_y-62)): [ [16,21], [18,24,33] ],#23
+    ((center_x-218, center_y-62), (center_x-163, center_y-32)): [ [16,22], [18,23,25,34] ], 
+    ((center_x-163, center_y-32), (center_x-110, center_y-62)): [ [17,22], [19,24,26,34] ],
+    ((center_x-110, center_y-62), (center_x-53, center_y-32)): [ [17,23], [19,25,27,35] ], 
+    ((center_x-53, center_y-32), (center_x+2, center_y-62)): [ [18,23], [26,28,35,20] ], 
+    ((center_x+2, center_y-62), (center_x+57, center_y-32)): [ [18,24], [20,27,29,36] ],
+    ((center_x+57, center_y-32), (center_x+112, center_y-62)): [ [19,24], [21,28,30,36] ], 
+    ((center_x+112, center_y-62), (center_x+167, center_y-32)): [ [19,25], [21,29,31,37] ],
+    ((center_x+167, center_y-32), (center_x+222, center_y-62)): [ [20,25], [30,32,22,37] ],
+    ((center_x+222, center_y-62), (center_x+272, center_y-32)): [ [20,26], [22,31,38] ],
 
     #6th row
-    ((center_x-273, center_y-32), (center_x-273, center_y+33)): [ [21,27], [] ],
-    ((center_x-163, center_y-32), (center_x-163, center_y+33)): [ [22,28], [] ], 
-    ((center_x-53, center_y-32), (center_x-53, center_y+33)): [ [23,29], [] ], 
-    ((center_x+57, center_y-32), (center_x+57, center_y+33)): [ [24,30], [] ],
-    ((center_x+167, center_y-32), (center_x+167, center_y+33)): [ [25,31], [] ],
-    ((center_x+272, center_y-32), (center_x+272, center_y+33)): [ [26,32], [] ],
+    ((center_x-273, center_y-32), (center_x-273, center_y+33)): [ [21,27], [23,39] ],#33
+    ((center_x-163, center_y-32), (center_x-163, center_y+33)): [ [22,28], [24,25,40,41] ], 
+    ((center_x-53, center_y-32), (center_x-53, center_y+33)): [ [23,29], [26,27,42,43] ], 
+    ((center_x+57, center_y-32), (center_x+57, center_y+33)): [ [24,30], [28,29,44,45] ],
+    ((center_x+167, center_y-32), (center_x+167, center_y+33)): [ [25,31], [30,31,46,47] ],
+    ((center_x+272, center_y-32), (center_x+272, center_y+33)): [ [26,32], [32,48] ],
 
     #7th row
-    ((center_x-273, center_y+33), (center_x-218, center_y+58)): [ [27,33], [] ],
-    ((center_x-218, center_y+58), (center_x-163, center_y+33)): [ [28,33], [] ], 
-    ((center_x-163, center_y+33), (center_x-110, center_y+58)): [ [28,34], [] ],
-    ((center_x-110, center_y+58), (center_x-53, center_y+33)): [ [29,34], [] ], 
-    ((center_x-53, center_y+33), (center_x+2, center_y+58)): [ [29,35], [] ], 
-    ((center_x+2, center_y+58), (center_x+57, center_y+33)): [ [30,35], [] ],
-    ((center_x+57, center_y+33), (center_x+112, center_y+58)): [ [30,36], [] ], 
-    ((center_x+112, center_y+58), (center_x+167, center_y+33)): [ [31,36], [] ],
-    ((center_x+167, center_y+33), (center_x+222, center_y+58)): [ [31,37], [] ],
-    ((center_x+222, center_y+58), (center_x+272, center_y+33)): [ [32,37], [] ],
+    ((center_x-273, center_y+33), (center_x-218, center_y+58)): [ [27,33], [23,40,49] ],#39
+    ((center_x-218, center_y+58), (center_x-163, center_y+33)): [ [28,33], [39,49,34,40] ], 
+    ((center_x-163, center_y+33), (center_x-110, center_y+58)): [ [28,34], [34,40,42,50] ],
+    ((center_x-110, center_y+58), (center_x-53, center_y+33)): [ [29,34], [35,41,43,50] ], 
+    ((center_x-53, center_y+33), (center_x+2, center_y+58)): [ [29,35], [35,42,44,51] ], 
+    ((center_x+2, center_y+58), (center_x+57, center_y+33)): [ [30,35], [36,43,45,51] ],
+    ((center_x+57, center_y+33), (center_x+112, center_y+58)): [ [30,36], [36,44,46,52] ], 
+    ((center_x+112, center_y+58), (center_x+167, center_y+33)): [ [31,36], [37,45,47,52] ],
+    ((center_x+167, center_y+33), (center_x+222, center_y+58)): [ [31,37], [37,46,48,53] ],
+    ((center_x+222, center_y+58), (center_x+272, center_y+33)): [ [32,37], [38,47,53] ],
 
     #8th row
-    ((center_x-218, center_y+58), (center_x-218, center_y+128)): [ [33,38], [] ],
-    ((center_x-110, center_y+58), (center_x-110, center_y+128)): [ [34,39], [] ], 
-    ((center_x+2, center_y+58), (center_x+2, center_y+128)): [ [35,40], [] ], 
-    ((center_x+112, center_y+58), (center_x+112, center_y+128)): [ [36,41], [] ],
-    ((center_x+222, center_y+58), (center_x+222, center_y+128)): [ [37,42], [] ],
+    ((center_x-218, center_y+58), (center_x-218, center_y+128)): [ [33,38], [39,40,54] ],#49
+    ((center_x-110, center_y+58), (center_x-110, center_y+128)): [ [34,39], [41,42,55,56] ], 
+    ((center_x+2, center_y+58), (center_x+2, center_y+128)): [ [35,40], [43,44,57,58] ], 
+    ((center_x+112, center_y+58), (center_x+112, center_y+128)): [ [36,41], [45,46,59,60] ],
+    ((center_x+222, center_y+58), (center_x+222, center_y+128)): [ [37,42], [47,48,61] ],
 
     #9th row
-    ((center_x-218, center_y+128), (center_x-163, center_y+158)): [ [38,43], [] ],
-    ((center_x-163, center_y+158), (center_x-110, center_y+128)): [ [39,43], [] ], 
-    ((center_x-110, center_y+128), (center_x-53, center_y+158)): [ [39,44], [] ],
-    ((center_x-53, center_y+158), (center_x+2, center_y+128)): [ [40,44], [] ], 
-    ((center_x+2, center_y+128), (center_x+57, center_y+158)): [ [40,45], [] ], 
-    ((center_x+57, center_y+158), (center_x+112, center_y+128)): [ [41,45], [] ],
-    ((center_x+112, center_y+128), (center_x+167, center_y+158)): [ [41,46], [] ], 
-    ((center_x+167, center_y+158), (center_x+222, center_y+128)): [ [42,46], [] ],
+    ((center_x-218, center_y+128), (center_x-163, center_y+158)): [ [38,43], [49,55,62] ],#54
+    ((center_x-163, center_y+158), (center_x-110, center_y+128)): [ [39,43], [54,56,50,62] ], 
+    ((center_x-110, center_y+128), (center_x-53, center_y+158)): [ [39,44], [55,57,50,63] ],
+    ((center_x-53, center_y+158), (center_x+2, center_y+128)): [ [40,44], [56,58,51,63] ], 
+    ((center_x+2, center_y+128), (center_x+57, center_y+158)): [ [40,45], [57,59,51,64] ], 
+    ((center_x+57, center_y+158), (center_x+112, center_y+128)): [ [41,45], [58,60,52,64] ],
+    ((center_x+112, center_y+128), (center_x+167, center_y+158)): [ [41,46], [59,61,52,65] ], 
+    ((center_x+167, center_y+158), (center_x+222, center_y+128)): [ [42,46], [60,53,65] ],
 
     #10th row vertical roads
-    ((center_x-163, center_y+158), (center_x-163, center_y+218)): [ [43,47], [] ], 
-    ((center_x-53, center_y+158), (center_x-53, center_y+218)): [ [44,48], [] ], 
-    ((center_x+57, center_y+158), (center_x+57, center_y+218)): [ [45,49], [] ], 
-    ((center_x+167, center_y+158), (center_x+167, center_y+218)): [ [46,50], [] ],
+    ((center_x-163, center_y+158), (center_x-163, center_y+218)): [ [43,47], [54,55,66] ], #62
+    ((center_x-53, center_y+158), (center_x-53, center_y+218)): [ [44,48], [56,57,67,68] ], 
+    ((center_x+57, center_y+158), (center_x+57, center_y+218)): [ [45,49], [58,59,69,70] ], 
+    ((center_x+167, center_y+158), (center_x+167, center_y+218)): [ [46,50], [60,61,71] ],
 
     #bottom roads
-    ((center_x-163, center_y+218), (center_x-110, center_y+248)): [ [47,51], [] ],
-    ((center_x-110, center_y+248), (center_x-53, center_y+218)): [ [48,51], [] ], 
-    ((center_x-53, center_y+218), (center_x+2, center_y+248)): [ [48,52], [] ],
-    ((center_x+2, center_y+248), (center_x+57, center_y+218)): [ [49,52], [] ], 
-    ((center_x+57, center_y+218), (center_x+112, center_y+248)): [ [49,53], [] ], 
-    ((center_x+112, center_y+248), (center_x+167, center_y+218)): [ [50,53], [] ]
+    ((center_x-163, center_y+218), (center_x-110, center_y+248)): [ [47,51], [62,67] ],#66
+    ((center_x-110, center_y+248), (center_x-53, center_y+218)): [ [48,51], [66,68,63] ], 
+    ((center_x-53, center_y+218), (center_x+2, center_y+248)): [ [48,52], [67,69,63] ],
+    ((center_x+2, center_y+248), (center_x+57, center_y+218)): [ [49,52], [68,70,64] ], 
+    ((center_x+57, center_y+218), (center_x+112, center_y+248)): [ [49,53], [69,71,64] ], 
+    ((center_x+112, center_y+248), (center_x+167, center_y+218)): [ [50,53], [70,65] ]
 }
 
 #get every house option and store it
