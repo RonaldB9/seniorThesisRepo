@@ -33,13 +33,17 @@ def playerTurn(event, player_num, color, houseOption_choices, selectedHouse, hou
                 drawGame(housesPlayer1, housesPlayer2, housesPlayer3, housesPlayer4,
                          resourceTiles, resourceTokens, dice_rect, dice_rect_end_turn, screen, my_font, road_segments, players,)
                 selectedHouse = selected
-                #draw roads 
+                #get valid roads 
                 roadOption_choices.clear()
                 if selectedHouse['position'] in houseOptions:
                     selected_index = houseOptions.index(selectedHouse['position'])
-                    for road_coords, (connected_house_indices, _) in road_segments.items():
-                        if selected_index in connected_house_indices:
-                            roadOption_choices.append(road_coords)
+                    # Get all road indices the player already owns
+                    player_road_indices = [i for i, road in enumerate(road_segments.keys()) if road in playerRoads]
+                    for i, (road_coords, (house_list_1, road_list_2)) in enumerate(road_segments.items()):
+                        if selected_index in house_list_1 or any(r in road_list_2 for r in player_road_indices):
+                            if road_coords not in playerRoads:  # Optional: avoid offering roads the player already owns
+                                roadOption_choices.append(road_coords)
+                #draw roads 
                 for road in roadOption_choices: 
                     pygame.draw.line(screen, (0, 0, 0), road[0], road[1], 4) 
                 pygame.display.update()
