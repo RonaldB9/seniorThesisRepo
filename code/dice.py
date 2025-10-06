@@ -17,5 +17,5 @@ def rollDice(event, dice_rect, dice_rolled, screen, my_font):
             # Update only the dice area
             pygame.display.update(dice_rect)
 
-            return True  #Dice was rolled
-    return dice_rolled  #No change
+            return diceRoll  #return value
+    return 0  #No change

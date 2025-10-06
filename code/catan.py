@@ -2,7 +2,7 @@ import pygame
 import random
 
 from drawBoard import drawGame
-from dice import rollDice
+from mainPlayerTurn import playerMainTurn
 from playerInitialSetup import playerTurn
 
 #clock to control usage
@@ -43,14 +43,15 @@ my_font = pygame.font.SysFont('Comic Sans MS', 20)
 current_player = 1
 number_of_players = 4 #make dynamic
 players = {
-    1: {'color': (255, 0, 0), 'houses': [], 'roads': [], 'resources': [], 'placements': 0},
-    2: {'color': (0, 255, 0), 'houses': [], 'roads': [], 'resources': [], 'placements': 0},
-    3: {'color': (0, 0, 255), 'houses': [], 'roads': [], 'resources': [], 'placements': 0},
-    4: {'color': (0, 255, 255), 'houses': [], 'roads': [], 'resources': [], 'placements': 0},
+    1: {'color': (255, 0, 0), 'houses': [], 'city':[], 'roads': [], 'resources': [], 'placements': 0, 'points': 0},
+    2: {'color': (0, 255, 0), 'houses': [], 'city':[], 'roads': [], 'resources': [], 'placements': 0, 'points': 0},
+    3: {'color': (0, 0, 255), 'houses': [], 'city':[], 'roads': [], 'resources': [], 'placements': 0, 'points': 0},
+    4: {'color': (0, 255, 255), 'houses': [], 'city':[], 'roads': [], 'resources': [], 'placements': 0, 'points': 0},
 }
 
 player_order = list(players.keys())
 current_index = 0
+playerEndsTurn = False
 
 #dice
 dice_rect = pygame.Rect(center_x + 300, center_y + 250, 100, 100)
@@ -238,16 +239,22 @@ while running:
                     current_index -= 1
                     if current_index < 0:
                         endOfChoosingHouses = True  # Done choosing houses
+
+        #main player loop
+        if endOfChoosingHouses:
+            current_player_id = player_order[current_index]
+            player_data = players[current_player_id]
+
+            if not playerEndsTurn:
+                playerEndsTurn = playerMainTurn(screen, my_font, current_player_id, player_data, event, dice_rect, dice_rolled)
+
     #60 fps
     clock.tick(60)
             #for future
-            #dice_rolled = rollDice(event, dice_rect, dice_rolled, screen, my_font)
 pygame.quit()
 
 #to do
-#make roads connect to each other
-#fix coords to be relative to screen
-#add clock to game loop
+#add logic so roads cant continue through other players house
 
 #start main player loop
 #-roll dice, add resources to players

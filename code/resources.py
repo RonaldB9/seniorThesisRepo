@@ -18,3 +18,6 @@ def addResources(house_pos, resourceTiles, house_to_tile_map, playerResources):
         if resource and resource != 'desert':
             playerResources.append(resource)
             print("Player resources:", playerResources)
+
+def addResourcesAfterRoll(dice_roll, players):
+    print("test")
