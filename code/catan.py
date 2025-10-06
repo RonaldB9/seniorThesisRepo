@@ -246,7 +246,8 @@ while running:
             player_data = players[current_player_id]
 
             if not playerEndsTurn:
-                playerEndsTurn = playerMainTurn(screen, my_font, current_player_id, player_data, event, dice_rect, dice_rolled)
+                playerEndsTurn = playerMainTurn(screen, my_font, current_player_id, player_data, event, dice_rect, dice_rolled, players,
+                                                resourceTiles, resourceTokens)
 
     #60 fps
     clock.tick(60)
@@ -260,4 +261,5 @@ pygame.quit()
 #-roll dice, add resources to players
 #player can build city, road, buy card, trade(player or bank)
 #robber stops resources
+#add port logic
 #points (houses, city, longest road, victory points, army)

@@ -19,5 +19,12 @@ def addResources(house_pos, resourceTiles, house_to_tile_map, playerResources):
             playerResources.append(resource)
             print("Player resources:", playerResources)
 
-def addResourcesAfterRoll(dice_roll, players):
-    print("test")
+def addResourcesAfterRoll(dice_roll, players, playerNumber, resourceTiles, resourceTokens):
+    #get dice roll and what tiles are that number
+    
+    #get houses on those tiles and the players who own them
+
+    #give appropriate resources to players
+    tile_color = resourceTiles[tile_index]
+    players[playerNumber]['resources'].append(tile_color_to_resource.get(tile_color))
+    print(f"Player {playerNumber} resources: {players[playerNumber]['resources']}")
