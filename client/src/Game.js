@@ -1,0 +1,135 @@
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import './Game.css'; 
+//images
+import catanTitle from './Images/catanTitle.png';
+import brickTile from './Images/brickTile.png';
+import oreTile from './Images/oreTile.png';
+import woodTile from './Images/woodTile.png';
+import sheepTile from './Images/sheepTile.png';
+import wheatTile from './Images/wheatTile.png';
+import desertTile from './Images/desertTile.png';
+
+function Game() {
+    //map resources
+    const resourceImages = {
+        Brick: brickTile,
+        Ore: oreTile,
+        Wood: woodTile,
+        Sheep: sheepTile,
+        Wheat: wheatTile,
+        Desert: desertTile
+    };
+
+    const [resourceTiles, setResourceTiles] = useState([]);
+    const [resourceTokens, setResourceTokens] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/board')
+        .then((res) => res.json())
+        .then((data) => {
+            setResourceTiles(data.resourceTiles);
+            setResourceTokens(data.resourceTokens);
+        });
+    }, []);
+
+    return (
+    <div className="background">
+        <div className="images">
+          <img src={catanTitle} alt="Catan Title"/>
+        </div>
+        <h1 className="title">Game</h1>
+
+        <div className="tiles-container">
+        {resourceTiles.length > 1 && (
+            <>
+            {/* 1st Row */}
+            <div className="tiles-row">
+                {/* 0th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[0]]} alt={resourceTiles[0]}/>
+                    {resourceTokens[0] && ( <span className="token">{resourceTokens[0]}</span>)}
+                </span>
+
+                {/* 1st Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[1]]} alt={resourceTiles[1]}/>
+                    {resourceTokens[1] && ( <span className="token">{resourceTokens[1]}</span>)}
+                </span>
+
+                {/* 2nd Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[2]]} alt={resourceTiles[2]}/>
+                    {resourceTokens[2] && ( <span className="token">{resourceTokens[2]}</span>)}
+                </span>
+            </div>
+
+            {/* 2nd Row */}
+            <div className="tiles-row">
+                {/* 11th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[11]]} alt={resourceTiles[11]}/>
+                    {resourceTokens[11] && ( <span className="token">{resourceTokens[11]}</span>)}
+                </span>
+
+                {/* 12th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[12]]} alt={resourceTiles[12]}/>
+                    {resourceTokens[12] && ( <span className="token">{resourceTokens[12]}</span>)}
+                </span>
+
+                {/* 13th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[13]]} alt={resourceTiles[13]}/>
+                    {resourceTokens[13] && ( <span className="token">{resourceTokens[13]}</span>)}
+                </span>
+
+                {/* 3rd Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[3]]} alt={resourceTiles[3]}/>
+                    {resourceTokens[3] && ( <span className="token">{resourceTokens[3]}</span>)}
+                </span>
+            </div>
+
+            {/* 3rd Row */}
+            <div className="tiles-row">
+                {/* 10th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[10]]} alt={resourceTiles[10]}/>
+                    {resourceTokens[10] && ( <span className="token">{resourceTokens[10]}</span>)}
+                </span>
+
+                {/* 17th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[17]]} alt={resourceTiles[17]}/>
+                    {resourceTokens[17] && ( <span className="token">{resourceTokens[17]}</span>)}
+                </span>
+
+                {/* 18th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[18]]} alt={resourceTiles[18]}/>
+                    {resourceTokens[18] && ( <span className="token">{resourceTokens[18]}</span>)}
+                </span>
+
+                {/* 14th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[14]]} alt={resourceTiles[14]}/>
+                    {resourceTokens[14] && ( <span className="token">{resourceTokens[14]}</span>)}
+                </span>
+
+                {/* 5th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[4]]} alt={resourceTiles[4]}/>
+                    {resourceTokens[4] && ( <span className="token">{resourceTokens[4]}</span>)}
+                </span>
+            </div>
+
+
+            </>
+        )}
+        </div>
+    </div>
+    )
+}
+
+export default Game;
