@@ -21,18 +21,21 @@
 .playerStartUp {
  background-color: white;
  border-radius: 10px;
- width: 20%;
+ width: 30%;
  margin-left: 5%;
  text-align: center;
  padding-bottom: 10px;
 }
 
-.players {
+.player-block {
   background-color: lightgray;
-  width: 90%;
+}
+
+.players {
+  width: 70%;
+  border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
-  border-radius: 10px;
 }
 
 .contentHomePage {
@@ -43,4 +46,9 @@
   background-color: white;
   border-radius: 10px;
   margin-left: 50%;
+  width: 10%;
+}
+
+.startText {
+  text-align: center;
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
-import './Game.css'; 
+import './css/App.css';
+import './css/Game.css'; 
 //images
 import catanTitle from './Images/catanTitle.png';
 import brickTile from './Images/brickTile.png';
@@ -25,7 +25,7 @@ function Game() {
     const [resourceTiles, setResourceTiles] = useState([]);
     const [resourceTokens, setResourceTokens] = useState([]);
     const [houseData, setHouseData] = useState([]);
-    const [showhouseOptions, setShowOptions] = useState(false);
+    const [showhouseOptions, setShowOptions] = useState(0);
 
     useEffect(() => {
         fetch('http://localhost:3001/api/board')
@@ -38,7 +38,7 @@ function Game() {
     }, []);
 
     const handleClick = () => {
-        setShowOptions(true);
+        //setShowOptions(true);
     };
 
     return (
@@ -180,25 +180,19 @@ function Game() {
                 </span>
             </div>
             
-            {/* Conditionally show fading image */}
-                <>
-                {showhouseOptions && Array.isArray(houseData) && houseData.map((house, index) => (
-                    <img
-                    key={index}
-                    src={chooseCircle} // Or a house icon
-                    className="house_marker fade-loop"
-                    style={{
-                        position: 'absolute',
-                        top: `calc(50% + ${house.y}px)`,
-                        left: `calc(50% + ${house.x}px)`,
-                        transform: 'translate(-50%, -50%)',
-                        pointerEvents: 'none'
-                    }}
-                    alt={`House ${index}`}
-                    />
-                ))}
-            </>
-
+            {/* Show house options */}
+            {showhouseOptions < 9 && Array.isArray(houseData) && houseData.map((house, index) => (
+                <img key={index} src={chooseCircle} className="house_marker fade-loop" alt={`House ${index}`}
+                style={{
+                    position: 'absolute',
+                    top: `calc(50% + ${house.y}px)`,
+                    left: `calc(50% + ${house.x}px)`,
+                    transform: 'translate(-50%, -50%)',
+                    pointerEvents: 'none'
+                }}/>
+            ))}
+            
+            {/*End Turn Button*/}
             <div class="endTurnDiv">
                 <button onClick={handleClick}>End Turn</button>
             </div>
