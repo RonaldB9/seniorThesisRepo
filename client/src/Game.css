@@ -16,6 +16,7 @@
   margin-right: auto;
   border: 1px solid black;
   box-sizing: border-box;
+  position: relative;
 }
 
 .tile {
@@ -42,4 +43,24 @@
     width: 100%;
     justify-content: center;
     display: flex;
+}
+
+.fade-loop {
+  animation: fadeLoop 1s infinite alternate;
+  height: 30px;
+  width: 30px;
+  position: absolute;
+}
+
+@keyframes fadeLoop {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.endTurnDiv {
+    width: 100%;
 }

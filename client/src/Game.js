@@ -9,6 +9,7 @@ import woodTile from './Images/woodTile.png';
 import sheepTile from './Images/sheepTile.png';
 import wheatTile from './Images/wheatTile.png';
 import desertTile from './Images/desertTile.png';
+import chooseCircle from './Images/chooseCircle.png';
 
 function Game() {
     //map resources
@@ -23,6 +24,8 @@ function Game() {
 
     const [resourceTiles, setResourceTiles] = useState([]);
     const [resourceTokens, setResourceTokens] = useState([]);
+    const [houseData, setHouseData] = useState([]);
+    const [showhouseOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:3001/api/board')
@@ -30,8 +33,13 @@ function Game() {
         .then((data) => {
             setResourceTiles(data.resourceTiles);
             setResourceTokens(data.resourceTokens);
+            setHouseData(data.houseData);
         });
     }, []);
+
+    const handleClick = () => {
+        setShowOptions(true);
+    };
 
     return (
     <div className="background">
@@ -170,6 +178,29 @@ function Game() {
                     <img className="tiles" src={resourceImages[resourceTiles[6]]} alt={resourceTiles[6]}/>
                     {resourceTokens[6] && ( <span className="token">{resourceTokens[6]}</span>)}
                 </span>
+            </div>
+            
+            {/* Conditionally show fading image */}
+                <>
+                {showhouseOptions && Array.isArray(houseData) && houseData.map((house, index) => (
+                    <img
+                    key={index}
+                    src={chooseCircle} // Or a house icon
+                    className="house_marker fade-loop"
+                    style={{
+                        position: 'absolute',
+                        top: `calc(50% + ${house.y}px)`,
+                        left: `calc(50% + ${house.x}px)`,
+                        transform: 'translate(-50%, -50%)',
+                        pointerEvents: 'none'
+                    }}
+                    alt={`House ${index}`}
+                    />
+                ))}
+            </>
+
+            <div class="endTurnDiv">
+                <button onClick={handleClick}>End Turn</button>
             </div>
 
             </>
