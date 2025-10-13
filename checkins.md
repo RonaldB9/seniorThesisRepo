@@ -33,30 +33,32 @@ Making the board, and the initial start of the game.
 
 ### The challenges I faced this week were:
 
-There is so much logicaspects of the game to add
+There are so many logic aspects of the game to add
 
 ---
 
 ## Week 3 Summary (09/29/2025)
 ### This week I worked on:
 
-[Your answer here]
+Adding more to the Catan game.
+-Roads
+-Started main game loop
 
 ### This week I learned:
 
-[Your answer here]
+How to make my code a bit better.
 
 ### My successes this week were:
 
-[Your answer here]
+Adding the logic to place roads.
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+Keeping my code clean and easily maintainable.
 
 ---
 
-## Week 4 Summary (MM/DD/YYYY)
+## Week 4 Summary (10/06/2025)
 ### This week I worked on:
 
 [Your answer here]
