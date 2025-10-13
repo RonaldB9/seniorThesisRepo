@@ -1,6 +1,8 @@
 .tiles {
-    width: 150px;
-    height: 150px;
+    width: 125px;
+    height: auto;
+    max-height: 125px;
+    display: block;
 }
 
 .tiles-container {
@@ -9,18 +11,25 @@
   justify-content: center;
   gap: 0px;
   margin-top: 20px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid black;
+  box-sizing: border-box;
 }
 
 .tile {
   position: relative;
-  width: 150px;
-  height: 115px;
+  width: auto;
+  max-width: 125px;
+  height: auto;
+  max-height: 95px;
 }
 
 .token {
   position: relative;
-  bottom: 80px;
-  left: 60px;
+  bottom: 70px;
+  left: 50px;
   margin-left: auto;
   margin-right: auto;
   background: rgba(255, 255, 255, 0.9);

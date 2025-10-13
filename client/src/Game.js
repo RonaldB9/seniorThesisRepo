@@ -117,13 +117,60 @@ function Game() {
                     {resourceTokens[14] && ( <span className="token">{resourceTokens[14]}</span>)}
                 </span>
 
-                {/* 5th Tile */}
+                {/* 4th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[4]]} alt={resourceTiles[4]}/>
                     {resourceTokens[4] && ( <span className="token">{resourceTokens[4]}</span>)}
                 </span>
             </div>
 
+            {/* 4th Row */}
+            <div className="tiles-row">
+                {/* 9th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[9]]} alt={resourceTiles[9]}/>
+                    {resourceTokens[9] && ( <span className="token">{resourceTokens[9]}</span>)}
+                </span>
+
+                {/* 16th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[16]]} alt={resourceTiles[16]}/>
+                    {resourceTokens[16] && ( <span className="token">{resourceTokens[16]}</span>)}
+                </span>
+
+                {/* 15th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[15]]} alt={resourceTiles[15]}/>
+                    {resourceTokens[15] && ( <span className="token">{resourceTokens[15]}</span>)}
+                </span>
+
+                {/* 5th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[5]]} alt={resourceTiles[5]}/>
+                    {resourceTokens[5] && ( <span className="token">{resourceTokens[5]}</span>)}
+                </span>
+            </div>
+
+            {/* 5th Row */}
+            <div className="tiles-row">
+                {/* 8th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[8]]} alt={resourceTiles[8]}/>
+                    {resourceTokens[8] && ( <span className="token">{resourceTokens[8]}</span>)}
+                </span>
+
+                {/* 7th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[7]]} alt={resourceTiles[7]}/>
+                    {resourceTokens[7] && ( <span className="token">{resourceTokens[7]}</span>)}
+                </span>
+
+                {/* 6th Tile */}
+                <span className="tile">
+                    <img className="tiles" src={resourceImages[resourceTiles[6]]} alt={resourceTiles[6]}/>
+                    {resourceTokens[6] && ( <span className="token">{resourceTokens[6]}</span>)}
+                </span>
+            </div>
 
             </>
         )}
