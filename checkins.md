@@ -61,23 +61,23 @@ Keeping my code clean and easily maintainable.
 ## Week 4 Summary (10/06/2025)
 ### This week I worked on:
 
-[Your answer here]
+I switched to use React and Node.js for my application
 
 ### This week I learned:
 
-[Your answer here]
+PyGame is not what I want in order to create a hostable website.
 
 ### My successes this week were:
 
-[Your answer here]
+I got React and Node.js working as well as the starting screen and board.
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+Converting my code to VavaScript and to use a client and server methodology.
 
 ---
 
-## Week 5 Summary (MM/DD/YYYY)
+## Week 5 Summary (10/13/2025)
 ### This week I worked on:
 
 [Your answer here]
