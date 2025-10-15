@@ -40,13 +40,28 @@ app.get('/api/board', (req, res) => {
 // Register new player
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
+  const colors = ['red', 'green', 'blue', 'yellow', 'orange']; // Add more if needed
+  const playerNumber = playerData.getPlayers().length;
+  const assignedColor = colors[playerNumber % colors.length];
 
   let existing = playerData.findPlayer(userId);
   if (!existing) {
     const newPlayer = {
       userId,
       name: `Player ${playerData.getPlayers().length + 1}`,
-      ready: false
+      ready: false,
+      score: 0,
+      color: assignedColor,
+      resources: {
+        wood: 0,
+        brick: 0,
+        sheep: 0,
+        wheat: 0,
+        ore: 0
+      },
+      houses: [],
+      cities: [],
+      roads: []
     };
     playerData.addPlayer(newPlayer);
     existing = newPlayer;
@@ -71,7 +86,6 @@ app.post('/api/players/:userId/ready', (req, res) => {
 
   // Emit updated players list to all clients
   io.emit('playersUpdated', playerData.getPlayers());
-  console.log(playerData.getPlayers());
   res.json(updatedPlayer);
 });
 

@@ -101,7 +101,7 @@ function Home() {
           <h2>Players:</h2>
           {players.map((player, index) => (
             <div key={player.userId} className="player-block">
-              <h3 className="players">{player.name}</h3>
+              <h3 style={{ color: player.color }} className="players">{player.name}</h3>
               <h4>{player.ready ? "✅ Ready" : "❌ Not Ready"}</h4>
             </div>
           ))}
