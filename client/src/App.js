@@ -50,12 +50,15 @@ function Home() {
   useEffect(() => {
     socket.on('playersUpdated', updatedPlayers => {
       setPlayers(updatedPlayers);
+      if (userId) {
+        const me = updatedPlayers.find(p => p.userId === userId);
+        setCurrentPlayer(me);
+      }
     });
-
     return () => {
       socket.off('playersUpdated');
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     socket.on('startGame', () => {

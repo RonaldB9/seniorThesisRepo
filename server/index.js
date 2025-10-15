@@ -3,6 +3,11 @@ const http = require('http'); // ⬅️ Needed for Socket.IO
 const cors = require('cors');
 const { Server } = require('socket.io');
 const { generateCatanBoard, getHouseTileData } = require('./gameData');
+const playerData = require('./playerData');
+
+// Clear all players on server startup
+const { writePlayers } = require('./playerData');
+writePlayers([]); // wipes the players.json file
 
 const app = express();
 const server = http.createServer(app); // ⬅️ Create HTTP server manually
@@ -19,7 +24,7 @@ app.use(cors());
 app.use(express.json()); // For parsing POST bodies
 
 // In-memory player list
-let players = [];
+//let players = [];
 
 // Generate board data
 app.get('/api/board', (req, res) => {
@@ -36,18 +41,19 @@ app.get('/api/board', (req, res) => {
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
 
-  let existing = players.find(p => p.userId === userId);
+  let existing = playerData.findPlayer(userId);
   if (!existing) {
     const newPlayer = {
       userId,
-      name: `Player ${players.length + 1}`,
+      name: `Player ${playerData.getPlayers().length + 1}`,
       ready: false
     };
-    players.push(newPlayer);
+    playerData.addPlayer(newPlayer);
     existing = newPlayer;
     console.log(`Registered new player: ${newPlayer.name}`);
-    io.emit('playersUpdated', players); // ⬅️ Notify all clients
   }
+
+  io.emit('playersUpdated', playerData.getPlayers()); // notify all clients
 
   res.json(existing);
 });
@@ -55,25 +61,25 @@ app.post('/api/register', (req, res) => {
 // Toggle ready status
 app.post('/api/players/:userId/ready', (req, res) => {
   const { userId } = req.params;
-  const player = players.find(p => p.userId === userId);
+  const player = playerData.findPlayer(userId);
 
   if (!player) {
     return res.status(404).json({ error: 'Player not found' });
   }
 
-  player.ready = !player.ready; // ⬅️ Toggle status
+  const updatedPlayer = playerData.updatePlayer(userId, { ready: !player.ready });
 
   // Emit updated players list to all clients
-  io.emit('playersUpdated', players);
-
-  res.json(player);
+  io.emit('playersUpdated', playerData.getPlayers());
+  console.log(playerData.getPlayers());
+  res.json(updatedPlayer);
 });
 
 // Socket connection
 io.on('connection', (socket) => {
   console.log('🔌 New WebSocket connection');
 
-  socket.emit('playersUpdated', players);
+  socket.emit('playersUpdated', playerData.getPlayers());
 
   socket.on('startGameClicked', () => {
     console.log('🔔 startGameClicked received, broadcasting startGame');
@@ -87,7 +93,7 @@ io.on('connection', (socket) => {
 
 // Get all players (for initial load or fallback)
 app.get('/api/players', (req, res) => {
-  res.json(players);
+  res.json(playerData.getPlayers());
 });
 
 // Handle WebSocket connections
@@ -95,7 +101,7 @@ io.on('connection', (socket) => {
   console.log('🔌 New WebSocket connection');
 
   // Send current player list on connect
-  socket.emit('playersUpdated', players);
+  socket.emit('playersUpdated', playerData.getPlayers());
 
   socket.on('disconnect', () => {
     console.log('❌ Client disconnected');

@@ -1,0 +1,12 @@
+[
+  {
+    "userId": "73b9025b-c5ef-41ac-802b-254cf09500f5",
+    "name": "Player 1",
+    "ready": true
+  },
+  {
+    "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
+    "name": "Player 2",
+    "ready": true
+  }
+]
