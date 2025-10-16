@@ -23,18 +23,24 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json()); // For parsing POST bodies
 
-// In-memory player list
-//let players = [];
+// In-memory
+let currentTurnIndex = 0; // Index of the player whose turn it is
+let gameBoard = null;
 
 // Generate board data
 app.get('/api/board', (req, res) => {
-  const boardData = generateCatanBoard();
-  const houseData = getHouseTileData();
-  res.json({
-    resourceTiles: boardData.resourceTiles,
-    resourceTokens: boardData.resourceTokens,
-    houseData: houseData
-  });
+  if (!gameBoard) {
+    const boardData = generateCatanBoard();
+    const houseData = getHouseTileData();
+
+    gameBoard = {
+      resourceTiles: boardData.resourceTiles,
+      resourceTokens: boardData.resourceTokens,
+      houseData: houseData
+    };
+  }
+
+  res.json(gameBoard);
 });
 
 // Register new player
@@ -95,9 +101,31 @@ io.on('connection', (socket) => {
 
   socket.emit('playersUpdated', playerData.getPlayers());
 
+  // On endTurn from client
+  socket.on('endTurn', () => {
+    const players = playerData.getPlayers();
+    if (players.length === 0) return;
+
+    // Move to the next player
+    currentTurnIndex = (currentTurnIndex + 1) % players.length;
+
+    const nextPlayer = players[currentTurnIndex];
+    console.log(`🔁 Turn passed to: ${nextPlayer.name} (${nextPlayer.userId})`);
+
+    io.emit('currentTurn', nextPlayer.userId); // Inform all clients whose turn it is
+  });
+
   socket.on('startGameClicked', () => {
-    console.log('🔔 startGameClicked received, broadcasting startGame');
-    io.emit('startGame');
+    const players = playerData.getPlayers();
+    if (players.length === 0) return;
+
+    // Reset to the first player
+    currentTurnIndex = 0;
+
+    const firstPlayer = players[0];
+    console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
+    io.emit('startGame'); // Let frontend know game has started
+    io.emit('currentTurn', firstPlayer.userId); // Let everyone know whose turn it is
   });
 
   socket.on('disconnect', () => {
@@ -108,19 +136,6 @@ io.on('connection', (socket) => {
 // Get all players (for initial load or fallback)
 app.get('/api/players', (req, res) => {
   res.json(playerData.getPlayers());
-});
-
-// Handle WebSocket connections
-io.on('connection', (socket) => {
-  console.log('🔌 New WebSocket connection');
-
-  // Send current player list on connect
-  socket.emit('playersUpdated', playerData.getPlayers());
-
-  socket.on('disconnect', () => {
-    console.log('❌ Client disconnected');
-    // Optionally handle cleanup here
-  });
 });
 
 // Start server

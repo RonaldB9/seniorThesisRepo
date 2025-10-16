@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
 
 import catanTitle from './Images/catanTitle.png';
 import Game from './Game';
+import socket from './socket';
 
-const socket = io('http://localhost:3001'); // Update this if your backend is hosted elsewhere
 
 function App() {
   return (

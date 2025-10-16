@@ -10,6 +10,8 @@ import sheepTile from './Images/sheepTile.png';
 import wheatTile from './Images/wheatTile.png';
 import desertTile from './Images/desertTile.png';
 import chooseCircle from './Images/chooseCircle.png';
+import socket from './socket';
+
 
 function Game() {
     //map resources
@@ -26,6 +28,8 @@ function Game() {
     const [resourceTokens, setResourceTokens] = useState([]);
     const [houseData, setHouseData] = useState([]);
     const [showhouseOptions, setShowOptions] = useState(0);
+    const [currentTurnUserId, setCurrentTurnUserId] = useState(null);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         fetch('http://localhost:3001/api/board')
@@ -37,8 +41,26 @@ function Game() {
         });
     }, []);
 
+    useEffect(() => {
+        const id = localStorage.getItem('userId');
+        setUserId(id);
+    }, []);
+
+    useEffect(() => {
+        socket.on('currentTurn', (userId) => {
+            setCurrentTurnUserId(userId);
+            console.log("🔁 Current Turn:", userId);
+        });
+
+        return () => {
+            socket.off('currentTurn');
+        };
+    }, []);
+
     const handleClick = () => {
-        //setShowOptions(true);
+        if (userId === currentTurnUserId) {
+            socket.emit('endTurn');
+        }
     };
 
     return (
@@ -46,6 +68,9 @@ function Game() {
         <div className="images">
           <img src={catanTitle} alt="Catan Title"/>
         </div>
+        {userId === currentTurnUserId && (
+            <div className="your-turn-banner">🎯 Your Turn!</div>
+        )}
         <h1 className="title">Game</h1>
 
         <div className="tiles-container">
@@ -181,7 +206,7 @@ function Game() {
             </div>
             
             {/* Show house options */}
-            {showhouseOptions < 9 && Array.isArray(houseData) && houseData.map((house, index) => (
+            {userId === currentTurnUserId && showhouseOptions < 9 && Array.isArray(houseData) && houseData.map((house, index) => (
                 <img key={index} src={chooseCircle} className="house_marker fade-loop" alt={`House ${index}`}
                 style={{
                     position: 'absolute',
