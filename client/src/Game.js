@@ -10,7 +10,8 @@ import sheepTile from './Images/sheepTile.png';
 import wheatTile from './Images/wheatTile.png';
 import desertTile from './Images/desertTile.png';
 import chooseCircle from './Images/chooseCircle.png';
-import greenHouse from './Images/greenhouse.png';
+import redHouse from './Images/redHouse.png';
+import greenHouse from './Images/greenHouse.png';
 import socket from './socket';
 
 
@@ -33,11 +34,23 @@ function Game() {
     const [userId, setUserId] = useState(null);
     const [selectedHouseIndex, setSelectedHouseIndex] = useState(null);
     const [placedHouses, setPlacedHouses] = useState({});
+    const [currentPlayer, setCurrentPlayer] = useState(null);
 
     // Get userId on mount
     useEffect(() => {
         const id = localStorage.getItem('userId');
         setUserId(id);
+
+        // Fetch current player data
+        if (id) {
+            fetch(`http://localhost:3001/api/players`)
+            .then((res) => res.json())
+            .then((players) => {
+                const player = players.find(p => p.userId === id);
+                setCurrentPlayer(player);
+            })
+            .catch(err => console.error('Failed to fetch player:', err));
+        }
     }, []);
 
     // Fetch board data
@@ -66,7 +79,7 @@ function Game() {
             setShowOptions(houseData.length);
             setSelectedHouseIndex(null); // Reset selection on new turn
         }
-    }, [userId, currentTurnUserId, houseData]);
+    }, [currentTurnUserId, houseData.length, userId]);
 
     // Set up socket listeners ONCE on mount
     useEffect(() => {
@@ -293,7 +306,7 @@ function Game() {
             {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
                 <img 
                     key={`placed-${index}`}
-                    src={greenHouse}
+                    src={house.playerName === 'Player 1' ? redHouse : greenHouse}
                     alt={`Placed house by ${house.playerName}`}
                     style={{
                         position: 'absolute',
@@ -301,9 +314,9 @@ function Game() {
                         left: `calc(50% + ${house.position.x}px)`,
                         transform: 'translate(-50%, -50%)',
                         pointerEvents: 'none',
-                        filter: `drop-shadow(0 0 4px ${house.playerColor})`,
-                        height: '10px',
-                        width: '10px'
+                        filter: `drop-shadow(30px, 30px, 10px ${house.playerColor}, 1)`,
+                        width: '20px',
+                        height: '20px'
                     }}
                 />
             ))}
