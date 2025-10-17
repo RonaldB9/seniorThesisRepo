@@ -179,6 +179,10 @@ function Game() {
         }
     };
 
+    const housesPlacedByCurrentUser = Object.values(placedHouses).filter(
+        house => house.userId === userId
+    ).length;
+
     return (
     <div className="background">
         <div className="images">
@@ -322,7 +326,7 @@ function Game() {
             </div>
             
             {/* Show house options - ONLY if no house has been placed this turn */}
-            {userId === currentTurnUserId && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (
+            {userId === currentTurnUserId && housesPlacedByCurrentUser < 2 && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (
                 !placedHouses[index] && !unavailableHouses.has(index) && (
                     <img 
                         key={index} 
@@ -365,7 +369,7 @@ function Game() {
             
             {/*End Turn Button*/}
             <div className="endTurnDiv">
-                <button onClick={handleClick}>End Turn</button>
+                <button onClick={handleClick} disabled={!housePlacedThisTurn}>End Turn</button>
             </div>
 
             </>
