@@ -29,7 +29,7 @@ function Game() {
     const [resourceTiles, setResourceTiles] = useState([]);
     const [resourceTokens, setResourceTokens] = useState([]);
     const [houseData, setHouseData] = useState([]);
-    const [showhouseOptions, setShowOptions] = useState(0);
+    //const [showhouseOptions, setShowOptions] = useState(0);
     const [currentTurnUserId, setCurrentTurnUserId] = useState(null);
     const [userId, setUserId] = useState(null);
     const [selectedHouseIndex, setSelectedHouseIndex] = useState(null);
@@ -62,7 +62,7 @@ function Game() {
             setResourceTiles(data.resourceTiles);
             setResourceTokens(data.resourceTokens);
             setHouseData(data.houseData);
-            setShowOptions(data.houseData.length);
+            //setShowOptions(data.houseData.length);
         });
 
         // Fetch existing placed houses
@@ -113,7 +113,7 @@ function Game() {
     // Update house options visibility when turn changes
     useEffect(() => {
         if (userId === currentTurnUserId) {
-            setShowOptions(houseData.length);
+            //setShowOptions(houseData.length);
             setSelectedHouseIndex(null); // Reset selection on new turn
         }
     }, [currentTurnUserId, houseData.length, userId]);

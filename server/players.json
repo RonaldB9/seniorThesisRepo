@@ -14,16 +14,17 @@
     },
     "houses": [
       {
-        "houseIndex": 16,
+        "houseIndex": 40,
         "position": {
-          "x": -250,
-          "y": -62,
+          "x": 0,
+          "y": 128,
           "tiles": [
-            10,
-            11
+            7,
+            15,
+            16
           ]
         },
-        "placedAt": "2025-10-17T21:36:54.994Z"
+        "placedAt": "2025-10-17T21:49:42.365Z"
       },
       {
         "houseIndex": 17,
@@ -36,43 +37,7 @@
             17
           ]
         },
-        "placedAt": "2025-10-17T21:37:02.050Z"
-      },
-      {
-        "houseIndex": 19,
-        "position": {
-          "x": 125,
-          "y": -62,
-          "tiles": [
-            3,
-            13,
-            14
-          ]
-        },
-        "placedAt": "2025-10-17T21:37:13.060Z"
-      },
-      {
-        "houseIndex": 26,
-        "position": {
-          "x": 310,
-          "y": -32,
-          "tiles": [
-            4
-          ]
-        },
-        "placedAt": "2025-10-17T21:38:10.066Z"
-      },
-      {
-        "houseIndex": 43,
-        "position": {
-          "x": -185,
-          "y": 158,
-          "tiles": [
-            8,
-            9
-          ]
-        },
-        "placedAt": "2025-10-17T21:42:04.329Z"
+        "placedAt": "2025-10-17T21:50:09.878Z"
       }
     ],
     "cities": [],
@@ -93,52 +58,30 @@
     },
     "houses": [
       {
-        "houseIndex": 13,
-        "position": {
-          "x": 0,
-          "y": -127,
-          "tiles": [
-            1,
-            12,
-            13
-          ]
-        },
-        "placedAt": "2025-10-17T21:36:58.923Z"
-      },
-      {
-        "houseIndex": 5,
+        "houseIndex": 24,
         "position": {
           "x": 65,
-          "y": -222,
+          "y": -32,
           "tiles": [
-            1,
-            2
+            13,
+            14,
+            18
           ]
         },
-        "placedAt": "2025-10-17T21:37:07.425Z"
+        "placedAt": "2025-10-17T21:49:57.512Z"
       },
       {
-        "houseIndex": 15,
+        "houseIndex": 25,
         "position": {
-          "x": 250,
-          "y": -127,
+          "x": 185,
+          "y": -32,
           "tiles": [
-            3
+            3,
+            4,
+            14
           ]
         },
-        "placedAt": "2025-10-17T21:37:16.145Z"
-      },
-      {
-        "houseIndex": 33,
-        "position": {
-          "x": -250,
-          "y": 58,
-          "tiles": [
-            9,
-            10
-          ]
-        },
-        "placedAt": "2025-10-17T21:40:31.338Z"
+        "placedAt": "2025-10-17T21:50:15.526Z"
       }
     ],
     "cities": [],
