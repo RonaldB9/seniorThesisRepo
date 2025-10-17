@@ -12,7 +12,33 @@
       "wheat": 0,
       "ore": 0
     },
-    "houses": [],
+    "houses": [
+      {
+        "houseIndex": 7,
+        "position": {
+          "x": -185,
+          "y": -157,
+          "tiles": [
+            0,
+            11
+          ]
+        },
+        "placedAt": "2025-10-17T01:48:09.526Z"
+      },
+      {
+        "houseIndex": 22,
+        "position": {
+          "x": -185,
+          "y": -32,
+          "tiles": [
+            10,
+            11,
+            17
+          ]
+        },
+        "placedAt": "2025-10-17T01:48:28.407Z"
+      }
+    ],
     "cities": [],
     "roads": []
   },
@@ -29,7 +55,34 @@
       "wheat": 0,
       "ore": 0
     },
-    "houses": [],
+    "houses": [
+      {
+        "houseIndex": 18,
+        "position": {
+          "x": 0,
+          "y": -62,
+          "tiles": [
+            12,
+            13,
+            18
+          ]
+        },
+        "placedAt": "2025-10-17T01:48:15.188Z"
+      },
+      {
+        "houseIndex": 35,
+        "position": {
+          "x": 0,
+          "y": 58,
+          "tiles": [
+            15,
+            16,
+            18
+          ]
+        },
+        "placedAt": "2025-10-17T01:48:33.707Z"
+      }
+    ],
     "cities": [],
     "roads": []
   }

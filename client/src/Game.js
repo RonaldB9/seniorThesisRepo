@@ -10,6 +10,7 @@ import sheepTile from './Images/sheepTile.png';
 import wheatTile from './Images/wheatTile.png';
 import desertTile from './Images/desertTile.png';
 import chooseCircle from './Images/chooseCircle.png';
+import greenHouse from './Images/greenhouse.png';
 import socket from './socket';
 
 
@@ -30,6 +31,8 @@ function Game() {
     const [showhouseOptions, setShowOptions] = useState(0);
     const [currentTurnUserId, setCurrentTurnUserId] = useState(null);
     const [userId, setUserId] = useState(null);
+    const [selectedHouseIndex, setSelectedHouseIndex] = useState(null);
+    const [placedHouses, setPlacedHouses] = useState({});
 
     // Get userId on mount
     useEffect(() => {
@@ -47,12 +50,21 @@ function Game() {
             setHouseData(data.houseData);
             setShowOptions(data.houseData.length);
         });
+
+        // Fetch existing placed houses
+        fetch('http://localhost:3001/api/houses')
+        .then((res) => res.json())
+        .then((data) => {
+            setPlacedHouses(data);
+        })
+        .catch(err => console.error('Failed to fetch houses:', err));
     }, []);
 
     // Update house options visibility when turn changes
     useEffect(() => {
         if (userId === currentTurnUserId) {
             setShowOptions(houseData.length);
+            setSelectedHouseIndex(null); // Reset selection on new turn
         }
     }, [userId, currentTurnUserId, houseData]);
 
@@ -62,8 +74,16 @@ function Game() {
             setCurrentTurnUserId(turnUserId);
         };
 
+        const handleHousePlaced = (data) => {
+            setPlacedHouses(prev => ({
+                ...prev,
+                [data.houseIndex]: data
+            }));
+        };
+
         // Listen for currentTurn events
         socket.on('currentTurn', handleCurrentTurn);
+        socket.on('housePlaced', handleHousePlaced);
         
         // Also request current turn on connect
         if (socket.connected) {
@@ -75,14 +95,30 @@ function Game() {
         
         return () => {
             socket.off('currentTurn', handleCurrentTurn);
+            socket.off('housePlaced', handleHousePlaced);
         };
     }, []);
+
+    const handleHouseClick = (index) => {
+        if (userId === currentTurnUserId && selectedHouseIndex === null) {
+            setSelectedHouseIndex(index);
+            console.log(`🏠 Selected house ${index} at position:`, houseData[index]);
+            
+            // Emit to server
+            socket.emit('houseSelected', {
+                userId,
+                houseIndex: index,
+                position: houseData[index]
+            });
+        }
+    };
 
     const handleClick = () => {
         
         if (userId && currentTurnUserId && userId === currentTurnUserId) {
             console.log("✅ Emitting endTurn");
             socket.emit('endTurn');
+            setSelectedHouseIndex(null); // Reset selection
         } else {
             console.log("❌ Not your turn or userId not set");
         }
@@ -94,7 +130,7 @@ function Game() {
           <img src={catanTitle} alt="Catan Title"/>
         </div>
         {userId === currentTurnUserId && (
-            <div className="your-turn-banner">🎯 Your Turn!</div>
+            <div className="your-turn-banner">🎯 Your Turn! {selectedHouseIndex !== null && `(House ${selectedHouseIndex} selected)`}</div>
         )}
         <h1 className="title">Game</h1>
 
@@ -232,14 +268,44 @@ function Game() {
             
             {/* Show house options */}
             {userId === currentTurnUserId && Array.isArray(houseData) && houseData.map((house, index) => (
-                <img key={index} src={chooseCircle} className="house_marker fade-loop" alt={`House ${index}`}
-                style={{
-                    position: 'absolute',
-                    top: `calc(50% + ${house.y}px)`,
-                    left: `calc(50% + ${house.x}px)`,
-                    transform: 'translate(-50%, -50%)',
-                    pointerEvents: 'none'
-                }}/>
+                !placedHouses[index] && (
+                    <img 
+                        key={index} 
+                        src={chooseCircle} 
+                        className={`house_marker fade-loop ${selectedHouseIndex === index ? 'selected' : ''}`}
+                        alt={`House ${index}`}
+                        onClick={() => handleHouseClick(index)}
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${house.y}px)`,
+                            left: `calc(50% + ${house.x}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            cursor: 'pointer',
+                            opacity: selectedHouseIndex === index ? 1 : 0.7,
+                            filter: selectedHouseIndex === index ? 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))' : 'none',
+                            transition: 'all 0.3s ease'
+                        }}
+                    />
+                )
+            ))}
+
+            {/* Show placed houses */}
+            {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
+                <img 
+                    key={`placed-${index}`}
+                    src={greenHouse}
+                    alt={`Placed house by ${house.playerName}`}
+                    style={{
+                        position: 'absolute',
+                        top: `calc(50% + ${house.position.y}px)`,
+                        left: `calc(50% + ${house.position.x}px)`,
+                        transform: 'translate(-50%, -50%)',
+                        pointerEvents: 'none',
+                        filter: `drop-shadow(0 0 4px ${house.playerColor})`,
+                        height: '10px',
+                        width: '10px'
+                    }}
+                />
             ))}
             
             {/*End Turn Button*/}

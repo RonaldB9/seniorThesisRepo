@@ -26,6 +26,7 @@ app.use(express.json());
 // In-memory
 let currentTurnIndex = 0;
 let gameBoard = null;
+let placedHouses = {}; // Track which house indices are already occupied with house data
 
 // Generate board data
 app.get('/api/board', (req, res) => {
@@ -41,6 +42,11 @@ app.get('/api/board', (req, res) => {
   }
 
   res.json(gameBoard);
+});
+
+// Get all placed houses
+app.get('/api/houses', (req, res) => {
+  res.json(placedHouses);
 });
 
 // Register new player
@@ -131,6 +137,54 @@ io.on('connection', (socket) => {
     if (callback) callback({ currentUserId });
   });
 
+  // Handle house selection
+  socket.on('houseSelected', (data) => {
+    const { userId, houseIndex, position } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if house is already occupied
+    if (placedHouses[houseIndex]) {
+      console.log(`⚠️ House ${houseIndex} already occupied!`);
+      socket.emit('houseSelectionFailed', { reason: 'House already occupied' });
+      return;
+    }
+
+    // Store house data
+    placedHouses[houseIndex] = {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      houseIndex,
+      position,
+      placedAt: new Date()
+    };
+
+    // Add house to player
+    player.houses.push({
+      houseIndex,
+      position,
+      placedAt: new Date()
+    });
+
+    playerData.updatePlayer(userId, { houses: player.houses });
+
+    console.log(`🏠 ${player.name} placed a house at index ${houseIndex}`);
+
+    // Broadcast to all clients
+    io.emit('housePlaced', {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      houseIndex,
+      position
+    });
+  });
+
   // On endTurn from client
   socket.on('endTurn', () => {
     const players = playerData.getPlayers();
@@ -151,6 +205,7 @@ io.on('connection', (socket) => {
     if (players.length === 0) return;
 
     currentTurnIndex = 0;
+    placedHouses = {}; // Reset placed houses
 
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
