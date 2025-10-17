@@ -31,6 +31,13 @@ function Game() {
     const [currentTurnUserId, setCurrentTurnUserId] = useState(null);
     const [userId, setUserId] = useState(null);
 
+    // Get userId on mount
+    useEffect(() => {
+        const id = localStorage.getItem('userId');
+        setUserId(id);
+    }, []);
+
+    // Fetch board data
     useEffect(() => {
         fetch('http://localhost:3001/api/board')
         .then((res) => res.json())
@@ -38,28 +45,46 @@ function Game() {
             setResourceTiles(data.resourceTiles);
             setResourceTokens(data.resourceTokens);
             setHouseData(data.houseData);
+            setShowOptions(data.houseData.length);
         });
     }, []);
 
+    // Update house options visibility when turn changes
     useEffect(() => {
-        const id = localStorage.getItem('userId');
-        setUserId(id);
-    }, []);
+        if (userId === currentTurnUserId) {
+            setShowOptions(houseData.length);
+        }
+    }, [userId, currentTurnUserId, houseData]);
 
+    // Set up socket listeners ONCE on mount
     useEffect(() => {
-        socket.on('currentTurn', (userId) => {
-            setCurrentTurnUserId(userId);
-            console.log("🔁 Current Turn:", userId);
-        });
+        const handleCurrentTurn = (turnUserId) => {
+            setCurrentTurnUserId(turnUserId);
+        };
 
+        // Listen for currentTurn events
+        socket.on('currentTurn', handleCurrentTurn);
+        
+        // Also request current turn on connect
+        if (socket.connected) {
+            console.log("📌 Requesting current turn...");
+            socket.emit('requestCurrentTurn', (response) => {
+                console.log("📤 Got response:", response);
+            });
+        }
+        
         return () => {
-            socket.off('currentTurn');
+            socket.off('currentTurn', handleCurrentTurn);
         };
     }, []);
 
     const handleClick = () => {
-        if (userId === currentTurnUserId) {
+        
+        if (userId && currentTurnUserId && userId === currentTurnUserId) {
+            console.log("✅ Emitting endTurn");
             socket.emit('endTurn');
+        } else {
+            console.log("❌ Not your turn or userId not set");
         }
     };
 
@@ -206,7 +231,7 @@ function Game() {
             </div>
             
             {/* Show house options */}
-            {userId === currentTurnUserId && showhouseOptions < 9 && Array.isArray(houseData) && houseData.map((house, index) => (
+            {userId === currentTurnUserId && Array.isArray(houseData) && houseData.map((house, index) => (
                 <img key={index} src={chooseCircle} className="house_marker fade-loop" alt={`House ${index}`}
                 style={{
                     position: 'absolute',
@@ -218,7 +243,7 @@ function Game() {
             ))}
             
             {/*End Turn Button*/}
-            <div class="endTurnDiv">
+            <div className="endTurnDiv">
                 <button onClick={handleClick}>End Turn</button>
             </div>
 
