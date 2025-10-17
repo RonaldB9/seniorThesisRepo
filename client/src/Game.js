@@ -29,13 +29,13 @@ function Game() {
     const [resourceTiles, setResourceTiles] = useState([]);
     const [resourceTokens, setResourceTokens] = useState([]);
     const [houseData, setHouseData] = useState([]);
-    //const [showhouseOptions, setShowOptions] = useState(0);
     const [currentTurnUserId, setCurrentTurnUserId] = useState(null);
     const [userId, setUserId] = useState(null);
     const [selectedHouseIndex, setSelectedHouseIndex] = useState(null);
     const [placedHouses, setPlacedHouses] = useState({});
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [unavailableHouses, setUnavailableHouses] = useState(new Set());
+    const [housePlacedThisTurn, setHousePlacedThisTurn] = useState(false);
 
     // Get userId on mount
     useEffect(() => {
@@ -62,7 +62,6 @@ function Game() {
             setResourceTiles(data.resourceTiles);
             setResourceTokens(data.resourceTokens);
             setHouseData(data.houseData);
-            //setShowOptions(data.houseData.length);
         });
 
         // Fetch existing placed houses
@@ -110,13 +109,13 @@ function Game() {
         setUnavailableHouses(unavailable);
     };
 
-    // Update house options visibility when turn changes
+    // Reset selection and placement flag when turn changes
     useEffect(() => {
         if (userId === currentTurnUserId) {
-            //setShowOptions(houseData.length);
-            setSelectedHouseIndex(null); // Reset selection on new turn
+            setSelectedHouseIndex(null);
+            setHousePlacedThisTurn(false);
         }
-    }, [currentTurnUserId, houseData.length, userId]);
+    }, [currentTurnUserId, userId]);
 
     // Set up socket listeners ONCE on mount
     useEffect(() => {
@@ -154,8 +153,9 @@ function Game() {
     }, []);
 
     const handleHouseClick = (index) => {
-        if (userId === currentTurnUserId && selectedHouseIndex === null) {
+        if (userId === currentTurnUserId && selectedHouseIndex === null && !housePlacedThisTurn) {
             setSelectedHouseIndex(index);
+            setHousePlacedThisTurn(true);
             console.log(`🏠 Selected house ${index} at position:`, houseData[index]);
             
             // Emit to server
@@ -173,6 +173,7 @@ function Game() {
             console.log("✅ Emitting endTurn");
             socket.emit('endTurn');
             setSelectedHouseIndex(null); // Reset selection
+            setHousePlacedThisTurn(false); // Reset placement flag
         } else {
             console.log("❌ Not your turn or userId not set");
         }
@@ -320,8 +321,8 @@ function Game() {
                 </span>
             </div>
             
-            {/* Show house options */}
-            {userId === currentTurnUserId && Array.isArray(houseData) && houseData.map((house, index) => (
+            {/* Show house options - ONLY if no house has been placed this turn */}
+            {userId === currentTurnUserId && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (
                 !placedHouses[index] && !unavailableHouses.has(index) && (
                     <img 
                         key={index} 
