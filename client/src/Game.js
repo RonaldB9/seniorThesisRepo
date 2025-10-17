@@ -35,6 +35,7 @@ function Game() {
     const [selectedHouseIndex, setSelectedHouseIndex] = useState(null);
     const [placedHouses, setPlacedHouses] = useState({});
     const [currentPlayer, setCurrentPlayer] = useState(null);
+    const [unavailableHouses, setUnavailableHouses] = useState(new Set());
 
     // Get userId on mount
     useEffect(() => {
@@ -69,9 +70,45 @@ function Game() {
         .then((res) => res.json())
         .then((data) => {
             setPlacedHouses(data);
+            updateUnavailableHouses(data);
         })
         .catch(err => console.error('Failed to fetch houses:', err));
     }, []);
+
+    // Helper function to find adjacent houses
+    const getAdjacentHouses = (houseIndex) => {
+        const adjacencyMap = {
+            0: [3, 4], 1: [4, 5], 2: [5, 6],
+            3: [0, 7], 4: [0, 1, 8], 5: [1, 2, 9], 6: [2, 10],
+            7: [3, 11, 12], 8: [4, 12, 13], 9: [5, 13, 14], 10: [6, 14, 15],
+            11: [7, 16], 12: [7, 8, 17], 13: [8, 9, 18], 14: [9, 10, 19], 15: [10, 20],
+            16: [11, 21, 22], 17: [12, 22, 23], 18: [13, 23, 24], 19: [14, 24, 25], 20: [15, 25, 26], 
+            21: [16, 27], 22: [16, 17, 28], 23: [17, 18, 29], 24: [18, 19, 30], 25: [19, 20, 31], 26: [20, 32],
+            27: [21, 33], 28: [22, 33, 34], 29: [23, 34, 35], 30: [24, 35, 36], 31: [25, 36, 37], 32: [26, 37],
+            33: [27, 28, 38], 34: [28, 29, 39], 35: [29, 30, 40], 36: [30, 31, 41], 37: [31, 32, 42],
+            38: [33, 43], 39: [34, 43, 44], 40: [35, 44, 45], 41: [36, 45, 46], 42: [37, 46],
+            43: [38, 39, 47], 44: [39, 40, 48], 45: [40, 41, 49], 46: [41, 42, 50],
+            47: [43, 51], 48: [44, 51, 52], 49: [45, 52, 53], 50: [46, 53],
+            51: [47, 48], 52: [48, 49], 53: [49, 50]
+        };
+        return adjacencyMap[houseIndex] || [];
+    };
+
+    // Update unavailable houses based on placed houses
+    const updateUnavailableHouses = (placedHousesObj) => {
+        const unavailable = new Set();
+        
+        Object.keys(placedHousesObj).forEach(houseIndexStr => {
+            const houseIndex = parseInt(houseIndexStr);
+            unavailable.add(houseIndex); // Add the placed house itself
+            
+            // Add all adjacent houses
+            const adjacent = getAdjacentHouses(houseIndex);
+            adjacent.forEach(adj => unavailable.add(adj));
+        });
+        
+        setUnavailableHouses(unavailable);
+    };
 
     // Update house options visibility when turn changes
     useEffect(() => {
@@ -88,10 +125,14 @@ function Game() {
         };
 
         const handleHousePlaced = (data) => {
-            setPlacedHouses(prev => ({
-                ...prev,
-                [data.houseIndex]: data
-            }));
+            setPlacedHouses(prev => {
+                const updated = {
+                    ...prev,
+                    [data.houseIndex]: data
+                };
+                updateUnavailableHouses(updated);
+                return updated;
+            });
         };
 
         // Listen for currentTurn events
@@ -281,7 +322,7 @@ function Game() {
             
             {/* Show house options */}
             {userId === currentTurnUserId && Array.isArray(houseData) && houseData.map((house, index) => (
-                !placedHouses[index] && (
+                !placedHouses[index] && !unavailableHouses.has(index) && (
                     <img 
                         key={index} 
                         src={chooseCircle} 
