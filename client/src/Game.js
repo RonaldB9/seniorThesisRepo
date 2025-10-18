@@ -29,13 +29,18 @@ function Game() {
     const [resourceTiles, setResourceTiles] = useState([]);
     const [resourceTokens, setResourceTokens] = useState([]);
     const [houseData, setHouseData] = useState([]);
+    const [roadData, setRoadData] = useState([]);
     const [currentTurnUserId, setCurrentTurnUserId] = useState(null);
     const [userId, setUserId] = useState(null);
     const [selectedHouseIndex, setSelectedHouseIndex] = useState(null);
+    const [selectedRoadIndex, setSelectedRoadIndex] = useState(null);
     const [placedHouses, setPlacedHouses] = useState({});
+    const [placedRoads, setPlacedRoads] = useState({});
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [unavailableHouses, setUnavailableHouses] = useState(new Set());
+    const [unavailableRoads, setUnavailableRoads] = useState(new Set());
     const [housePlacedThisTurn, setHousePlacedThisTurn] = useState(false);
+    const [roadPlacedThisTurn, setRoadPlacedThisTurn] = useState(false);
 
     // Get userId on mount
     useEffect(() => {
@@ -62,6 +67,7 @@ function Game() {
             setResourceTiles(data.resourceTiles);
             setResourceTokens(data.resourceTokens);
             setHouseData(data.houseData);
+            setRoadData(data.roadData);
         });
 
         // Fetch existing placed houses
@@ -99,9 +105,8 @@ function Game() {
         
         Object.keys(placedHousesObj).forEach(houseIndexStr => {
             const houseIndex = parseInt(houseIndexStr);
-            unavailable.add(houseIndex); // Add the placed house itself
+            unavailable.add(houseIndex);
             
-            // Add all adjacent houses
             const adjacent = getAdjacentHouses(houseIndex);
             adjacent.forEach(adj => unavailable.add(adj));
         });
@@ -109,11 +114,25 @@ function Game() {
         setUnavailableHouses(unavailable);
     };
 
-    // Reset selection and placement flag when turn changes
+    // Update unavailable roads based on placed roads
+    const updateUnavailableRoads = (placedRoadsObj) => {
+        const unavailable = new Set();
+        
+        Object.keys(placedRoadsObj).forEach(roadIndexStr => {
+            const roadIndex = parseInt(roadIndexStr);
+            unavailable.add(roadIndex);
+        });
+        
+        setUnavailableRoads(unavailable);
+    };
+
+    // Reset selection and placement flags when turn changes
     useEffect(() => {
         if (userId === currentTurnUserId) {
             setSelectedHouseIndex(null);
+            setSelectedRoadIndex(null);
             setHousePlacedThisTurn(false);
+            setRoadPlacedThisTurn(false);
         }
     }, [currentTurnUserId, userId]);
 
@@ -134,11 +153,21 @@ function Game() {
             });
         };
 
-        // Listen for currentTurn events
+        const handleRoadPlaced = (data) => {
+            setPlacedRoads(prev => {
+                const updated = {
+                    ...prev,
+                    [data.roadIndex]: data
+                };
+                updateUnavailableRoads(updated);
+                return updated;
+            });
+        };
+
         socket.on('currentTurn', handleCurrentTurn);
         socket.on('housePlaced', handleHousePlaced);
+        socket.on('roadPlaced', handleRoadPlaced);
         
-        // Also request current turn on connect
         if (socket.connected) {
             console.log("📌 Requesting current turn...");
             socket.emit('requestCurrentTurn', (response) => {
@@ -149,6 +178,7 @@ function Game() {
         return () => {
             socket.off('currentTurn', handleCurrentTurn);
             socket.off('housePlaced', handleHousePlaced);
+            socket.off('roadPlaced', handleRoadPlaced);
         };
     }, []);
 
@@ -158,7 +188,6 @@ function Game() {
             setHousePlacedThisTurn(true);
             console.log(`🏠 Selected house ${index} at position:`, houseData[index]);
             
-            // Emit to server
             socket.emit('houseSelected', {
                 userId,
                 houseIndex: index,
@@ -167,13 +196,28 @@ function Game() {
         }
     };
 
+    const handleRoadClick = (index) => {
+        if (userId === currentTurnUserId && selectedRoadIndex === null && !roadPlacedThisTurn) {
+            setSelectedRoadIndex(index);
+            setRoadPlacedThisTurn(true);
+            console.log(`🛣️ Selected road ${index} at position:`, roadData[index]);
+            
+            socket.emit('roadSelected', {
+                userId,
+                roadIndex: index,
+                position: roadData[index]
+            });
+        }
+    };
+
     const handleClick = () => {
-        
         if (userId && currentTurnUserId && userId === currentTurnUserId) {
             console.log("✅ Emitting endTurn");
             socket.emit('endTurn');
-            setSelectedHouseIndex(null); // Reset selection
-            setHousePlacedThisTurn(false); // Reset placement flag
+            setSelectedHouseIndex(null);
+            setSelectedRoadIndex(null);
+            setHousePlacedThisTurn(false);
+            setRoadPlacedThisTurn(false);
         } else {
             console.log("❌ Not your turn or userId not set");
         }
@@ -183,13 +227,17 @@ function Game() {
         house => house.userId === userId
     ).length;
 
+    const roadsPlacedByCurrentUser = Object.values(placedRoads).filter(
+        road => road.userId === userId
+    ).length;
+
     return (
     <div className="background">
         <div className="images">
           <img src={catanTitle} alt="Catan Title"/>
         </div>
         {userId === currentTurnUserId && (
-            <div className="your-turn-banner">🎯 Your Turn! {selectedHouseIndex !== null && `(House ${selectedHouseIndex} selected)`}</div>
+            <div className="your-turn-banner">🎯 Your Turn! {selectedHouseIndex !== null && `(House ${selectedHouseIndex} selected)`} {selectedRoadIndex !== null && `(Road ${selectedRoadIndex} selected)`}</div>
         )}
         <h1 className="title">Game</h1>
 
@@ -198,19 +246,14 @@ function Game() {
             <>
             {/* 1st Row */}
             <div className="tiles-row">
-                {/* 0th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[0]]} alt={resourceTiles[0]}/>
                     {resourceTokens[0] && ( <span className="token">{resourceTokens[0]}</span>)}
                 </span>
-
-                {/* 1st Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[1]]} alt={resourceTiles[1]}/>
                     {resourceTokens[1] && ( <span className="token">{resourceTokens[1]}</span>)}
                 </span>
-
-                {/* 2nd Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[2]]} alt={resourceTiles[2]}/>
                     {resourceTokens[2] && ( <span className="token">{resourceTokens[2]}</span>)}
@@ -219,25 +262,18 @@ function Game() {
 
             {/* 2nd Row */}
             <div className="tiles-row">
-                {/* 11th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[11]]} alt={resourceTiles[11]}/>
                     {resourceTokens[11] && ( <span className="token">{resourceTokens[11]}</span>)}
                 </span>
-
-                {/* 12th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[12]]} alt={resourceTiles[12]}/>
                     {resourceTokens[12] && ( <span className="token">{resourceTokens[12]}</span>)}
                 </span>
-
-                {/* 13th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[13]]} alt={resourceTiles[13]}/>
                     {resourceTokens[13] && ( <span className="token">{resourceTokens[13]}</span>)}
                 </span>
-
-                {/* 3rd Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[3]]} alt={resourceTiles[3]}/>
                     {resourceTokens[3] && ( <span className="token">{resourceTokens[3]}</span>)}
@@ -246,31 +282,22 @@ function Game() {
 
             {/* 3rd Row */}
             <div className="tiles-row">
-                {/* 10th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[10]]} alt={resourceTiles[10]}/>
                     {resourceTokens[10] && ( <span className="token">{resourceTokens[10]}</span>)}
                 </span>
-
-                {/* 17th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[17]]} alt={resourceTiles[17]}/>
                     {resourceTokens[17] && ( <span className="token">{resourceTokens[17]}</span>)}
                 </span>
-
-                {/* 18th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[18]]} alt={resourceTiles[18]}/>
                     {resourceTokens[18] && ( <span className="token">{resourceTokens[18]}</span>)}
                 </span>
-
-                {/* 14th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[14]]} alt={resourceTiles[14]}/>
                     {resourceTokens[14] && ( <span className="token">{resourceTokens[14]}</span>)}
                 </span>
-
-                {/* 4th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[4]]} alt={resourceTiles[4]}/>
                     {resourceTokens[4] && ( <span className="token">{resourceTokens[4]}</span>)}
@@ -279,25 +306,18 @@ function Game() {
 
             {/* 4th Row */}
             <div className="tiles-row">
-                {/* 9th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[9]]} alt={resourceTiles[9]}/>
                     {resourceTokens[9] && ( <span className="token">{resourceTokens[9]}</span>)}
                 </span>
-
-                {/* 16th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[16]]} alt={resourceTiles[16]}/>
                     {resourceTokens[16] && ( <span className="token">{resourceTokens[16]}</span>)}
                 </span>
-
-                {/* 15th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[15]]} alt={resourceTiles[15]}/>
                     {resourceTokens[15] && ( <span className="token">{resourceTokens[15]}</span>)}
                 </span>
-
-                {/* 5th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[5]]} alt={resourceTiles[5]}/>
                     {resourceTokens[5] && ( <span className="token">{resourceTokens[5]}</span>)}
@@ -306,19 +326,14 @@ function Game() {
 
             {/* 5th Row */}
             <div className="tiles-row">
-                {/* 8th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[8]]} alt={resourceTiles[8]}/>
                     {resourceTokens[8] && ( <span className="token">{resourceTokens[8]}</span>)}
                 </span>
-
-                {/* 7th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[7]]} alt={resourceTiles[7]}/>
                     {resourceTokens[7] && ( <span className="token">{resourceTokens[7]}</span>)}
                 </span>
-
-                {/* 6th Tile */}
                 <span className="tile">
                     <img className="tiles" src={resourceImages[resourceTiles[6]]} alt={resourceTiles[6]}/>
                     {resourceTokens[6] && ( <span className="token">{resourceTokens[6]}</span>)}
@@ -348,6 +363,29 @@ function Game() {
                 )
             ))}
 
+            {/* Show road options - ONLY if no road has been placed this turn */}
+            {userId === currentTurnUserId && housePlacedThisTurn && roadsPlacedByCurrentUser < 3 && !roadPlacedThisTurn && Array.isArray(roadData) && roadData.map((road, index) => (
+                !placedRoads[index] && !unavailableRoads.has(index) && (
+                    <img 
+                        key={`road-${index}`} 
+                        src={chooseCircle} 
+                        className={`road_marker fade-loop ${selectedRoadIndex === index ? 'selected' : ''}`}
+                        alt={`Road ${index}`}
+                        onClick={() => handleRoadClick(index)}
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${road.y}px)`,
+                            left: `calc(50% + ${road.x}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            cursor: 'pointer',
+                            opacity: selectedRoadIndex === index ? 1 : 0.5,
+                            filter: selectedRoadIndex === index ? 'drop-shadow(0 0 8px rgba(100, 200, 255, 0.8))' : 'none',
+                            transition: 'all 0.3s ease'
+                        }}
+                    />
+                )
+            ))}
+
             {/* Show placed houses */}
             {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
                 <img 
@@ -369,7 +407,7 @@ function Game() {
             
             {/*End Turn Button*/}
             <div className="endTurnDiv">
-                <button onClick={handleClick} disabled={!housePlacedThisTurn}>End Turn</button>
+                <button onClick={handleClick} disabled={!housePlacedThisTurn && !roadPlacedThisTurn}>End Turn</button>
             </div>
 
             </>
