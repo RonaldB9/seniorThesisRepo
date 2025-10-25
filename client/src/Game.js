@@ -246,12 +246,14 @@ function Game() {
         .filter(([_, house]) => house.userId === userId)
         .map(([index, _]) => parseInt(index));
 
-    // Filter roads that are connected to current user's houses
+    // Get road indices placed by current user
+    const currentUserRoadIndices = Object.entries(placedRoads)
+        .filter(([_, road]) => road.userId === userId)
+        .map(([index, _]) => parseInt(index));
+
+    // Filter roads that are connected to current user's houses or roads
     const getAvailableRoadsForUser = () => {
         if (currentUserHouseIndices.length === 0) return [];
-        
-        console.log('Current user house indices:', currentUserHouseIndices);
-        console.log('Road data sample:', roadData[0]);
         
         return roadData.reduce((availableRoads, road, roadIndex) => {
             // Check if this road is connected to any of the user's houses
@@ -259,8 +261,12 @@ function Game() {
                 currentUserHouseIndices.includes(houseIndex)
             );
             
-            if (isConnectedToUserHouse) {
-                console.log(`Road ${roadIndex} is connected to user's houses:`, road.connectedHouses);
+            // Check if this road is connected to any of the user's roads
+            const isConnectedToUserRoad = road.connectedRoads?.some(roadIndex => 
+                currentUserRoadIndices.includes(roadIndex)
+            );
+            
+            if (isConnectedToUserHouse || isConnectedToUserRoad) {
                 availableRoads.push(roadIndex);
             }
             
@@ -269,7 +275,6 @@ function Game() {
     };
 
     const availableRoadIndices = getAvailableRoadsForUser();
-    console.log('Available road indices for user:', availableRoadIndices);
 
     return (
     <div className="background">

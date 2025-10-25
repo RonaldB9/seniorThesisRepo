@@ -14,65 +14,68 @@
     },
     "houses": [
       {
-        "houseIndex": 13,
+        "houseIndex": 4,
         "position": {
-          "x": 0,
-          "y": -127,
+          "x": -65,
+          "y": -222,
           "tiles": [
-            1,
-            12,
-            13
+            0,
+            1
           ]
         },
-        "placedAt": "2025-10-25T01:25:56.603Z"
+        "placedAt": "2025-10-25T01:28:48.235Z"
       },
       {
-        "houseIndex": 0,
+        "houseIndex": 22,
         "position": {
-          "x": -125,
-          "y": -252,
+          "x": -185,
+          "y": -32,
           "tiles": [
-            0
+            10,
+            11,
+            17
           ]
         },
-        "placedAt": "2025-10-25T01:26:43.389Z"
+        "placedAt": "2025-10-25T01:28:56.170Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 20,
+        "roadIndex": 7,
         "position": {
-          "x": 0,
-          "y": -95,
+          "x": -60,
+          "y": -190,
           "connectedHouses": [
-            13,
-            18
-          ],
-          "connectedRoads": [
-            13,
-            14,
-            27,
-            28
-          ]
-        },
-        "placedAt": "2025-10-25T01:25:57.874Z"
-      },
-      {
-        "roadIndex": 0,
-        "position": {
-          "x": -160,
-          "y": -235,
-          "connectedHouses": [
-            0,
-            3
+            4,
+            8
           ],
           "connectedRoads": [
             1,
-            6
+            2,
+            12,
+            13
           ]
         },
-        "placedAt": "2025-10-25T01:26:47.703Z"
+        "placedAt": "2025-10-25T01:28:49.123Z"
+      },
+      {
+        "roadIndex": 25,
+        "position": {
+          "x": -160,
+          "y": -45,
+          "connectedHouses": [
+            17,
+            22
+          ],
+          "connectedRoads": [
+            19,
+            24,
+            26,
+            34
+          ]
+        },
+        "placedAt": "2025-10-25T01:28:59.010Z"
       }
     ]
   },
@@ -91,65 +94,69 @@
     },
     "houses": [
       {
-        "houseIndex": 2,
+        "houseIndex": 14,
         "position": {
           "x": 125,
-          "y": -252,
+          "y": -127,
           "tiles": [
-            2
+            2,
+            3,
+            13
           ]
         },
-        "placedAt": "2025-10-25T01:26:00.039Z"
+        "placedAt": "2025-10-25T01:28:52.098Z"
       },
       {
-        "houseIndex": 23,
+        "houseIndex": 35,
         "position": {
-          "x": -65,
-          "y": -32,
+          "x": 0,
+          "y": 58,
           "tiles": [
-            12,
-            17,
+            15,
+            16,
             18
           ]
         },
-        "placedAt": "2025-10-25T01:26:50.265Z"
+        "placedAt": "2025-10-25T01:29:01.972Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 5,
+        "roadIndex": 21,
         "position": {
-          "x": 160,
-          "y": -235,
+          "x": 125,
+          "y": -95,
           "connectedHouses": [
-            2,
-            6
+            14,
+            19
           ],
           "connectedRoads": [
-            4,
-            9
+            15,
+            16,
+            29,
+            30
           ]
         },
-        "placedAt": "2025-10-25T01:26:39.101Z"
+        "placedAt": "2025-10-25T01:28:53.303Z"
       },
       {
-        "roadIndex": 26,
+        "roadIndex": 44,
         "position": {
-          "x": -90,
-          "y": -45,
+          "x": 35,
+          "y": 45,
           "connectedHouses": [
-            17,
-            23
+            30,
+            35
           ],
           "connectedRoads": [
-            19,
-            25,
-            27,
-            35
+            36,
+            43,
+            45,
+            51
           ]
         },
-        "placedAt": "2025-10-25T01:26:52.772Z"
+        "placedAt": "2025-10-25T01:29:05.051Z"
       }
     ]
   }
