@@ -23,20 +23,7 @@
             1
           ]
         },
-        "placedAt": "2025-10-25T01:28:48.235Z"
-      },
-      {
-        "houseIndex": 22,
-        "position": {
-          "x": -185,
-          "y": -32,
-          "tiles": [
-            10,
-            11,
-            17
-          ]
-        },
-        "placedAt": "2025-10-25T01:28:56.170Z"
+        "placedAt": "2025-10-25T22:56:35.011Z"
       }
     ],
     "cities": [],
@@ -57,25 +44,7 @@
             13
           ]
         },
-        "placedAt": "2025-10-25T01:28:49.123Z"
-      },
-      {
-        "roadIndex": 25,
-        "position": {
-          "x": -160,
-          "y": -45,
-          "connectedHouses": [
-            17,
-            22
-          ],
-          "connectedRoads": [
-            19,
-            24,
-            26,
-            34
-          ]
-        },
-        "placedAt": "2025-10-25T01:28:59.010Z"
+        "placedAt": "2025-10-25T22:56:36.444Z"
       }
     ]
   },
@@ -94,69 +63,38 @@
     },
     "houses": [
       {
-        "houseIndex": 14,
-        "position": {
-          "x": 125,
-          "y": -127,
-          "tiles": [
-            2,
-            3,
-            13
-          ]
-        },
-        "placedAt": "2025-10-25T01:28:52.098Z"
-      },
-      {
-        "houseIndex": 35,
+        "houseIndex": 18,
         "position": {
           "x": 0,
-          "y": 58,
+          "y": -62,
           "tiles": [
-            15,
-            16,
+            12,
+            13,
             18
           ]
         },
-        "placedAt": "2025-10-25T01:29:01.972Z"
+        "placedAt": "2025-10-25T23:01:47.538Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 21,
+        "roadIndex": 27,
         "position": {
-          "x": 125,
-          "y": -95,
+          "x": -35,
+          "y": -45,
           "connectedHouses": [
-            14,
-            19
+            18,
+            23
           ],
           "connectedRoads": [
-            15,
-            16,
-            29,
-            30
+            26,
+            28,
+            35,
+            20
           ]
         },
-        "placedAt": "2025-10-25T01:28:53.303Z"
-      },
-      {
-        "roadIndex": 44,
-        "position": {
-          "x": 35,
-          "y": 45,
-          "connectedHouses": [
-            30,
-            35
-          ],
-          "connectedRoads": [
-            36,
-            43,
-            45,
-            51
-          ]
-        },
-        "placedAt": "2025-10-25T01:29:05.051Z"
+        "placedAt": "2025-10-25T23:01:48.184Z"
       }
     ]
   }

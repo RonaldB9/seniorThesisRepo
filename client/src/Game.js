@@ -12,7 +12,7 @@ import desertTile from './Images/desertTile.png';
 import chooseCircle from './Images/chooseCircle.png';
 import redHouse from './Images/redHouse.png';
 import greenHouse from './Images/greenHouse.png';
-import greenRoad from './Images/greenRoad.png'; // Add this import
+import greenRoad from './Images/greenRoad.png';
 import socket from './socket';
 
 
@@ -42,6 +42,7 @@ function Game() {
     const [unavailableRoads, setUnavailableRoads] = useState(new Set());
     const [housePlacedThisTurn, setHousePlacedThisTurn] = useState(false);
     const [roadPlacedThisTurn, setRoadPlacedThisTurn] = useState(false);
+    const [allPlayers, setAllPlayers] = useState([]);
 
     // Get userId on mount
     useEffect(() => {
@@ -55,6 +56,7 @@ function Game() {
             .then((players) => {
                 const player = players.find(p => p.userId === id);
                 setCurrentPlayer(player);
+                setAllPlayers(players);
             })
             .catch(err => console.error('Failed to fetch player:', err));
         }
@@ -174,9 +176,18 @@ function Game() {
             });
         };
 
+        const handlePlayersUpdated = (players) => {
+            setAllPlayers(players);
+            if (userId) {
+                const player = players.find(p => p.userId === userId);
+                setCurrentPlayer(player);
+            }
+        };
+
         socket.on('currentTurn', handleCurrentTurn);
         socket.on('housePlaced', handleHousePlaced);
         socket.on('roadPlaced', handleRoadPlaced);
+        socket.on('playersUpdated', handlePlayersUpdated);
         
         if (socket.connected) {
             console.log("📌 Requesting current turn...");
@@ -189,8 +200,9 @@ function Game() {
             socket.off('currentTurn', handleCurrentTurn);
             socket.off('housePlaced', handleHousePlaced);
             socket.off('roadPlaced', handleRoadPlaced);
+            socket.off('playersUpdated', handlePlayersUpdated);
         };
-    }, []);
+    }, [userId]);
 
     const handleHouseClick = (index) => {
         if (userId === currentTurnUserId && selectedHouseIndex === null && !housePlacedThisTurn) {
@@ -285,6 +297,20 @@ function Game() {
             <div className="your-turn-banner">🎯 Your Turn! {selectedHouseIndex !== null && `(House ${selectedHouseIndex} selected)`} {selectedRoadIndex !== null && `(Road ${selectedRoadIndex} selected)`}</div>
         )}
         <h1 className="title">Game</h1>
+
+        {/* Scoreboard */}
+        <div className="scoreboard">
+            <h3>Scoreboard</h3>
+            {allPlayers.map((player) => (
+                <div key={player.userId} className="score-item">
+                    <span style={{ color: player.color, fontWeight: 'bold' }}>
+                        {player.name}
+                    </span>
+                    <span className="score-points">{player.score} points</span>
+                    {player.userId === currentTurnUserId && <span className="turn-indicator">← Current Turn</span>}
+                </div>
+            ))}
+        </div>
 
         <div className="tiles-container">
         {resourceTiles.length > 1 && (
