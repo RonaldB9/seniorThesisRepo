@@ -12,41 +12,9 @@
       "wheat": 0,
       "ore": 0
     },
-    "houses": [
-      {
-        "houseIndex": 4,
-        "position": {
-          "x": -65,
-          "y": -222,
-          "tiles": [
-            0,
-            1
-          ]
-        },
-        "placedAt": "2025-10-25T22:56:35.011Z"
-      }
-    ],
+    "houses": [],
     "cities": [],
-    "roads": [
-      {
-        "roadIndex": 7,
-        "position": {
-          "x": -60,
-          "y": -190,
-          "connectedHouses": [
-            4,
-            8
-          ],
-          "connectedRoads": [
-            1,
-            2,
-            12,
-            13
-          ]
-        },
-        "placedAt": "2025-10-25T22:56:36.444Z"
-      }
-    ]
+    "roads": []
   },
   {
     "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
@@ -61,41 +29,8 @@
       "wheat": 0,
       "ore": 0
     },
-    "houses": [
-      {
-        "houseIndex": 18,
-        "position": {
-          "x": 0,
-          "y": -62,
-          "tiles": [
-            12,
-            13,
-            18
-          ]
-        },
-        "placedAt": "2025-10-25T23:01:47.538Z"
-      }
-    ],
+    "houses": [],
     "cities": [],
-    "roads": [
-      {
-        "roadIndex": 27,
-        "position": {
-          "x": -35,
-          "y": -45,
-          "connectedHouses": [
-            18,
-            23
-          ],
-          "connectedRoads": [
-            26,
-            28,
-            35,
-            20
-          ]
-        },
-        "placedAt": "2025-10-25T23:01:48.184Z"
-      }
-    ]
+    "roads": []
   }
 ]

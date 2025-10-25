@@ -302,9 +302,12 @@ function Game() {
         <div className="scoreboard">
             <h3>Scoreboard</h3>
             {allPlayers.map((player) => (
-                <div key={player.userId} className="score-item">
+                <div 
+                    key={player.userId} 
+                    className={`score-item ${player.userId === userId ? 'current-user' : ''}`}
+                >
                     <span style={{ color: player.color, fontWeight: 'bold' }}>
-                        {player.name}
+                        {player.name} {player.userId === userId && '(You)'}
                     </span>
                     <span className="score-points">{player.score} points</span>
                     {player.userId === currentTurnUserId && <span className="turn-indicator">← Current Turn</span>}
