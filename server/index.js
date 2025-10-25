@@ -27,6 +27,7 @@ app.use(express.json());
 let currentTurnIndex = 0;
 let gameBoard = null;
 let placedHouses = {}; // Track which house indices are already occupied with house data
+let placedRoads = {}; // Track which road indices are already occupied with road data
 
 // Generate board data
 app.get('/api/board', (req, res) => {
@@ -49,6 +50,11 @@ app.get('/api/board', (req, res) => {
 // Get all placed houses
 app.get('/api/houses', (req, res) => {
   res.json(placedHouses);
+});
+
+// Get all placed roads
+app.get('/api/roads', (req, res) => {
+  res.json(placedRoads);
 });
 
 // Register new player
@@ -187,6 +193,54 @@ io.on('connection', (socket) => {
     });
   });
 
+  // Handle road selection
+  socket.on('roadSelected', (data) => {
+    const { userId, roadIndex, position } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if road is already occupied
+    if (placedRoads[roadIndex]) {
+      console.log(`⚠️ Road ${roadIndex} already occupied!`);
+      socket.emit('roadSelectionFailed', { reason: 'Road already occupied' });
+      return;
+    }
+
+    // Store road data
+    placedRoads[roadIndex] = {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      roadIndex,
+      position,
+      placedAt: new Date()
+    };
+
+    // Add road to player
+    player.roads.push({
+      roadIndex,
+      position,
+      placedAt: new Date()
+    });
+
+    playerData.updatePlayer(userId, { roads: player.roads });
+
+    console.log(`🛣️ ${player.name} placed a road at index ${roadIndex}`);
+
+    // Broadcast to all clients
+    io.emit('roadPlaced', {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      roadIndex,
+      position
+    });
+  });
+
   // On endTurn from client
   socket.on('endTurn', () => {
     const players = playerData.getPlayers();
@@ -208,6 +262,7 @@ io.on('connection', (socket) => {
 
     currentTurnIndex = 0;
     placedHouses = {}; // Reset placed houses
+    placedRoads = {}; // Reset placed roads
 
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);

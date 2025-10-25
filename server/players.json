@@ -14,21 +14,67 @@
     },
     "houses": [
       {
-        "houseIndex": 29,
+        "houseIndex": 13,
         "position": {
-          "x": -65,
-          "y": 33,
+          "x": 0,
+          "y": -127,
           "tiles": [
-            16,
-            17,
-            18
+            1,
+            12,
+            13
           ]
         },
-        "placedAt": "2025-10-18T02:48:44.652Z"
+        "placedAt": "2025-10-25T01:25:56.603Z"
+      },
+      {
+        "houseIndex": 0,
+        "position": {
+          "x": -125,
+          "y": -252,
+          "tiles": [
+            0
+          ]
+        },
+        "placedAt": "2025-10-25T01:26:43.389Z"
       }
     ],
     "cities": [],
-    "roads": []
+    "roads": [
+      {
+        "roadIndex": 20,
+        "position": {
+          "x": 0,
+          "y": -95,
+          "connectedHouses": [
+            13,
+            18
+          ],
+          "connectedRoads": [
+            13,
+            14,
+            27,
+            28
+          ]
+        },
+        "placedAt": "2025-10-25T01:25:57.874Z"
+      },
+      {
+        "roadIndex": 0,
+        "position": {
+          "x": -160,
+          "y": -235,
+          "connectedHouses": [
+            0,
+            3
+          ],
+          "connectedRoads": [
+            1,
+            6
+          ]
+        },
+        "placedAt": "2025-10-25T01:26:47.703Z"
+      }
+    ]
   },
   {
     "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
@@ -45,20 +91,66 @@
     },
     "houses": [
       {
-        "houseIndex": 17,
+        "houseIndex": 2,
         "position": {
-          "x": -125,
-          "y": -62,
+          "x": 125,
+          "y": -252,
           "tiles": [
-            11,
-            12,
-            17
+            2
           ]
         },
-        "placedAt": "2025-10-18T02:49:10.713Z"
+        "placedAt": "2025-10-25T01:26:00.039Z"
+      },
+      {
+        "houseIndex": 23,
+        "position": {
+          "x": -65,
+          "y": -32,
+          "tiles": [
+            12,
+            17,
+            18
+          ]
+        },
+        "placedAt": "2025-10-25T01:26:50.265Z"
       }
     ],
     "cities": [],
-    "roads": []
+    "roads": [
+      {
+        "roadIndex": 5,
+        "position": {
+          "x": 160,
+          "y": -235,
+          "connectedHouses": [
+            2,
+            6
+          ],
+          "connectedRoads": [
+            4,
+            9
+          ]
+        },
+        "placedAt": "2025-10-25T01:26:39.101Z"
+      },
+      {
+        "roadIndex": 26,
+        "position": {
+          "x": -90,
+          "y": -45,
+          "connectedHouses": [
+            17,
+            23
+          ],
+          "connectedRoads": [
+            19,
+            25,
+            27,
+            35
+          ]
+        },
+        "placedAt": "2025-10-25T01:26:52.772Z"
+      }
+    ]
   }
 ]

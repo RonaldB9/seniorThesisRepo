@@ -12,6 +12,7 @@ import desertTile from './Images/desertTile.png';
 import chooseCircle from './Images/chooseCircle.png';
 import redHouse from './Images/redHouse.png';
 import greenHouse from './Images/greenHouse.png';
+import greenRoad from './Images/greenRoad.png'; // Add this import
 import socket from './socket';
 
 
@@ -78,6 +79,15 @@ function Game() {
             updateUnavailableHouses(data);
         })
         .catch(err => console.error('Failed to fetch houses:', err));
+
+        // Fetch existing placed roads
+        fetch('http://localhost:3001/api/roads')
+        .then((res) => res.json())
+        .then((data) => {
+            setPlacedRoads(data);
+            updateUnavailableRoads(data);
+        })
+        .catch(err => console.error('Failed to fetch roads:', err));
     }, []);
 
     // Helper function to find adjacent houses
@@ -231,6 +241,36 @@ function Game() {
         road => road.userId === userId
     ).length;
 
+    // Get house indices placed by current user
+    const currentUserHouseIndices = Object.entries(placedHouses)
+        .filter(([_, house]) => house.userId === userId)
+        .map(([index, _]) => parseInt(index));
+
+    // Filter roads that are connected to current user's houses
+    const getAvailableRoadsForUser = () => {
+        if (currentUserHouseIndices.length === 0) return [];
+        
+        console.log('Current user house indices:', currentUserHouseIndices);
+        console.log('Road data sample:', roadData[0]);
+        
+        return roadData.reduce((availableRoads, road, roadIndex) => {
+            // Check if this road is connected to any of the user's houses
+            const isConnectedToUserHouse = road.connectedHouses?.some(houseIndex => 
+                currentUserHouseIndices.includes(houseIndex)
+            );
+            
+            if (isConnectedToUserHouse) {
+                console.log(`Road ${roadIndex} is connected to user's houses:`, road.connectedHouses);
+                availableRoads.push(roadIndex);
+            }
+            
+            return availableRoads;
+        }, []);
+    };
+
+    const availableRoadIndices = getAvailableRoadsForUser();
+    console.log('Available road indices for user:', availableRoadIndices);
+
     return (
     <div className="background">
         <div className="images">
@@ -363,9 +403,9 @@ function Game() {
                 )
             ))}
 
-            {/* Show road options - ONLY if no road has been placed this turn */}
+            {/* Show road options - ONLY if no road has been placed this turn AND road is connected to user's house */}
             {userId === currentTurnUserId && housePlacedThisTurn && roadsPlacedByCurrentUser < 3 && !roadPlacedThisTurn && Array.isArray(roadData) && roadData.map((road, index) => (
-                !placedRoads[index] && !unavailableRoads.has(index) && (
+                !placedRoads[index] && !unavailableRoads.has(index) && availableRoadIndices.includes(index) && (
                     <img 
                         key={`road-${index}`} 
                         src={chooseCircle} 
@@ -389,7 +429,7 @@ function Game() {
             {/* Show placed houses */}
             {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
                 <img 
-                    key={`placed-${index}`}
+                    key={`placed-house-${index}`}
                     src={house.playerName === 'Player 1' ? redHouse : greenHouse}
                     alt={`Placed house by ${house.playerName}`}
                     style={{
@@ -401,6 +441,25 @@ function Game() {
                         filter: `drop-shadow(30px, 30px, 10px ${house.playerColor}, 1)`,
                         width: '20px',
                         height: '20px'
+                    }}
+                />
+            ))}
+
+            {/* Show placed roads */}
+            {Array.isArray(roadData) && Object.entries(placedRoads).map(([index, road]) => (
+                <img 
+                    key={`placed-road-${index}`}
+                    src={greenRoad}
+                    alt={`Placed road by ${road.playerName}`}
+                    style={{
+                        position: 'absolute',
+                        top: `calc(50% + ${road.position.y}px)`,
+                        left: `calc(50% + ${road.position.x}px)`,
+                        transform: 'translate(-50%, -50%)',
+                        pointerEvents: 'none',
+                        width: '30px',
+                        height: '8px',
+                        zIndex: 1
                     }}
                 />
             ))}

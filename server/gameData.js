@@ -55,7 +55,7 @@ function getRoadSpotData() {
         {x: -90, y: -235, connectedHouses: [0, 4], connectedRoads: [0, 2, 7]},
         {x: -35, y: -235, connectedHouses: [1, 4], connectedRoads: [1, 3, 7]},
         {x: 35, y: -235, connectedHouses: [1, 5], connectedRoads: [2, 4, 8]},
-        {x: 90, y: -235, connectedHouses: [1, 5], connectedRoads: [3, 5, 8]},
+        {x: 90, y: -235, connectedHouses: [2, 5], connectedRoads: [3, 5, 8]},
         {x: 160, y: -235, connectedHouses: [2, 6], connectedRoads: [4, 9]},
         
         {x: -185, y: -190, connectedHouses: [3, 7], connectedRoads: [0, 10, 11]},
