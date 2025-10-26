@@ -11,6 +11,8 @@
   justify-content: center;
   gap: 0px;
   margin-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 40px;
   width: 60%;
   margin-left: auto;
   margin-right: auto;
@@ -118,4 +120,112 @@
     50% {
         opacity: 0.5;
     }
+}
+
+.dice-display {
+    position: absolute;
+    right: -300px;
+    top: 50px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    width: 180px;
+}
+
+.dice-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.die {
+    width: 60px;
+    height: 60px;
+    background-color: #fff;
+    border: 3px solid #333;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: diceRoll 0.5s ease-out;
+}
+
+@keyframes diceRoll {
+    0% {
+        transform: rotate(0deg) scale(0.5);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+.dice-total {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+.action-buttons {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.roll-dice-button,
+.end-turn-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.roll-dice-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.roll-dice-button:hover:not(:disabled) {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.roll-dice-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.end-turn-button {
+    background-color: #FF6B6B;
+    color: white;
+}
+
+.end-turn-button:hover:not(:disabled) {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.end-turn-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
 }

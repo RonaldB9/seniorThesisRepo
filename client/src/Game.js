@@ -43,6 +43,9 @@ function Game() {
     const [housePlacedThisTurn, setHousePlacedThisTurn] = useState(false);
     const [roadPlacedThisTurn, setRoadPlacedThisTurn] = useState(false);
     const [allPlayers, setAllPlayers] = useState([]);
+    const [gamePhase, setGamePhase] = useState('setup'); // 'setup' or 'playing'
+    const [diceRoll, setDiceRoll] = useState(null);
+    const [isRolling, setIsRolling] = useState(false);
 
     // Get userId on mount
     useEffect(() => {
@@ -148,6 +151,21 @@ function Game() {
         }
     }, [currentTurnUserId, userId]);
 
+    // Check if setup phase is complete
+    useEffect(() => {
+        const totalHouses = Object.keys(placedHouses).length;
+        const totalRoads = Object.keys(placedRoads).length;
+        const requiredHouses = allPlayers.length * 2;
+        const requiredRoads = allPlayers.length * 2;
+        
+        console.log(`Setup check - Houses: ${totalHouses}/${requiredHouses}, Roads: ${totalRoads}/${requiredRoads}, Phase: ${gamePhase}`);
+        
+        if (totalHouses >= requiredHouses && totalRoads >= requiredRoads && gamePhase === 'setup' && allPlayers.length > 0) {
+            console.log('🎮 Setup complete! Moving to playing phase');
+            setGamePhase('playing');
+        }
+    }, [placedHouses, placedRoads, allPlayers.length, gamePhase]);
+
     // Set up socket listeners ONCE on mount
     useEffect(() => {
         const handleCurrentTurn = (turnUserId) => {
@@ -184,10 +202,17 @@ function Game() {
             }
         };
 
+        const handleDiceRolled = (data) => {
+            setDiceRoll(data);
+            setIsRolling(false);
+            console.log(`🎲 Dice rolled: ${data.die1} + ${data.die2} = ${data.total}`);
+        };
+
         socket.on('currentTurn', handleCurrentTurn);
         socket.on('housePlaced', handleHousePlaced);
         socket.on('roadPlaced', handleRoadPlaced);
         socket.on('playersUpdated', handlePlayersUpdated);
+        socket.on('diceRolled', handleDiceRolled);
         
         if (socket.connected) {
             console.log("📌 Requesting current turn...");
@@ -201,11 +226,12 @@ function Game() {
             socket.off('housePlaced', handleHousePlaced);
             socket.off('roadPlaced', handleRoadPlaced);
             socket.off('playersUpdated', handlePlayersUpdated);
+            socket.off('diceRolled', handleDiceRolled);
         };
     }, [userId]);
 
     const handleHouseClick = (index) => {
-        if (userId === currentTurnUserId && selectedHouseIndex === null && !housePlacedThisTurn) {
+        if (userId === currentTurnUserId && selectedHouseIndex === null && !housePlacedThisTurn && gamePhase === 'setup') {
             setSelectedHouseIndex(index);
             setHousePlacedThisTurn(true);
             console.log(`🏠 Selected house ${index} at position:`, houseData[index]);
@@ -219,7 +245,7 @@ function Game() {
     };
 
     const handleRoadClick = (index) => {
-        if (userId === currentTurnUserId && selectedRoadIndex === null && !roadPlacedThisTurn) {
+        if (userId === currentTurnUserId && selectedRoadIndex === null && !roadPlacedThisTurn && gamePhase === 'setup') {
             setSelectedRoadIndex(index);
             setRoadPlacedThisTurn(true);
             console.log(`🛣️ Selected road ${index} at position:`, roadData[index]);
@@ -232,7 +258,7 @@ function Game() {
         }
     };
 
-    const handleClick = () => {
+    const handleEndTurn = () => {
         if (userId && currentTurnUserId && userId === currentTurnUserId) {
             console.log("✅ Emitting endTurn");
             socket.emit('endTurn');
@@ -240,8 +266,16 @@ function Game() {
             setSelectedRoadIndex(null);
             setHousePlacedThisTurn(false);
             setRoadPlacedThisTurn(false);
+            setDiceRoll(null);
         } else {
             console.log("❌ Not your turn or userId not set");
+        }
+    };
+
+    const handleRollDice = () => {
+        if (userId === currentTurnUserId && gamePhase === 'playing' && !diceRoll) {
+            setIsRolling(true);
+            socket.emit('rollDice', { userId });
         }
     };
 
@@ -294,9 +328,15 @@ function Game() {
           <img src={catanTitle} alt="Catan Title"/>
         </div>
         {userId === currentTurnUserId && (
-            <div className="your-turn-banner">🎯 Your Turn! {selectedHouseIndex !== null && `(House ${selectedHouseIndex} selected)`} {selectedRoadIndex !== null && `(Road ${selectedRoadIndex} selected)`}</div>
+            <div className="your-turn-banner">
+                🎯 Your Turn! 
+                {gamePhase === 'setup' && selectedHouseIndex !== null && ` (House ${selectedHouseIndex} selected)`}
+                {gamePhase === 'setup' && selectedRoadIndex !== null && ` (Road ${selectedRoadIndex} selected)`}
+                {gamePhase === 'playing' && !diceRoll && ' Roll the dice!'}
+                {gamePhase === 'playing' && diceRoll && ` Rolled: ${diceRoll.total}`}
+            </div>
         )}
-        <h1 className="title">Game</h1>
+        <h1 className="title">Game {gamePhase === 'setup' ? '(Setup)' : '(Playing)'}</h1>
 
         {/* Scoreboard */}
         <div className="scoreboard">
@@ -314,6 +354,17 @@ function Game() {
                 </div>
             ))}
         </div>
+
+        {/* Dice Roll Display */}
+        {gamePhase === 'playing' && diceRoll && (
+            <div className="dice-display">
+                <div className="dice-container">
+                    <div className="die">{diceRoll.die1}</div>
+                    <div className="die">{diceRoll.die2}</div>
+                </div>
+                <div className="dice-total">Total: {diceRoll.total}</div>
+            </div>
+        )}
 
         <div className="tiles-container">
         {resourceTiles.length > 1 && (
@@ -414,8 +465,8 @@ function Game() {
                 </span>
             </div>
             
-            {/* Show house options - ONLY if no house has been placed this turn */}
-            {userId === currentTurnUserId && housesPlacedByCurrentUser < 2 && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (
+            {/* Show house options - ONLY during setup phase */}
+            {gamePhase === 'setup' && userId === currentTurnUserId && housesPlacedByCurrentUser < 2 && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (
                 !placedHouses[index] && !unavailableHouses.has(index) && (
                     <img 
                         key={index} 
@@ -437,8 +488,8 @@ function Game() {
                 )
             ))}
 
-            {/* Show road options - ONLY if no road has been placed this turn AND road is connected to user's house */}
-            {userId === currentTurnUserId && housePlacedThisTurn && roadsPlacedByCurrentUser < 3 && !roadPlacedThisTurn && Array.isArray(roadData) && roadData.map((road, index) => (
+            {/* Show road options - ONLY during setup phase */}
+            {gamePhase === 'setup' && userId === currentTurnUserId && housePlacedThisTurn && roadsPlacedByCurrentUser < 2 && !roadPlacedThisTurn && Array.isArray(roadData) && roadData.map((road, index) => (
                 !placedRoads[index] && !unavailableRoads.has(index) && availableRoadIndices.includes(index) && (
                     <img 
                         key={`road-${index}`} 
@@ -498,14 +549,33 @@ function Game() {
                 />
             ))}
             
-            {/*End Turn Button*/}
-            <div className="endTurnDiv">
-                <button onClick={handleClick} disabled={!housePlacedThisTurn && !roadPlacedThisTurn}>End Turn</button>
-            </div>
+            
 
             </>
         )}
         </div>
+        {/* Action Buttons */}
+            <div className="action-buttons">
+                {/* Roll Dice Button - Only in playing phase */}
+                {gamePhase === 'playing' && userId === currentTurnUserId && (
+                    <button 
+                        onClick={handleRollDice} 
+                        disabled={diceRoll !== null || isRolling}
+                        className="roll-dice-button"
+                    >
+                        {isRolling ? '🎲 Rolling...' : '🎲 Roll Dice'}
+                    </button>
+                )}
+                
+                {/* End Turn Button */}
+                <button 
+                    onClick={handleEndTurn} 
+                    disabled={gamePhase === 'setup' ? (!housePlacedThisTurn && !roadPlacedThisTurn) : !diceRoll}
+                    className="end-turn-button"
+                >
+                    End Turn
+                </button>
+            </div>
     </div>
     )
 }

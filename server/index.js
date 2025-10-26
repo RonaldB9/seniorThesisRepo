@@ -124,6 +124,47 @@ function broadcastCurrentTurn() {
   }
 }
 
+// Helper function to distribute resources based on dice roll
+function distributeResources(diceTotal) {
+  if (!gameBoard) return;
+
+  const { resourceTiles, resourceTokens } = gameBoard;
+  
+  // Find all tiles that match the dice roll
+  resourceTokens.forEach((token, tileIndex) => {
+    if (token === diceTotal) {
+      const resourceType = resourceTiles[tileIndex];
+      
+      // Skip desert tiles
+      if (resourceType === 'Desert') return;
+
+      console.log(`🎲 Tile ${tileIndex} (${resourceType}) matches roll ${diceTotal}`);
+
+      // Find all houses adjacent to this tile
+      Object.entries(placedHouses).forEach(([houseIndex, houseData]) => {
+        const house = houseData;
+        const houseTileData = gameBoard.houseData[parseInt(houseIndex)];
+        
+        // Check if this house is adjacent to the matching tile
+        if (houseTileData.tiles.includes(tileIndex)) {
+          const player = playerData.findPlayer(house.userId);
+          if (player) {
+            // Give the player the resource
+            const resourceKey = resourceType.toLowerCase();
+            player.resources[resourceKey] = (player.resources[resourceKey] || 0) + 1;
+            playerData.updatePlayer(player.userId, { resources: player.resources });
+            
+            console.log(`✅ ${player.name} received 1 ${resourceType} (house at ${houseIndex})`);
+          }
+        }
+      });
+    }
+  });
+
+  // Broadcast updated player data
+  io.emit('playersUpdated', playerData.getPlayers());
+}
+
 // Socket connection
 io.on('connection', (socket) => {
   console.log('🔌 New WebSocket connection:', socket.id);
@@ -238,6 +279,42 @@ io.on('connection', (socket) => {
       playerColor: player.color,
       roadIndex,
       position
+    });
+  });
+
+  // Handle dice roll
+  socket.on('rollDice', (data) => {
+    const { userId } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if it's this player's turn
+    if (userId !== getCurrentPlayerUserId()) {
+      console.log(`❌ Not ${player.name}'s turn!`);
+      return;
+    }
+
+    // Roll two dice
+    const die1 = Math.floor(Math.random() * 6) + 1;
+    const die2 = Math.floor(Math.random() * 6) + 1;
+    const total = die1 + die2;
+
+    console.log(`🎲 ${player.name} rolled: ${die1} + ${die2} = ${total}`);
+
+    // Distribute resources based on the roll
+    distributeResources(total);
+
+    // Broadcast dice roll to all clients
+    io.emit('diceRolled', {
+      userId,
+      playerName: player.name,
+      die1,
+      die2,
+      total
     });
   });
 
