@@ -14,68 +14,69 @@
     },
     "houses": [
       {
-        "houseIndex": 4,
+        "houseIndex": 8,
         "position": {
           "x": -65,
-          "y": -222,
+          "y": -157,
           "tiles": [
             0,
-            1
+            1,
+            12
           ]
         },
-        "placedAt": "2025-10-27T17:37:47.278Z"
+        "placedAt": "2025-11-01T17:49:15.227Z"
       },
       {
-        "houseIndex": 23,
+        "houseIndex": 29,
         "position": {
           "x": -65,
-          "y": -32,
+          "y": 33,
           "tiles": [
-            12,
+            16,
             17,
             18
           ]
         },
-        "placedAt": "2025-10-27T17:38:01.346Z"
+        "placedAt": "2025-11-01T17:49:33.076Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 7,
+        "roadIndex": 13,
         "position": {
-          "x": -60,
-          "y": -190,
-          "connectedHouses": [
-            4,
-            8
-          ],
-          "connectedRoads": [
-            1,
-            2,
-            12,
-            13
-          ]
-        },
-        "placedAt": "2025-10-27T17:37:48.278Z"
-      },
-      {
-        "roadIndex": 12,
-        "position": {
-          "x": -90,
+          "x": -35,
           "y": -140,
           "connectedHouses": [
             8,
-            12
+            13
           ],
           "connectedRoads": [
-            11,
-            19,
             7,
-            13
+            12,
+            14,
+            20
           ]
         },
-        "placedAt": "2025-10-27T17:38:02.431Z"
+        "placedAt": "2025-11-01T17:49:16.245Z"
+      },
+      {
+        "roadIndex": 42,
+        "position": {
+          "x": -90,
+          "y": 45,
+          "connectedHouses": [
+            29,
+            34
+          ],
+          "connectedRoads": [
+            35,
+            41,
+            43,
+            50
+          ]
+        },
+        "placedAt": "2025-11-01T17:49:33.665Z"
       }
     ]
   },
@@ -104,20 +105,20 @@
             13
           ]
         },
-        "placedAt": "2025-10-27T17:37:56.185Z"
+        "placedAt": "2025-11-01T17:49:22.740Z"
       },
       {
-        "houseIndex": 31,
+        "houseIndex": 24,
         "position": {
-          "x": 185,
-          "y": 33,
+          "x": 65,
+          "y": -32,
           "tiles": [
-            4,
-            5,
-            14
+            13,
+            14,
+            18
           ]
         },
-        "placedAt": "2025-10-27T17:38:05.563Z"
+        "placedAt": "2025-11-01T17:49:28.641Z"
       }
     ],
     "cities": [],
@@ -138,25 +139,25 @@
             30
           ]
         },
-        "placedAt": "2025-10-27T17:37:56.866Z"
+        "placedAt": "2025-11-01T17:49:23.399Z"
       },
       {
-        "roadIndex": 47,
+        "roadIndex": 36,
         "position": {
-          "x": 220,
-          "y": 45,
+          "x": 60,
+          "y": 0,
           "connectedHouses": [
-            31,
-            37
+            24,
+            30
           ],
           "connectedRoads": [
-            37,
-            46,
-            48,
-            53
+            28,
+            29,
+            44,
+            45
           ]
         },
-        "placedAt": "2025-10-27T17:38:06.290Z"
+        "placedAt": "2025-11-01T17:49:29.441Z"
       }
     ]
   }

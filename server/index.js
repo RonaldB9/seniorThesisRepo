@@ -25,6 +25,7 @@ app.use(express.json());
 
 // In-memory
 let currentTurnIndex = 0;
+let setupPhase = 'forward'; // 'forward' or 'backward'
 let gameBoard = null;
 let placedHouses = {}; // Track which house indices are already occupied with house data
 let placedRoads = {}; // Track which road indices are already occupied with road data
@@ -119,7 +120,7 @@ function getCurrentPlayerUserId() {
 function broadcastCurrentTurn() {
   const currentUserId = getCurrentPlayerUserId();
   if (currentUserId) {
-    console.log(`📢 Broadcasting current turn: ${currentUserId}`);
+    console.log(`📢 Broadcasting current turn: ${currentUserId} (Setup phase: ${setupPhase})`);
     io.emit('currentTurn', currentUserId);
   }
 }
@@ -163,6 +164,17 @@ function distributeResources(diceTotal) {
 
   // Broadcast updated player data
   io.emit('playersUpdated', playerData.getPlayers());
+}
+
+// Helper function to check if setup phase is complete
+function isSetupPhaseComplete() {
+  const players = playerData.getPlayers();
+  const totalHouses = Object.keys(placedHouses).length;
+  const totalRoads = Object.keys(placedRoads).length;
+  const requiredHouses = players.length * 2;
+  const requiredRoads = players.length * 2;
+  
+  return totalHouses >= requiredHouses && totalRoads >= requiredRoads;
 }
 
 // Socket connection
@@ -323,8 +335,32 @@ io.on('connection', (socket) => {
     const players = playerData.getPlayers();
     if (players.length === 0) return;
 
-    // Move to the next player
-    currentTurnIndex = (currentTurnIndex + 1) % players.length;
+    // Check if we're still in setup phase
+    if (!isSetupPhaseComplete()) {
+      // Setup phase turn logic
+      if (setupPhase === 'forward') {
+        // Going forward through players
+        if (currentTurnIndex < players.length - 1) {
+          currentTurnIndex++;
+        } else {
+          // Reached the end, switch to backward phase
+          setupPhase = 'backward';
+          console.log('🔄 Setup phase switching to BACKWARD');
+          // Don't increment, stay on last player for their second turn
+        }
+      } else {
+        // Going backward through players
+        if (currentTurnIndex > 0) {
+          currentTurnIndex--;
+        } else {
+          // Setup complete, would normally transition to playing phase
+          console.log('✅ Setup phase complete!');
+        }
+      }
+    } else {
+      // Normal playing phase - cycle through players
+      currentTurnIndex = (currentTurnIndex + 1) % players.length;
+    }
 
     const nextPlayer = players[currentTurnIndex];
     console.log(`🔁 Turn passed to: ${nextPlayer.name} (${nextPlayer.userId})`);
@@ -338,6 +374,7 @@ io.on('connection', (socket) => {
     if (players.length === 0) return;
 
     currentTurnIndex = 0;
+    setupPhase = 'forward'; // Reset setup phase
     placedHouses = {}; // Reset placed houses
     placedRoads = {}; // Reset placed roads
 
