@@ -10,21 +10,99 @@
       "brick": 0,
       "sheep": 0,
       "wheat": 0,
+      "ore": 1
+    },
+    "houses": [
+      {
+        "houseIndex": 11,
+        "position": {
+          "x": -250,
+          "y": -127,
+          "tiles": [
+            11
+          ]
+        },
+        "placedAt": "2025-11-01T17:58:08.970Z"
+      },
+      {
+        "houseIndex": 34,
+        "position": {
+          "x": -125,
+          "y": 58,
+          "tiles": [
+            9,
+            16,
+            17
+          ]
+        },
+        "placedAt": "2025-11-01T17:58:18.506Z"
+      }
+    ],
+    "cities": [],
+    "roads": [
+      {
+        "roadIndex": 18,
+        "position": {
+          "x": -250,
+          "y": -95,
+          "connectedHouses": [
+            11,
+            16
+          ],
+          "connectedRoads": [
+            10,
+            23,
+            24
+          ]
+        },
+        "placedAt": "2025-11-01T17:58:09.898Z"
+      },
+      {
+        "roadIndex": 50,
+        "position": {
+          "x": -125,
+          "y": 95,
+          "connectedHouses": [
+            34,
+            39
+          ],
+          "connectedRoads": [
+            41,
+            42,
+            55,
+            56
+          ]
+        },
+        "placedAt": "2025-11-01T17:58:18.971Z"
+      }
+    ]
+  },
+  {
+    "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
+    "name": "Player 2",
+    "ready": true,
+    "score": 0,
+    "color": "green",
+    "resources": {
+      "wood": 0,
+      "brick": 0,
+      "sheep": 0,
+      "wheat": 2,
       "ore": 0
     },
     "houses": [
       {
-        "houseIndex": 13,
+        "houseIndex": 23,
         "position": {
-          "x": 0,
-          "y": -127,
+          "x": -65,
+          "y": -32,
           "tiles": [
-            1,
             12,
-            13
+            17,
+            18
           ]
         },
-        "placedAt": "2025-11-01T17:54:19.215Z"
+        "placedAt": "2025-11-01T17:58:13.186Z"
       },
       {
         "houseIndex": 30,
@@ -37,28 +115,28 @@
             18
           ]
         },
-        "placedAt": "2025-11-01T17:54:30.998Z"
+        "placedAt": "2025-11-01T17:58:15.492Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 20,
+        "roadIndex": 35,
         "position": {
-          "x": 0,
-          "y": -95,
+          "x": -60,
+          "y": 0,
           "connectedHouses": [
-            13,
-            18
+            23,
+            29
           ],
           "connectedRoads": [
-            13,
-            14,
+            26,
             27,
-            28
+            42,
+            43
           ]
         },
-        "placedAt": "2025-11-01T17:54:19.676Z"
+        "placedAt": "2025-11-01T17:58:13.618Z"
       },
       {
         "roadIndex": 45,
@@ -76,88 +154,7 @@
             52
           ]
         },
-        "placedAt": "2025-11-01T17:54:31.385Z"
-      }
-    ]
-  },
-  {
-    "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
-    "name": "Player 2",
-    "ready": true,
-    "score": 0,
-    "color": "green",
-    "resources": {
-      "wood": 0,
-      "brick": 0,
-      "sheep": 1,
-      "wheat": 0,
-      "ore": 0
-    },
-    "houses": [
-      {
-        "houseIndex": 14,
-        "position": {
-          "x": 125,
-          "y": -127,
-          "tiles": [
-            2,
-            3,
-            13
-          ]
-        },
-        "placedAt": "2025-11-01T17:54:22.510Z"
-      },
-      {
-        "houseIndex": 29,
-        "position": {
-          "x": -65,
-          "y": 33,
-          "tiles": [
-            16,
-            17,
-            18
-          ]
-        },
-        "placedAt": "2025-11-01T17:54:27.406Z"
-      }
-    ],
-    "cities": [],
-    "roads": [
-      {
-        "roadIndex": 21,
-        "position": {
-          "x": 125,
-          "y": -95,
-          "connectedHouses": [
-            14,
-            19
-          ],
-          "connectedRoads": [
-            15,
-            16,
-            29,
-            30
-          ]
-        },
-        "placedAt": "2025-11-01T17:54:23.035Z"
-      },
-      {
-        "roadIndex": 42,
-        "position": {
-          "x": -90,
-          "y": 45,
-          "connectedHouses": [
-            29,
-            34
-          ],
-          "connectedRoads": [
-            35,
-            41,
-            43,
-            50
-          ]
-        },
-        "placedAt": "2025-11-01T17:54:27.992Z"
+        "placedAt": "2025-11-01T17:58:16.076Z"
       }
     ]
   }

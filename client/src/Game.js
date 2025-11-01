@@ -350,6 +350,17 @@ function Game() {
                     </span>
                     <span className="score-points">{player.score} points</span>
                     {player.userId === currentTurnUserId && <span className="turn-indicator">← Current Turn</span>}
+                    
+                    {/* Show resources only for current user */}
+                    {player.userId === userId && player.resources && (
+                        <div className="player-resources">
+                            <div className="resource-item">Wood: {player.resources.wood || 0}</div>
+                            <div className="resource-item">🧱 {player.resources.brick || 0}</div>
+                            <div className="resource-item">Sheep: {player.resources.sheep || 0}</div>
+                            <div className="resource-item">🌾 {player.resources.wheat || 0}</div>
+                            <div className="resource-item">Ore: {player.resources.ore || 0}</div>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>
