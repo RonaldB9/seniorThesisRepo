@@ -73,30 +73,32 @@ I got React and Node.js working as well as the starting screen and board.
 
 ### The challenges I faced this week were:
 
-Converting my code to VavaScript and to use a client and server methodology.
+Converting my code to JavaScript and to use a client and server methodology.
 
 ---
 
-## Week 5 Summary (10/13/2025)
+## Week 5 Summary (10/20/2025)
 ### This week I worked on:
 
-[Your answer here]
+The online multiplayer.
+The actual game.
 
 ### This week I learned:
 
-[Your answer here]
+More about React and Node.js
 
 ### My successes this week were:
 
-[Your answer here]
+Successfully add users and players
+Finished initial setup of the game
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+The game logic
 
 ---
 
-## Week 6 Summary (MM/DD/YYYY)
+## Week 6 Summary (10/27/2025)
 ### This week I worked on:
 
 [Your answer here]
