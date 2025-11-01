@@ -344,8 +344,7 @@ function Game() {
             {allPlayers.map((player) => (
                 <div 
                     key={player.userId} 
-                    className={`score-item ${player.userId === userId ? 'current-user' : ''}`}
-                >
+                    className={`score-item ${player.userId === userId ? 'current-user' : ''}`}>
                     <span style={{ color: player.color, fontWeight: 'bold' }}>
                         {player.name} {player.userId === userId && '(You)'}
                     </span>
@@ -513,9 +512,7 @@ function Game() {
 
             {/* Show placed houses */}
             {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
-                <img 
-                    key={`placed-house-${index}`}
-                    src={house.playerName === 'Player 1' ? redHouse : greenHouse}
+                <img key={`placed-house-${index}`} src={house.playerName === 'Player 1' ? redHouse : greenHouse}
                     alt={`Placed house by ${house.playerName}`}
                     style={{
                         position: 'absolute',
@@ -526,8 +523,7 @@ function Game() {
                         filter: `drop-shadow(30px, 30px, 10px ${house.playerColor}, 1)`,
                         width: '20px',
                         height: '20px'
-                    }}
-                />
+                    }}/>
             ))}
 
             {/* Show placed roads */}
@@ -545,12 +541,8 @@ function Game() {
                         width: '30px',
                         height: '8px',
                         zIndex: 1
-                    }}
-                />
+                    }}/>
             ))}
-            
-            
-
             </>
         )}
         </div>
@@ -558,23 +550,14 @@ function Game() {
             <div className="action-buttons">
                 {/* Roll Dice Button - Only in playing phase */}
                 {gamePhase === 'playing' && userId === currentTurnUserId && (
-                    <button 
-                        onClick={handleRollDice} 
-                        disabled={diceRoll !== null || isRolling}
-                        className="roll-dice-button"
-                    >
-                        {isRolling ? '🎲 Rolling...' : '🎲 Roll Dice'}
-                    </button>
+                    <button onClick={handleRollDice} disabled={diceRoll !== null || isRolling}
+                        className="roll-dice-button"> {isRolling ? '🎲 Rolling...' : '🎲 Roll Dice'}</button>
                 )}
                 
                 {/* End Turn Button */}
-                <button 
-                    onClick={handleEndTurn} 
+                <button onClick={handleEndTurn} 
                     disabled={gamePhase === 'setup' ? (!housePlacedThisTurn && !roadPlacedThisTurn) : !diceRoll}
-                    className="end-turn-button"
-                >
-                    End Turn
-                </button>
+                    className="end-turn-button">End Turn</button>
             </div>
     </div>
     )
