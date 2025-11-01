@@ -166,6 +166,40 @@ function distributeResources(diceTotal) {
   io.emit('playersUpdated', playerData.getPlayers());
 }
 
+// Helper function to give resources for a house placement (used for second setup house)
+function giveResourcesForHouse(houseIndex, userId) {
+  if (!gameBoard) return;
+
+  const houseTileData = gameBoard.houseData[houseIndex];
+  const player = playerData.findPlayer(userId);
+  
+  if (!player || !houseTileData) return;
+
+  console.log(`🏠 Giving initial resources for house ${houseIndex} to ${player.name}`);
+
+  // For each tile adjacent to this house
+  houseTileData.tiles.forEach(tileIndex => {
+    const resourceType = gameBoard.resourceTiles[tileIndex];
+    
+    // Skip desert tiles
+    if (resourceType === 'Desert') return;
+
+    // Give the player one of this resource
+    const resourceKey = resourceType.toLowerCase();
+    player.resources[resourceKey] = (player.resources[resourceKey] || 0) + 1;
+    
+    console.log(`  ✅ ${player.name} received 1 ${resourceType} from tile ${tileIndex}`);
+  });
+
+  // Update player data
+  playerData.updatePlayer(userId, { resources: player.resources });
+  
+  // Broadcast updated player data
+  io.emit('playersUpdated', playerData.getPlayers());
+}
+
+
+
 // Helper function to check if setup phase is complete
 function isSetupPhaseComplete() {
   const players = playerData.getPlayers();
@@ -236,6 +270,13 @@ io.on('connection', (socket) => {
 
     console.log(`🏠 ${player.name} placed a house at index ${houseIndex}`);
 
+    // Check if this is the player's second house (during backward setup phase)
+    const playerHouseCount = player.houses.length;
+    if (playerHouseCount === 2 && setupPhase === 'backward') {
+      console.log(`🎁 Second house placement - giving initial resources!`);
+      giveResourcesForHouse(houseIndex, userId);
+    }
+
     // Broadcast to all clients
     io.emit('housePlaced', {
       userId,
@@ -245,7 +286,7 @@ io.on('connection', (socket) => {
       position
     });
   });
-
+  
   // Handle road selection
   socket.on('roadSelected', (data) => {
     const { userId, roadIndex, position } = data;
