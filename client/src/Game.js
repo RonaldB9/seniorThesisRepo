@@ -143,13 +143,13 @@ function Game() {
 
     // Reset selection and placement flags when turn changes
     useEffect(() => {
-        if (userId === currentTurnUserId) {
-            setSelectedHouseIndex(null);
-            setSelectedRoadIndex(null);
-            setHousePlacedThisTurn(false);
-            setRoadPlacedThisTurn(false);
-        }
-    }, [currentTurnUserId, userId]);
+        setSelectedHouseIndex(null);
+        setSelectedRoadIndex(null);
+        setHousePlacedThisTurn(false);
+        setRoadPlacedThisTurn(false);
+        setDiceRoll(null); // Reset dice roll for new turn
+        setIsRolling(false);
+    }, [currentTurnUserId]);
 
     // Check if setup phase is complete
     useEffect(() => {
