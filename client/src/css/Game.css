@@ -200,9 +200,13 @@
     justify-content: center;
     margin-top: 20px;
     padding: 10px;
+    flex-wrap: wrap;
 }
 
 .roll-dice-button,
+.build-house-button,
+.build-road-button,
+.cancel-build-button,
 .end-turn-button {
     padding: 12px 24px;
     font-size: 16px;
@@ -231,6 +235,34 @@
     opacity: 0.6;
 }
 
+.build-house-button {
+    background-color: #8B4513;
+    color: white;
+}
+
+.build-house-button:hover:not(:disabled) {
+    background-color: #6F3609;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.build-house-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.cancel-build-button {
+    background-color: #FFA500;
+    color: white;
+}
+
+.cancel-build-button:hover {
+    background-color: #FF8C00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 .end-turn-button {
     background-color: #FF6B6B;
     color: white;
@@ -246,4 +278,17 @@
     background-color: #cccccc;
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.your-turn-banner {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    margin: 10px auto;
+    width: 80%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

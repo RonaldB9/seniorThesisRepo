@@ -74,11 +74,11 @@ app.post('/api/register', (req, res) => {
       score: 0,
       color: assignedColor,
       resources: {
-        wood: 0,
-        brick: 0,
-        sheep: 0,
-        wheat: 0,
-        ore: 0
+        wood: 10,
+        brick: 10,
+        sheep: 10,
+        wheat: 10,
+        ore: 10
       },
       houses: [],
       cities: [],
@@ -198,7 +198,61 @@ function giveResourcesForHouse(houseIndex, userId) {
   io.emit('playersUpdated', playerData.getPlayers());
 }
 
+// Helper function to deduct resources when building a house
+function deductHouseResources(userId) {
+  const player = playerData.findPlayer(userId);
+  
+  if (!player || !player.resources) return false;
+  
+  // Check if player has enough resources
+  if (player.resources.wood < 1 || player.resources.wheat < 1 || 
+      player.resources.brick < 1 || player.resources.sheep < 1) {
+    console.log(`❌ ${player.name} doesn't have enough resources to build a house`);
+    return false;
+  }
+  
+  // Deduct the resources
+  player.resources.wood -= 1;
+  player.resources.wheat -= 1;
+  player.resources.brick -= 1;
+  player.resources.sheep -= 1;
+  
+  // Update player data
+  playerData.updatePlayer(userId, { 
+    resources: player.resources,
+    score: player.score + 1  // Each house is worth 1 point
+  });
+  
+  console.log(`💰 ${player.name} paid: 1 Wood, 1 Wheat, 1 Brick, 1 Sheep`);
+  
+  return true;
+}
 
+// Helper function to deduct resources when building a road
+function deductRoadResources(userId) {
+  const player = playerData.findPlayer(userId);
+  
+  if (!player || !player.resources) return false;
+  
+  // Check if player has enough resources
+  if (player.resources.wood < 1 || player.resources.brick < 1) {
+    console.log(`❌ ${player.name} doesn't have enough resources to build a road`);
+    return false;
+  }
+  
+  // Deduct the resources
+  player.resources.wood -= 1;
+  player.resources.brick -= 1;
+  
+  // Update player data
+  playerData.updatePlayer(userId, { 
+    resources: player.resources
+  });
+  
+  console.log(`💰 ${player.name} paid: 1 Wood, 1 Brick`);
+  
+  return true;
+}
 
 // Helper function to check if setup phase is complete
 function isSetupPhaseComplete() {
@@ -232,7 +286,7 @@ io.on('connection', (socket) => {
     if (callback) callback({ currentUserId });
   });
 
-  // Handle house selection
+  // Handle house selection (setup phase)
   socket.on('houseSelected', (data) => {
     const { userId, houseIndex, position } = data;
     const player = playerData.findPlayer(userId);
@@ -285,6 +339,69 @@ io.on('connection', (socket) => {
       houseIndex,
       position
     });
+  });
+  
+  // Handle building a house (playing phase)
+  socket.on('buildHouse', (data) => {
+    const { userId, houseIndex, position } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if it's this player's turn
+    if (userId !== getCurrentPlayerUserId()) {
+      console.log(`❌ Not ${player.name}'s turn!`);
+      return;
+    }
+
+    // Check if house is already occupied
+    if (placedHouses[houseIndex]) {
+      console.log(`⚠️ House ${houseIndex} already occupied!`);
+      socket.emit('houseSelectionFailed', { reason: 'House already occupied' });
+      return;
+    }
+
+    // Deduct resources and check if player has enough
+    if (!deductHouseResources(userId)) {
+      socket.emit('houseSelectionFailed', { reason: 'Not enough resources' });
+      return;
+    }
+
+    // Store house data
+    placedHouses[houseIndex] = {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      houseIndex,
+      position,
+      placedAt: new Date()
+    };
+
+    // Add house to player
+    player.houses.push({
+      houseIndex,
+      position,
+      placedAt: new Date()
+    });
+
+    playerData.updatePlayer(userId, { houses: player.houses });
+
+    console.log(`🏗️ ${player.name} built a house at index ${houseIndex}`);
+
+    // Broadcast to all clients
+    io.emit('housePlaced', {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      houseIndex,
+      position
+    });
+
+    // Broadcast updated player data (resources and score)
+    io.emit('playersUpdated', playerData.getPlayers());
   });
   
   // Handle road selection
