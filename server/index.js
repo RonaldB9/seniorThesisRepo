@@ -403,6 +403,69 @@ io.on('connection', (socket) => {
     // Broadcast updated player data (resources and score)
     io.emit('playersUpdated', playerData.getPlayers());
   });
+
+  // Handle building a road (playing phase)
+  socket.on('buildRoad', (data) => {
+    const { userId, roadIndex, position } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if it's this player's turn
+    if (userId !== getCurrentPlayerUserId()) {
+      console.log(`❌ Not ${player.name}'s turn!`);
+      return;
+    }
+
+    // Check if road is already occupied
+    if (placedRoads[roadIndex]) {
+      console.log(`⚠️ Road ${roadIndex} already occupied!`);
+      socket.emit('roadSelectionFailed', { reason: 'Road already occupied' });
+      return;
+    }
+
+    // Deduct resources and check if player has enough
+    if (!deductRoadResources(userId)) {
+      socket.emit('roadSelectionFailed', { reason: 'Not enough resources' });
+      return;
+    }
+
+    // Store road data
+    placedRoads[roadIndex] = {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      roadIndex,
+      position,
+      placedAt: new Date()
+    };
+
+    // Add road to player
+    player.roads.push({
+      roadIndex,
+      position,
+      placedAt: new Date()
+    });
+
+    playerData.updatePlayer(userId, { roads: player.roads });
+
+    console.log(`🏗️ ${player.name} built a road at index ${roadIndex}`);
+
+    // Broadcast to all clients
+    io.emit('roadPlaced', {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      roadIndex,
+      position
+    });
+
+    // Broadcast updated player data (resources)
+    io.emit('playersUpdated', playerData.getPlayers());
+  });
   
   // Handle road selection
   socket.on('roadSelected', (data) => {

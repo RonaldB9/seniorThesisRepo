@@ -46,8 +46,8 @@ function Game() {
     const [gamePhase, setGamePhase] = useState('setup'); // 'setup' or 'playing'
     const [diceRoll, setDiceRoll] = useState(null);
     const [isRolling, setIsRolling] = useState(false);
-    const [buildingHouse, setBuildingHouse] = useState(false); // New state for building mode
-    const [buildingRoad, setBuildingRoad] = useState(false); // New state for building roads
+    const [buildingHouse, setBuildingHouse] = useState(false);
+    const [buildingRoad, setBuildingRoad] = useState(false);
 
     // Get userId on mount
     useEffect(() => {
@@ -149,9 +149,10 @@ function Game() {
         setSelectedRoadIndex(null);
         setHousePlacedThisTurn(false);
         setRoadPlacedThisTurn(false);
-        setDiceRoll(null); // Reset dice roll for new turn
+        setDiceRoll(null);
         setIsRolling(false);
-        setBuildingHouse(false); // Reset building mode
+        setBuildingHouse(false);
+        setBuildingRoad(false);
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -258,11 +259,12 @@ function Game() {
                 position: houseData[index]
             });
             
-            setBuildingHouse(false); // Exit building mode
+            setBuildingHouse(false);
         }
     };
 
     const handleRoadClick = (index) => {
+        // Setup phase logic
         if (userId === currentTurnUserId && selectedRoadIndex === null && !roadPlacedThisTurn && gamePhase === 'setup') {
             setSelectedRoadIndex(index);
             setRoadPlacedThisTurn(true);
@@ -273,6 +275,20 @@ function Game() {
                 roadIndex: index,
                 position: roadData[index]
             });
+        }
+        
+        // Playing phase logic - building road
+        if (userId === currentTurnUserId && buildingRoad && gamePhase === 'playing') {
+            setSelectedRoadIndex(index);
+            console.log(`🛣️ Building road ${index} at position:`, roadData[index]);
+            
+            socket.emit('buildRoad', {
+                userId,
+                roadIndex: index,
+                position: roadData[index]
+            });
+            
+            setBuildingRoad(false);
         }
     };
 
@@ -286,6 +302,7 @@ function Game() {
             setRoadPlacedThisTurn(false);
             setDiceRoll(null);
             setBuildingHouse(false);
+            setBuildingRoad(false);
         } else {
             console.log("❌ Not your turn or userId not set");
         }
@@ -305,9 +322,17 @@ function Game() {
         }
     };
 
+    const handleBuildRoad = () => {
+        if (userId === currentTurnUserId && gamePhase === 'playing' && canBuildRoad()) {
+            setBuildingRoad(true);
+            console.log('🏗️ Entering road building mode');
+        }
+    };
+
     const handleCancelBuild = () => {
         setBuildingHouse(false);
-        console.log('❌ Cancelled house building');
+        setBuildingRoad(false);
+        console.log('❌ Cancelled building');
     };
 
     // Check if player has enough resources to build a house
@@ -315,6 +340,13 @@ function Game() {
         if (!currentPlayer || !currentPlayer.resources) return false;
         const { wood, wheat, brick, sheep } = currentPlayer.resources;
         return wood >= 1 && wheat >= 1 && brick >= 1 && sheep >= 1;
+    };
+
+    // Check if player has enough resources to build a road
+    const canBuildRoad = () => {
+        if (!currentPlayer || !currentPlayer.resources) return false;
+        const { wood, brick } = currentPlayer.resources;
+        return wood >= 1 && brick >= 1;
     };
 
     const housesPlacedByCurrentUser = Object.values(placedHouses).filter(
@@ -346,8 +378,8 @@ function Game() {
             );
             
             // Check if this road is connected to any of the user's roads
-            const isConnectedToUserRoad = road.connectedRoads?.some(roadIndex => 
-                currentUserRoadIndices.includes(roadIndex)
+            const isConnectedToUserRoad = road.connectedRoads?.some(roadIdx => 
+                currentUserRoadIndices.includes(roadIdx)
             );
             
             if (isConnectedToUserHouse || isConnectedToUserRoad) {
@@ -368,7 +400,6 @@ function Game() {
         
         roadData.forEach((road, roadIndex) => {
             if (currentUserRoadIndices.includes(roadIndex)) {
-                // This road belongs to the current user
                 road.connectedHouses?.forEach(houseIndex => {
                     if (!placedHouses[houseIndex] && !unavailableHouses.has(houseIndex)) {
                         availableHouses.push(houseIndex);
@@ -377,7 +408,6 @@ function Game() {
             }
         });
         
-        // Remove duplicates
         return [...new Set(availableHouses)];
     };
 
@@ -396,6 +426,7 @@ function Game() {
                 {gamePhase === 'playing' && !diceRoll && ' Roll the dice!'}
                 {gamePhase === 'playing' && diceRoll && ` Rolled: ${diceRoll.total}`}
                 {buildingHouse && ' - Select a spot for your house'}
+                {buildingRoad && ' - Select a spot for your road'}
             </div>
         )}
         <h1 className="title">Game {gamePhase === 'setup' ? '(Setup)' : '(Playing)'}</h1>
@@ -413,7 +444,6 @@ function Game() {
                     <span className="score-points">{player.score} points</span>
                     {player.userId === currentTurnUserId && <span className="turn-indicator">← Current Turn</span>}
                     
-                    {/* Show resources only for current user */}
                     {player.userId === userId && player.resources && (
                         <div className="player-resources">
                             <div className="resource-item">🪵 {player.resources.wood || 0}</div>
@@ -606,6 +636,29 @@ function Game() {
                 )
             ))}
 
+            {/* Show road building options - ONLY during playing phase when building */}
+            {gamePhase === 'playing' && buildingRoad && userId === currentTurnUserId && Array.isArray(roadData) && roadData.map((road, index) => (
+                !placedRoads[index] && !unavailableRoads.has(index) && availableRoadIndices.includes(index) && (
+                    <img 
+                        key={`build-road-${index}`} 
+                        src={chooseCircle} 
+                        className="road_marker fade-loop"
+                        alt={`Build Road ${index}`}
+                        onClick={() => handleRoadClick(index)}
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${road.y}px)`,
+                            left: `calc(50% + ${road.x}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            cursor: 'pointer',
+                            opacity: 0.7,
+                            filter: 'drop-shadow(0 0 8px rgba(255, 152, 0, 0.8))',
+                            transition: 'all 0.3s ease'
+                        }}
+                    />
+                )
+            ))}
+
             {/* Show placed houses */}
             {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
                 <img key={`placed-house-${index}`} src={house.playerName === 'Player 1' ? redHouse : greenHouse}
@@ -651,7 +704,7 @@ function Game() {
                 )}
                 
                 {/* Build House Button - Only in playing phase */}
-                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && (
+                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && (
                     <button 
                         onClick={handleBuildHouse} 
                         disabled={!canBuildHouse()}
@@ -662,8 +715,20 @@ function Game() {
                     </button>
                 )}
                 
+                {/* Build Road Button - Only in playing phase */}
+                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && (
+                    <button 
+                        onClick={handleBuildRoad} 
+                        disabled={!canBuildRoad()}
+                        className="build-road-button"
+                        title={!canBuildRoad() ? 'Need: 1 Wood, 1 Brick' : 'Build a road'}
+                    >
+                        🛣️ Build Road
+                    </button>
+                )}
+                
                 {/* Cancel Build Button */}
-                {gamePhase === 'playing' && buildingHouse && (
+                {gamePhase === 'playing' && (buildingHouse || buildingRoad) && (
                     <button 
                         onClick={handleCancelBuild}
                         className="cancel-build-button"
