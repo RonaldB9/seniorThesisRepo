@@ -337,17 +337,21 @@ function Game() {
 
     // Check if player has enough resources to build a house
     const canBuildHouse = () => {
-        if (!currentPlayer || !currentPlayer.resources) return false;
+    if (!currentPlayer || !currentPlayer.resources) return false;
         const { wood, wheat, brick, sheep } = currentPlayer.resources;
-        return wood >= 1 && wheat >= 1 && brick >= 1 && sheep >= 1;
-    };
+        const hasResources = wood >= 1 && wheat >= 1 && brick >= 1 && sheep >= 1;
+        const hasAvailableSpots = availableHouseIndicesForBuilding.length > 0;
+        return hasResources && hasAvailableSpots;
+};
 
     // Check if player has enough resources to build a road
     const canBuildRoad = () => {
-        if (!currentPlayer || !currentPlayer.resources) return false;
+    if (!currentPlayer || !currentPlayer.resources) return false;
         const { wood, brick } = currentPlayer.resources;
-        return wood >= 1 && brick >= 1;
-    };
+        const hasResources = wood >= 1 && brick >= 1;
+        const hasAvailableSpots = availableRoadIndices.length > 0;
+        return hasResources && hasAvailableSpots;
+};
 
     const housesPlacedByCurrentUser = Object.values(placedHouses).filter(
         house => house.userId === userId
@@ -709,9 +713,17 @@ function Game() {
                         onClick={handleBuildHouse} 
                         disabled={!canBuildHouse()}
                         className="build-house-button"
-                        title={!canBuildHouse() ? 'Need: 1 Wood, 1 Wheat, 1 Brick, 1 Sheep' : 'Build a settlement'}
-                    >
-                        🏠 Build House
+                        title={
+                            !currentPlayer?.resources || 
+                            currentPlayer.resources.wood < 1 || 
+                            currentPlayer.resources.wheat < 1 || 
+                            currentPlayer.resources.brick < 1 || 
+                            currentPlayer.resources.sheep < 1
+                                ? 'Need: 1 Wood, 1 Wheat, 1 Brick, 1 Sheep'
+                                : availableHouseIndicesForBuilding.length === 0
+                                ? 'No available spots to build'
+                                : 'Build a settlement'
+                        }>🏠 Build House
                     </button>
                 )}
                 
@@ -721,7 +733,15 @@ function Game() {
                         onClick={handleBuildRoad} 
                         disabled={!canBuildRoad()}
                         className="build-road-button"
-                        title={!canBuildRoad() ? 'Need: 1 Wood, 1 Brick' : 'Build a road'}
+                        title={
+                            !currentPlayer?.resources || 
+                            currentPlayer.resources.wood < 1 || 
+                            currentPlayer.resources.brick < 1
+                                ? 'Need: 1 Wood, 1 Brick'
+                                : availableRoadIndices.length === 0
+                                ? 'No available spots to build'
+                                : 'Build a road'
+                        }
                     >
                         🛣️ Build Road
                     </button>
