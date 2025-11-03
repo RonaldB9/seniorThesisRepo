@@ -101,23 +101,23 @@ The game logic
 ## Week 6 Summary (10/27/2025)
 ### This week I worked on:
 
-[Your answer here]
+Continuing to complete the game.
 
 ### This week I learned:
 
-[Your answer here]
+I am almost done with the main game.
 
 ### My successes this week were:
 
-[Your answer here]
+Being able to reuse code logic for parts of the game. From the initial setup to the main game loop.
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+Time, I didn't have much time to work this weekend.
 
 ---
 
-## Week 7 Summary (MM/DD/YYYY)
+## Week 7 Summary (11/03/2025)
 ### This week I worked on:
 
 [Your answer here]
