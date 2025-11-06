@@ -13,6 +13,7 @@ import chooseCircle from './Images/chooseCircle.png';
 import redHouse from './Images/redHouse.png';
 import greenHouse from './Images/greenHouse.png';
 import greenRoad from './Images/greenRoad.png';
+import ThreetoOnePort from './Images/3to1Port.jpg';
 import socket from './socket';
 
 
@@ -570,6 +571,9 @@ function Game() {
                     {resourceTokens[6] && ( <span className="token">{resourceTokens[6]}</span>)}
                 </span>
             </div>
+
+            {/*Ports*/}
+            <img className="ports" src={ThreetoOnePort} alt="3To1Port"/>
             
             {/* Show house options - ONLY during setup phase */}
             {gamePhase === 'setup' && userId === currentTurnUserId && housesPlacedByCurrentUser < 2 && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (

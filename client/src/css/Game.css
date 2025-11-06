@@ -292,3 +292,8 @@
     width: 80%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.ports {
+  position: absolute;
+  width: 50px;
+}
