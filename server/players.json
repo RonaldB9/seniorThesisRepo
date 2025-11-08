@@ -12,42 +12,9 @@
       "wheat": 10,
       "ore": 10
     },
-    "houses": [
-      {
-        "houseIndex": 8,
-        "position": {
-          "x": -65,
-          "y": -157,
-          "tiles": [
-            0,
-            1,
-            12
-          ]
-        },
-        "placedAt": "2025-11-08T03:25:36.813Z"
-      }
-    ],
+    "houses": [],
     "cities": [],
-    "roads": [
-      {
-        "roadIndex": 13,
-        "position": {
-          "x": -35,
-          "y": -140,
-          "connectedHouses": [
-            8,
-            13
-          ],
-          "connectedRoads": [
-            7,
-            12,
-            14,
-            20
-          ]
-        },
-        "placedAt": "2025-11-08T03:25:37.295Z"
-      }
-    ]
+    "roads": []
   },
   {
     "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
