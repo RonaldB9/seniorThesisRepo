@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
-const { generateCatanBoard, getHouseTileData, getRoadSpotData } = require('./gameData');
+const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData} = require('./gameData');
 const playerData = require('./playerData');
 
 // Clear all players on server startup
@@ -36,12 +36,14 @@ app.get('/api/board', (req, res) => {
     const boardData = generateCatanBoard();
     const houseData = getHouseTileData();
     const roadData = getRoadSpotData();
+    const portRoadData = getPortRoadData();
 
     gameBoard = {
       resourceTiles: boardData.resourceTiles,
       resourceTokens: boardData.resourceTokens,
       houseData: houseData,
-      roadData: roadData
+      roadData: roadData,
+      portRoadData: portRoadData
     };
   }
 

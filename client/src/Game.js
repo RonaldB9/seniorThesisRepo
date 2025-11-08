@@ -56,6 +56,8 @@ function Game() {
     const [isRolling, setIsRolling] = useState(false);
     const [buildingHouse, setBuildingHouse] = useState(false);
     const [buildingRoad, setBuildingRoad] = useState(false);
+    const [portRoadData, setPortRoadData] = useState([]);
+
 
     // Get userId on mount
     useEffect(() => {
@@ -84,6 +86,7 @@ function Game() {
             setResourceTokens(data.resourceTokens);
             setHouseData(data.houseData);
             setRoadData(data.roadData);
+            setPortRoadData(data.portRoadData);
         });
 
         // Fetch existing placed houses
@@ -581,8 +584,6 @@ function Game() {
 
             {/*Ports*/}
             <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% - 300px)`, left: `calc(50% + 10px)`}} alt="3To1Port"/>
-            <img className="ports" src={portRoad} style={{ width: '7px', height: '30px',top: `calc(50% - 270px)`, left: `calc(50% + 10px)`}} alt="3To1Port"/>
-            <img className="ports" src={portRoad} style={{ width: '7px', height: '30px',top: `calc(50% - 270px)`, left: `calc(50% + 30px)`}} alt="3To1Port"/>
             <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% - 210px)`, left: `calc(50% + 210px)`}} alt="3To1Port2"/>
             <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% + 250px)`, left: `calc(50% + 10px)`}} alt="3To1Port3"/>
             <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% + 65px)`, left: `calc(50% - 310px)`}} alt="3To1Port4"/>
@@ -592,6 +593,29 @@ function Game() {
             <img className="ports" src={TwotoOneWood} style={{ top: `calc(50% + 250px)`, left: `calc(50% - 200px)`}} alt="2To1Wood"/>
             <img className="ports" src={TwotoOneWheat} style={{ top: `calc(50% + 150px)`, left: `calc(50% + 210px)`}} alt="2To1Wheat"/>
             
+            {/* Port Roads - connecting ports to houses */}
+            {Array.isArray(portRoadData) && portRoadData.map((portRoadMapping, portIndex) => (
+            <React.Fragment key={`port-road-group-${portIndex}`}>
+                {portRoadMapping.roadSegments.map((segment, segmentIndex) => (
+                <img 
+                    key={`port-road-${portIndex}-${segmentIndex}`}
+                    src={portRoad}
+                    alt={`Port Road`}
+                    style={{
+                    position: 'absolute',
+                    top: `calc(50% + ${segment.y}px)`,
+                    left: `calc(50% + ${segment.x}px)`,
+                    transform: `translate(-50%, -50%) rotate(${segment.rotation}deg)`,
+                    pointerEvents: 'none',
+                    width: '7px',
+                    height: '30px',
+                    zIndex: 1
+                    }}
+                />
+                ))}
+            </React.Fragment>
+            ))}
+
             {/* Show house options - ONLY during setup phase */}
             {gamePhase === 'setup' && userId === currentTurnUserId && housesPlacedByCurrentUser < 2 && !housePlacedThisTurn && Array.isArray(houseData) && houseData.map((house, index) => (
                 !placedHouses[index] && !unavailableHouses.has(index) && (

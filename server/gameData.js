@@ -138,8 +138,79 @@ function getRoadSpotData() {
     return road_segments;
 }
 
+function getPortRoadData() {
+    const portRoadMappings = [
+        // 3:1 Port at top-middle
+        {
+            roadSegments: [
+                { x: 10, y: -270, rotation: 30 },
+                { x: 40, y: -250, rotation: 0 }
+            ]
+        },
+        // 3:1 Port at top-right  
+        {
+            roadSegments: [
+                { x: 220, y: -160, rotation: 30 },
+                { x: 240, y: -160, rotation: 0 }
+            ]
+        },
+        // 3:1 Port at bottom-middle
+        {
+            roadSegments: [
+                { x: 10, y: 230, rotation: -30 },
+                { x: 60, y: 230, rotation: 0 }
+            ]
+        },
+        // 3:1 Port at middle-left
+        {
+            roadSegments: [
+                { x: -250, y: 110, rotation: -30 },
+                { x: -250, y: 70, rotation: 30 }
+            ]
+        },
+        // 2:1 Brick Port at top-left
+        {
+            roadSegments: [
+                { x: -180, y: -240, rotation: 0 },
+                { x: -140, y: -240, rotation: -30 }
+            ]
+        },
+        // 2:1 Sheep Port at middle-right
+        {
+            roadSegments: [
+                { x: 320, y: -10, rotation: -60 },
+                { x: 320, y: 20, rotation: 60 }
+            ]
+        },
+        // 2:1 Stone Port at left
+        {
+            roadSegments: [
+                { x: -250, y: -120, rotation: 30 },
+                { x: -250, y: -75, rotation: -30 }
+            ]
+        },
+        // 2:1 Wood Port at bottom-left
+        {
+            roadSegments: [
+                { x: -170, y: 220, rotation: 30 },
+                { x: -145, y: 235, rotation: 30 }
+            ]
+        },
+        // 2:1 Wheat Port at bottom-right
+        {
+            roadSegments: [
+                { x: 220, y: 150, rotation: 0 },
+                { x: 190, y: 170, rotation: -30 }
+            ]
+        }
+    ];
+
+    return portRoadMappings;
+}
+
 module.exports = {
   generateCatanBoard,
   getHouseTileData,
-  getRoadSpotData
+  getRoadSpotData,
+  getPortRoadData
 };
