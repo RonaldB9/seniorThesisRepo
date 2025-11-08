@@ -13,6 +13,8 @@ import chooseCircle from './Images/chooseCircle.png';
 import redHouse from './Images/redHouse.png';
 import greenHouse from './Images/greenHouse.png';
 import greenRoad from './Images/greenRoad.png';
+import redRoad from './Images/redRoad.png';
+import blueRoad from './Images/blueRoad.png';
 import ThreetoOnePort from './Images/3to1Port.jpg';
 import TwotoOneBrick from './Images/2To1Brick.jpg';
 import TwotoOneSheep from './Images/2To1Sheep.jpg';
@@ -708,8 +710,8 @@ function Game() {
                         left: `calc(50% + ${road.position.x}px)`,
                         transform: 'translate(-50%, -50%)',
                         pointerEvents: 'none',
-                        width: '30px',
-                        height: '8px',
+                        width: '10px',
+                        height: '60px',
                         zIndex: 1
                     }}/>
             ))}
