@@ -694,27 +694,59 @@ function Game() {
                         pointerEvents: 'none',
                         filter: `drop-shadow(30px, 30px, 10px ${house.playerColor}, 1)`,
                         width: '20px',
-                        height: '20px'
+                        height: '20px',
+                        zIndex: 2
                     }}/>
             ))}
 
             {/* Show placed roads */}
-            {Array.isArray(roadData) && Object.entries(placedRoads).map(([index, road]) => (
-                <img 
-                    key={`placed-road-${index}`}
-                    src={greenRoad}
-                    alt={`Placed road by ${road.playerName}`}
-                    style={{
-                        position: 'absolute',
-                        top: `calc(50% + ${road.position.y}px)`,
-                        left: `calc(50% + ${road.position.x}px)`,
-                        transform: 'translate(-50%, -50%)',
-                        pointerEvents: 'none',
-                        width: '10px',
-                        height: '60px',
-                        zIndex: 1
-                    }}/>
-            ))}
+            {Array.isArray(roadData) && Object.entries(placedRoads).map(([index, road]) => {
+                // Select road image based on player color
+                let roadImage = greenRoad; // default
+                if (road.playerColor === 'red') {
+                    roadImage = redRoad;
+                } else if (road.playerColor === 'blue') {
+                    roadImage = blueRoad;
+                } else if (road.playerColor === 'green') {
+                    roadImage = greenRoad;
+                }
+                
+                // Calculate rotation based on connected houses
+                const roadIdx = parseInt(index);
+                const roadInfo = roadData[roadIdx];
+                let rotation = 0; // default vertical
+                
+                if (roadInfo && roadInfo.connectedHouses && roadInfo.connectedHouses.length >= 2) {
+                    const house1 = houseData[roadInfo.connectedHouses[0]];
+                    const house2 = houseData[roadInfo.connectedHouses[1]];
+                    
+                    if (house1 && house2) {
+                        const dx = house2.x - house1.x;
+                        const dy = house2.y - house1.y;
+                        
+                        // Calculate angle in degrees
+                        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                        rotation = angle + 90; // Add 90 because image is vertical by default
+                    }
+                }
+                
+                return (
+                    <img 
+                        key={`placed-road-${index}`}
+                        src={roadImage}
+                        alt={`Placed road by ${road.playerName}`}
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${road.position.y}px)`,
+                            left: `calc(50% + ${road.position.x}px)`,
+                            transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+                            pointerEvents: 'none',
+                            width: '10px',
+                            height: '60px',
+                            zIndex: 1
+                        }}/>
+                );
+            })}
             </>
         )}
         </div>
