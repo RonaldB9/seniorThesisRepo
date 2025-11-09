@@ -45,6 +45,7 @@ function Game() {
     const [selectedRoadIndex, setSelectedRoadIndex] = useState(null);
     const [placedHouses, setPlacedHouses] = useState({});
     const [placedRoads, setPlacedRoads] = useState({});
+    const [placedCities, setPlacedCities] = useState({});
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [unavailableHouses, setUnavailableHouses] = useState(new Set());
     const [unavailableRoads, setUnavailableRoads] = useState(new Set());
@@ -56,6 +57,7 @@ function Game() {
     const [isRolling, setIsRolling] = useState(false);
     const [buildingHouse, setBuildingHouse] = useState(false);
     const [buildingRoad, setBuildingRoad] = useState(false);
+    const [buildingCity, setBuildingCity] = useState(false);
     const [portRoadData, setPortRoadData] = useState([]);
 
 
@@ -106,6 +108,14 @@ function Game() {
             updateUnavailableRoads(data);
         })
         .catch(err => console.error('Failed to fetch roads:', err));
+
+        // Fetch existing placed cities
+        fetch('http://localhost:3001/api/cities')
+        .then((res) => res.json())
+        .then((data) => {
+            setPlacedCities(data);
+        })
+        .catch(err => console.error('Failed to fetch cities:', err));
     }, []);
 
     // Helper function to find adjacent houses
@@ -164,6 +174,7 @@ function Game() {
         setIsRolling(false);
         setBuildingHouse(false);
         setBuildingRoad(false);
+        setBuildingCity(false);
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -209,6 +220,13 @@ function Game() {
             });
         };
 
+        const handleCityPlaced = (data) => {
+            setPlacedCities(prev => ({
+                ...prev,
+                [data.houseIndex]: data
+            }));
+        };
+
         const handlePlayersUpdated = (players) => {
             setAllPlayers(players);
             if (userId) {
@@ -226,6 +244,7 @@ function Game() {
         socket.on('currentTurn', handleCurrentTurn);
         socket.on('housePlaced', handleHousePlaced);
         socket.on('roadPlaced', handleRoadPlaced);
+        socket.on('cityPlaced', handleCityPlaced);
         socket.on('playersUpdated', handlePlayersUpdated);
         socket.on('diceRolled', handleDiceRolled);
         
@@ -240,6 +259,7 @@ function Game() {
             socket.off('currentTurn', handleCurrentTurn);
             socket.off('housePlaced', handleHousePlaced);
             socket.off('roadPlaced', handleRoadPlaced);
+            socket.off('cityPlaced', handleCityPlaced);
             socket.off('playersUpdated', handlePlayersUpdated);
             socket.off('diceRolled', handleDiceRolled);
         };
@@ -271,6 +291,19 @@ function Game() {
             });
             
             setBuildingHouse(false);
+        }
+
+        // Playing phase logic - upgrading to city
+        if (userId === currentTurnUserId && buildingCity && gamePhase === 'playing') {
+            console.log(`🏛️ Upgrading house ${index} to city`);
+            
+            socket.emit('buildCity', {
+                userId,
+                houseIndex: index,
+                position: houseData[index]
+            });
+            
+            setBuildingCity(false);
         }
     };
 
@@ -314,6 +347,7 @@ function Game() {
             setDiceRoll(null);
             setBuildingHouse(false);
             setBuildingRoad(false);
+            setBuildingCity(false);
         } else {
             console.log("❌ Not your turn or userId not set");
         }
@@ -340,29 +374,57 @@ function Game() {
         }
     };
 
+    const handleBuildCity = () => {
+        if (userId === currentTurnUserId && gamePhase === 'playing' && canBuildCity()) {
+            setBuildingCity(true);
+            console.log('🏗️ Entering city building mode');
+        }
+    };
+
     const handleCancelBuild = () => {
         setBuildingHouse(false);
         setBuildingRoad(false);
+        setBuildingCity(false);
         console.log('❌ Cancelled building');
     };
 
     // Check if player has enough resources to build a house
     const canBuildHouse = () => {
-    if (!currentPlayer || !currentPlayer.resources) return false;
+        if (!currentPlayer || !currentPlayer.resources) return false;
         const { wood, wheat, brick, sheep } = currentPlayer.resources;
         const hasResources = wood >= 1 && wheat >= 1 && brick >= 1 && sheep >= 1;
         const hasAvailableSpots = availableHouseIndicesForBuilding.length > 0;
         return hasResources && hasAvailableSpots;
-};
+    };
 
     // Check if player has enough resources to build a road
     const canBuildRoad = () => {
-    if (!currentPlayer || !currentPlayer.resources) return false;
+        if (!currentPlayer || !currentPlayer.resources) return false;
         const { wood, brick } = currentPlayer.resources;
         const hasResources = wood >= 1 && brick >= 1;
         const hasAvailableSpots = availableRoadIndices.length > 0;
         return hasResources && hasAvailableSpots;
-};
+    };
+
+    // Check if player has enough resources to build a city
+    const canBuildCity = () => {
+        if (!currentPlayer || !currentPlayer.resources) return false;
+        const { ore, wheat } = currentPlayer.resources;
+        const hasResources = ore >= 3 && wheat >= 2;
+        const hasSettlementsToUpgrade = getUpgradeableSettlements().length > 0;
+        return hasResources && hasSettlementsToUpgrade;
+    };
+
+    // Get settlements that can be upgraded to cities
+    const getUpgradeableSettlements = () => {
+        const userSettlements = Object.entries(placedHouses)
+            .filter(([index, house]) => 
+                house.userId === userId && !placedCities[index]
+            )
+            .map(([index, _]) => parseInt(index));
+        
+        return userSettlements;
+    };
 
     const housesPlacedByCurrentUser = Object.values(placedHouses).filter(
         house => house.userId === userId
@@ -427,6 +489,7 @@ function Game() {
     };
 
     const availableHouseIndicesForBuilding = getAvailableHousesForBuilding();
+    const upgradeableSettlements = getUpgradeableSettlements();
 
     return (
     <div className="background">
@@ -442,6 +505,7 @@ function Game() {
                 {gamePhase === 'playing' && diceRoll && ` Rolled: ${diceRoll.total}`}
                 {buildingHouse && ' - Select a spot for your house'}
                 {buildingRoad && ' - Select a spot for your road'}
+                {buildingCity && ' - Select a settlement to upgrade'}
             </div>
         )}
         <h1 className="title">Game {gamePhase === 'setup' ? '(Setup)' : '(Playing)'}</h1>
@@ -662,6 +726,32 @@ function Game() {
                 )
             ))}
 
+            {/* Show city upgrade options - ONLY during playing phase when upgrading */}
+            {gamePhase === 'playing' && buildingCity && userId === currentTurnUserId && Array.isArray(houseData) && houseData.map((house, index) => (
+                upgradeableSettlements.includes(index) && (
+                    <img 
+                        key={`upgrade-city-${index}`} 
+                        src={chooseCircle} 
+                        className="house_marker fade-loop"
+                        alt={`Upgrade to City ${index}`}
+                        onClick={() => handleHouseClick(index)}
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${house.y}px)`,
+                            left: `calc(50% + ${house.x}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            cursor: 'pointer',
+                            opacity: 0.7,
+                            filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.9))',
+                            transition: 'all 0.3s ease',
+                            width: '35px',
+                            height: '35px',
+                            zIndex: 10
+                        }}
+                    />
+                )
+            ))}
+
             {/* Show road options - ONLY during setup phase */}
             {gamePhase === 'setup' && userId === currentTurnUserId && housePlacedThisTurn && roadsPlacedByCurrentUser < 2 && !roadPlacedThisTurn && Array.isArray(roadData) && roadData.map((road, index) => (
                 !placedRoads[index] && !unavailableRoads.has(index) && availableRoadIndices.includes(index) && (
@@ -709,21 +799,30 @@ function Game() {
             ))}
 
             {/* Show placed houses */}
-            {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => (
-                <img key={`placed-house-${index}`} src={house.playerName === 'Player 1' ? redHouse : greenHouse}
-                    alt={`Placed house by ${house.playerName}`}
-                    style={{
-                        position: 'absolute',
-                        top: `calc(50% + ${house.position.y}px)`,
-                        left: `calc(50% + ${house.position.x}px)`,
-                        transform: 'translate(-50%, -50%)',
-                        pointerEvents: 'none',
-                        filter: `drop-shadow(30px, 30px, 10px ${house.playerColor}, 1)`,
-                        width: '20px',
-                        height: '20px',
-                        zIndex: 2
-                    }}/>
-            ))}
+            {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => {
+                const isCity = placedCities[index];
+                return (
+                    <img 
+                        key={`placed-house-${index}`} 
+                        src={house.playerName === 'Player 1' ? redHouse : greenHouse}
+                        alt={isCity ? `City by ${house.playerName}` : `House by ${house.playerName}`}
+                        style={{
+                            position: 'absolute',
+                            top: `calc(50% + ${house.position.y}px)`,
+                            left: `calc(50% + ${house.position.x}px)`,
+                            transform: 'translate(-50%, -50%)',
+                            pointerEvents: 'none',
+                            filter: `drop-shadow(30px, 30px, 10px ${house.playerColor}, 1)`,
+                            width: isCity ? '30px' : '20px',
+                            height: isCity ? '30px' : '20px',
+                            zIndex: 2,
+                            border: isCity ? '3px solid gold' : 'none',
+                            borderRadius: isCity ? '50%' : '0',
+                            boxShadow: isCity ? '0 0 15px rgba(255, 215, 0, 0.8)' : 'none'
+                        }}
+                    />
+                );
+            })}
 
             {/* Show placed roads */}
             {Array.isArray(roadData) && Object.entries(placedRoads).map(([index, road]) => {
@@ -785,7 +884,7 @@ function Game() {
                 )}
                 
                 {/* Build House Button - Only in playing phase */}
-                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && (
+                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && (
                     <button 
                         onClick={handleBuildHouse} 
                         disabled={!canBuildHouse()}
@@ -805,7 +904,7 @@ function Game() {
                 )}
                 
                 {/* Build Road Button - Only in playing phase */}
-                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && (
+                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && (
                     <button 
                         onClick={handleBuildRoad} 
                         disabled={!canBuildRoad()}
@@ -823,9 +922,29 @@ function Game() {
                         🛣️ Build Road
                     </button>
                 )}
+
+                {/* Build City Button - Only in playing phase */}
+                {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && (
+                    <button 
+                        onClick={handleBuildCity} 
+                        disabled={!canBuildCity()}
+                        className="build-city-button"
+                        title={
+                            !currentPlayer?.resources || 
+                            currentPlayer.resources.ore < 3 || 
+                            currentPlayer.resources.wheat < 2
+                                ? 'Need: 3 Ore, 2 Wheat'
+                                : upgradeableSettlements.length === 0
+                                ? 'No settlements to upgrade'
+                                : 'Upgrade settlement to city'
+                        }
+                    >
+                        🏛️ Build City
+                    </button>
+                )}
                 
                 {/* Cancel Build Button */}
-                {gamePhase === 'playing' && (buildingHouse || buildingRoad) && (
+                {gamePhase === 'playing' && (buildingHouse || buildingRoad || buildingCity) && (
                     <button 
                         onClick={handleCancelBuild}
                         className="cancel-build-button"

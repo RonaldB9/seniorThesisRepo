@@ -1,1 +1,191 @@
-[]
+[
+  {
+    "userId": "73b9025b-c5ef-41ac-802b-254cf09500f5",
+    "name": "Player 1",
+    "ready": true,
+    "score": 2,
+    "color": "red",
+    "resources": {
+      "wood": 11,
+      "brick": 10,
+      "sheep": 11,
+      "wheat": 7,
+      "ore": 4
+    },
+    "houses": [
+      {
+        "houseIndex": 13,
+        "position": {
+          "x": 0,
+          "y": -127,
+          "tiles": [
+            1,
+            12,
+            13
+          ]
+        },
+        "placedAt": "2025-11-09T01:07:59.946Z"
+      },
+      {
+        "houseIndex": 12,
+        "position": {
+          "x": -125,
+          "y": -127,
+          "tiles": [
+            0,
+            11,
+            12
+          ]
+        },
+        "placedAt": "2025-11-09T01:13:31.262Z"
+      }
+    ],
+    "cities": [
+      {
+        "houseIndex": 13,
+        "position": {
+          "x": 0,
+          "y": -127,
+          "tiles": [
+            1,
+            12,
+            13
+          ]
+        },
+        "upgradedAt": "2025-11-09T01:13:34.867Z"
+      },
+      {
+        "houseIndex": 12,
+        "position": {
+          "x": -125,
+          "y": -127,
+          "tiles": [
+            0,
+            11,
+            12
+          ]
+        },
+        "upgradedAt": "2025-11-09T01:13:43.211Z"
+      }
+    ],
+    "roads": [
+      {
+        "roadIndex": 20,
+        "position": {
+          "x": 0,
+          "y": -95,
+          "connectedHouses": [
+            13,
+            18
+          ],
+          "connectedRoads": [
+            13,
+            14,
+            27,
+            28
+          ]
+        },
+        "placedAt": "2025-11-09T01:08:00.234Z"
+      },
+      {
+        "roadIndex": 19,
+        "position": {
+          "x": -125,
+          "y": -95,
+          "connectedHouses": [
+            12,
+            17
+          ],
+          "connectedRoads": [
+            11,
+            12,
+            25,
+            26
+          ]
+        },
+        "placedAt": "2025-11-09T01:13:31.582Z"
+      }
+    ]
+  },
+  {
+    "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
+    "name": "Player 2",
+    "ready": true,
+    "score": 0,
+    "color": "green",
+    "resources": {
+      "wood": 12,
+      "brick": 10,
+      "sheep": 11,
+      "wheat": 10,
+      "ore": 10
+    },
+    "houses": [
+      {
+        "houseIndex": 24,
+        "position": {
+          "x": 65,
+          "y": -32,
+          "tiles": [
+            13,
+            14,
+            18
+          ]
+        },
+        "placedAt": "2025-11-09T01:08:04.275Z"
+      },
+      {
+        "houseIndex": 29,
+        "position": {
+          "x": -65,
+          "y": 33,
+          "tiles": [
+            16,
+            17,
+            18
+          ]
+        },
+        "placedAt": "2025-11-09T01:08:48.470Z"
+      }
+    ],
+    "cities": [],
+    "roads": [
+      {
+        "roadIndex": 36,
+        "position": {
+          "x": 60,
+          "y": 0,
+          "connectedHouses": [
+            24,
+            30
+          ],
+          "connectedRoads": [
+            28,
+            29,
+            44,
+            45
+          ]
+        },
+        "placedAt": "2025-11-09T01:08:04.530Z"
+      },
+      {
+        "roadIndex": 42,
+        "position": {
+          "x": -90,
+          "y": 45,
+          "connectedHouses": [
+            29,
+            34
+          ],
+          "connectedRoads": [
+            35,
+            41,
+            43,
+            50
+          ]
+        },
+        "placedAt": "2025-11-09T01:08:48.777Z"
+      }
+    ]
+  }
+]

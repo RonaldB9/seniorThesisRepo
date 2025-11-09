@@ -29,6 +29,7 @@ let setupPhase = 'forward'; // 'forward' or 'backward'
 let gameBoard = null;
 let placedHouses = {}; // Track which house indices are already occupied with house data
 let placedRoads = {}; // Track which road indices are already occupied with road data
+let placedCities = {}; // Track which houses have been upgraded to cities
 
 // Generate board data
 app.get('/api/board', (req, res) => {
@@ -58,6 +59,11 @@ app.get('/api/houses', (req, res) => {
 // Get all placed roads
 app.get('/api/roads', (req, res) => {
   res.json(placedRoads);
+});
+
+// Get all placed cities
+app.get('/api/cities', (req, res) => {
+  res.json(placedCities);
 });
 
 // Register new player
@@ -152,12 +158,16 @@ function distributeResources(diceTotal) {
         if (houseTileData.tiles.includes(tileIndex)) {
           const player = playerData.findPlayer(house.userId);
           if (player) {
+            // Check if this house is a city (produces 2 resources) or settlement (1 resource)
+            const isCity = placedCities[houseIndex];
+            const resourceAmount = isCity ? 2 : 1;
+            
             // Give the player the resource
             const resourceKey = resourceType.toLowerCase();
-            player.resources[resourceKey] = (player.resources[resourceKey] || 0) + 1;
+            player.resources[resourceKey] = (player.resources[resourceKey] || 0) + resourceAmount;
             playerData.updatePlayer(player.userId, { resources: player.resources });
             
-            console.log(`✅ ${player.name} received 1 ${resourceType} (house at ${houseIndex})`);
+            console.log(`✅ ${player.name} received ${resourceAmount} ${resourceType} (${isCity ? 'city' : 'settlement'} at ${houseIndex})`);
           }
         }
       });
@@ -252,6 +262,34 @@ function deductRoadResources(userId) {
   });
   
   console.log(`💰 ${player.name} paid: 1 Wood, 1 Brick`);
+  
+  return true;
+}
+
+// Helper function to deduct resources when building a city
+function deductCityResources(userId) {
+  const player = playerData.findPlayer(userId);
+  
+  if (!player || !player.resources) return false;
+  
+  // Check if player has enough resources (3 ore + 2 wheat)
+  if (player.resources.ore < 3 || player.resources.wheat < 2) {
+    console.log(`❌ ${player.name} doesn't have enough resources to build a city`);
+    return false;
+  }
+  
+  // Deduct the resources
+  player.resources.ore -= 3;
+  player.resources.wheat -= 2;
+  
+  // Update player data - cities are worth 2 points, but we already counted 1 for the settlement
+  // So we only add 1 more point
+  playerData.updatePlayer(userId, { 
+    resources: player.resources,
+    score: player.score + 1  // Add 1 more point (settlement was 1, city is 2 total)
+  });
+  
+  console.log(`💰 ${player.name} paid: 3 Ore, 2 Wheat`);
   
   return true;
 }
@@ -395,6 +433,77 @@ io.on('connection', (socket) => {
 
     // Broadcast to all clients
     io.emit('housePlaced', {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      houseIndex,
+      position
+    });
+
+    // Broadcast updated player data (resources and score)
+    io.emit('playersUpdated', playerData.getPlayers());
+  });
+
+  // Handle building a city (playing phase)
+  socket.on('buildCity', (data) => {
+    const { userId, houseIndex, position } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if it's this player's turn
+    if (userId !== getCurrentPlayerUserId()) {
+      console.log(`❌ Not ${player.name}'s turn!`);
+      return;
+    }
+
+    // Check if house exists and belongs to this player
+    const house = placedHouses[houseIndex];
+    if (!house || house.userId !== userId) {
+      console.log(`⚠️ Invalid house for city upgrade at ${houseIndex}!`);
+      socket.emit('cityBuildFailed', { reason: 'Invalid settlement for upgrade' });
+      return;
+    }
+
+    // Check if already a city
+    if (placedCities[houseIndex]) {
+      console.log(`⚠️ House ${houseIndex} is already a city!`);
+      socket.emit('cityBuildFailed', { reason: 'Already a city' });
+      return;
+    }
+
+    // Deduct resources and check if player has enough
+    if (!deductCityResources(userId)) {
+      socket.emit('cityBuildFailed', { reason: 'Not enough resources' });
+      return;
+    }
+
+    // Mark this house as a city
+    placedCities[houseIndex] = {
+      userId,
+      playerName: player.name,
+      playerColor: player.color,
+      houseIndex,
+      position,
+      upgradedAt: new Date()
+    };
+
+    // Add city to player's cities array
+    player.cities.push({
+      houseIndex,
+      position,
+      upgradedAt: new Date()
+    });
+
+    playerData.updatePlayer(userId, { cities: player.cities });
+
+    console.log(`🏛️ ${player.name} upgraded house ${houseIndex} to a city`);
+
+    // Broadcast to all clients
+    io.emit('cityPlaced', {
       userId,
       playerName: player.name,
       playerColor: player.color,
@@ -600,6 +709,7 @@ io.on('connection', (socket) => {
     setupPhase = 'forward'; // Reset setup phase
     placedHouses = {}; // Reset placed houses
     placedRoads = {}; // Reset placed roads
+    placedCities = {}; // Reset placed cities
 
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
