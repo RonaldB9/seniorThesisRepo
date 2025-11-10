@@ -2,7 +2,7 @@ import React from 'react';
 import './css/App.css';
 import './css/Game.css'; 
 import catanTitle from './Images/catanTitle.png';
-import socket from './socket';
+import socket from '../socket';
 import { useGameLogic } from './useGameLogic';
 import GameBoard from './GameBoard';
 import Scoreboard from './Scoreboard';

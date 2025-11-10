@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import socket from './socket';
+import socket from '../socket';
 
 // Helper function to get adjacent houses
 const getAdjacentHouses = (houseIndex) => {
