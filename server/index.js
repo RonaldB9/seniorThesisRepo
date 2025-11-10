@@ -32,6 +32,7 @@ let placedRoads = {}; // Track which road indices are already occupied with road
 let placedCities = {}; // Track which houses have been upgraded to cities
 let developmentCardDeck = [];
 let largestArmyPlayer = null; // Track who has largest army
+let robberTileIndex = null; // Track robber position
 
 // Generate board data
 app.get('/api/board', (req, res) => {
@@ -40,6 +41,9 @@ app.get('/api/board', (req, res) => {
     const houseData = getHouseTileData();
     const roadData = getRoadSpotData();
     const portRoadData = getPortRoadData();
+
+    // Initialize robber on desert tile
+    robberTileIndex = boardData.resourceTiles.findIndex(tile => tile === 'Desert');
 
     gameBoard = {
       resourceTiles: boardData.resourceTiles,
@@ -68,6 +72,11 @@ app.get('/api/cities', (req, res) => {
   res.json(placedCities);
 });
 
+// Get robber position
+app.get('/api/robber', (req, res) => {
+  res.json({ tileIndex: robberTileIndex });
+});
+
 // Register new player
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
@@ -77,7 +86,6 @@ app.post('/api/register', (req, res) => {
 
   let existing = playerData.findPlayer(userId);
   if (!existing) {
-    // When creating a new player in server/index.js, add:
     const newPlayer = {
       userId,
       name: `Player ${playerData.getPlayers().length + 1}`,
@@ -98,7 +106,7 @@ app.post('/api/register', (req, res) => {
         yearOfPlenty: 0,
         monopoly: 0
       },
-      playedKnights: 0, // Track for Largest Army
+      playedKnights: 0,
       houses: [],
       cities: [],
       roads: []
@@ -109,7 +117,6 @@ app.post('/api/register', (req, res) => {
   }
 
   io.emit('playersUpdated', playerData.getPlayers());
-
   res.json(existing);
 });
 
@@ -123,7 +130,6 @@ app.post('/api/players/:userId/ready', (req, res) => {
   }
 
   const updatedPlayer = playerData.updatePlayer(userId, { ready: !player.ready });
-
   io.emit('playersUpdated', playerData.getPlayers());
   res.json(updatedPlayer);
 });
@@ -152,6 +158,12 @@ function distributeResources(diceTotal) {
   
   // Find all tiles that match the dice roll
   resourceTokens.forEach((token, tileIndex) => {
+    // Skip if robber is on this tile
+    if (tileIndex === robberTileIndex) {
+      console.log(`⛔ Robber blocking tile ${tileIndex}`);
+      return;
+    }
+
     if (token === diceTotal) {
       const resourceType = resourceTiles[tileIndex];
       
@@ -216,8 +228,6 @@ function giveResourcesForHouse(houseIndex, userId) {
 
   // Update player data
   playerData.updatePlayer(userId, { resources: player.resources });
-  
-  // Broadcast updated player data
   io.emit('playersUpdated', playerData.getPlayers());
 }
 
@@ -227,27 +237,23 @@ function deductHouseResources(userId) {
   
   if (!player || !player.resources) return false;
   
-  // Check if player has enough resources
   if (player.resources.wood < 1 || player.resources.wheat < 1 || 
       player.resources.brick < 1 || player.resources.sheep < 1) {
     console.log(`❌ ${player.name} doesn't have enough resources to build a house`);
     return false;
   }
   
-  // Deduct the resources
   player.resources.wood -= 1;
   player.resources.wheat -= 1;
   player.resources.brick -= 1;
   player.resources.sheep -= 1;
   
-  // Update player data
   playerData.updatePlayer(userId, { 
     resources: player.resources,
-    score: player.score + 1  // Each house is worth 1 point
+    score: player.score + 1
   });
   
   console.log(`💰 ${player.name} paid: 1 Wood, 1 Wheat, 1 Brick, 1 Sheep`);
-  
   return true;
 }
 
@@ -257,23 +263,17 @@ function deductRoadResources(userId) {
   
   if (!player || !player.resources) return false;
   
-  // Check if player has enough resources
   if (player.resources.wood < 1 || player.resources.brick < 1) {
     console.log(`❌ ${player.name} doesn't have enough resources to build a road`);
     return false;
   }
   
-  // Deduct the resources
   player.resources.wood -= 1;
   player.resources.brick -= 1;
   
-  // Update player data
-  playerData.updatePlayer(userId, { 
-    resources: player.resources
-  });
+  playerData.updatePlayer(userId, { resources: player.resources });
   
   console.log(`💰 ${player.name} paid: 1 Wood, 1 Brick`);
-  
   return true;
 }
 
@@ -283,25 +283,20 @@ function deductCityResources(userId) {
   
   if (!player || !player.resources) return false;
   
-  // Check if player has enough resources (3 ore + 2 wheat)
   if (player.resources.ore < 3 || player.resources.wheat < 2) {
     console.log(`❌ ${player.name} doesn't have enough resources to build a city`);
     return false;
   }
   
-  // Deduct the resources
   player.resources.ore -= 3;
   player.resources.wheat -= 2;
   
-  // Update player data - cities are worth 2 points, but we already counted 1 for the settlement
-  // So we only add 1 more point
   playerData.updatePlayer(userId, { 
     resources: player.resources,
-    score: player.score + 1  // Add 1 more point (settlement was 1, city is 2 total)
+    score: player.score + 1
   });
   
   console.log(`💰 ${player.name} paid: 3 Ore, 2 Wheat`);
-  
   return true;
 }
 
@@ -316,11 +311,77 @@ function isSetupPhaseComplete() {
   return totalHouses >= requiredHouses && totalRoads >= requiredRoads;
 }
 
+// Helper function to get players with settlements adjacent to a tile
+function getPlayersAdjacentToTile(tileIndex) {
+  if (!gameBoard) return [];
+  
+  const adjacentPlayers = new Set();
+  
+  // Check all placed houses
+  Object.entries(placedHouses).forEach(([houseIndex, house]) => {
+    const houseTileData = gameBoard.houseData[parseInt(houseIndex)];
+    
+    // If this house is adjacent to the tile
+    if (houseTileData.tiles.includes(tileIndex)) {
+      const player = playerData.findPlayer(house.userId);
+      if (player) {
+        const totalCards = Object.values(player.resources).reduce((sum, count) => sum + count, 0);
+        if (totalCards > 0) {
+          adjacentPlayers.add(JSON.stringify({
+            userId: player.userId,
+            name: player.name,
+            color: player.color,
+            totalCards
+          }));
+        }
+      }
+    }
+  });
+  
+  return Array.from(adjacentPlayers).map(p => JSON.parse(p));
+}
+
+// Helper function to steal a random resource from a player
+function stealRandomResource(thiefUserId, victimUserId) {
+  const victim = playerData.findPlayer(victimUserId);
+  const thief = playerData.findPlayer(thiefUserId);
+  
+  if (!victim || !thief) return null;
+  
+  // Get all available resources from victim
+  const availableResources = [];
+  Object.entries(victim.resources).forEach(([resource, count]) => {
+    for (let i = 0; i < count; i++) {
+      availableResources.push(resource);
+    }
+  });
+  
+  if (availableResources.length === 0) return null;
+  
+  // Pick a random resource
+  const randomIndex = Math.floor(Math.random() * availableResources.length);
+  const stolenResource = availableResources[randomIndex];
+  
+  // Transfer the resource
+  victim.resources[stolenResource] -= 1;
+  thief.resources[stolenResource] = (thief.resources[stolenResource] || 0) + 1;
+  
+  playerData.updatePlayer(victimUserId, { resources: victim.resources });
+  playerData.updatePlayer(thiefUserId, { resources: thief.resources });
+  
+  console.log(`🦹 ${thief.name} stole ${stolenResource} from ${victim.name}`);
+  
+  return {
+    resource: stolenResource,
+    thiefName: thief.name,
+    victimName: victim.name
+  };
+}
+
 // Socket connection
 io.on('connection', (socket) => {
   console.log('🔌 New WebSocket connection:', socket.id);
 
-  // Send current turn to this specific client
   const currentUserId = getCurrentPlayerUserId();
   if (currentUserId) {
     console.log(`📤 Sending current turn to ${socket.id}: ${currentUserId}`);
@@ -347,14 +408,12 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if house is already occupied
     if (placedHouses[houseIndex]) {
       console.log(`⚠️ House ${houseIndex} already occupied!`);
       socket.emit('houseSelectionFailed', { reason: 'House already occupied' });
       return;
     }
 
-    // Store house data
     placedHouses[houseIndex] = {
       userId,
       playerName: player.name,
@@ -364,7 +423,6 @@ io.on('connection', (socket) => {
       placedAt: new Date()
     };
 
-    // Add house to player
     player.houses.push({
       houseIndex,
       position,
@@ -375,14 +433,12 @@ io.on('connection', (socket) => {
 
     console.log(`🏠 ${player.name} placed a house at index ${houseIndex}`);
 
-    // Check if this is the player's second house (during backward setup phase)
     const playerHouseCount = player.houses.length;
     if (playerHouseCount === 2 && setupPhase === 'backward') {
       console.log(`🎁 Second house placement - giving initial resources!`);
       giveResourcesForHouse(houseIndex, userId);
     }
 
-    // Broadcast to all clients
     io.emit('housePlaced', {
       userId,
       playerName: player.name,
@@ -402,26 +458,22 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if it's this player's turn
     if (userId !== getCurrentPlayerUserId()) {
       console.log(`❌ Not ${player.name}'s turn!`);
       return;
     }
 
-    // Check if house is already occupied
     if (placedHouses[houseIndex]) {
       console.log(`⚠️ House ${houseIndex} already occupied!`);
       socket.emit('houseSelectionFailed', { reason: 'House already occupied' });
       return;
     }
 
-    // Deduct resources and check if player has enough
     if (!deductHouseResources(userId)) {
       socket.emit('houseSelectionFailed', { reason: 'Not enough resources' });
       return;
     }
 
-    // Store house data
     placedHouses[houseIndex] = {
       userId,
       playerName: player.name,
@@ -431,7 +483,6 @@ io.on('connection', (socket) => {
       placedAt: new Date()
     };
 
-    // Add house to player
     player.houses.push({
       houseIndex,
       position,
@@ -442,7 +493,6 @@ io.on('connection', (socket) => {
 
     console.log(`🏗️ ${player.name} built a house at index ${houseIndex}`);
 
-    // Broadcast to all clients
     io.emit('housePlaced', {
       userId,
       playerName: player.name,
@@ -451,7 +501,6 @@ io.on('connection', (socket) => {
       position
     });
 
-    // Broadcast updated player data (resources and score)
     io.emit('playersUpdated', playerData.getPlayers());
   });
 
@@ -465,13 +514,11 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if it's this player's turn
     if (userId !== getCurrentPlayerUserId()) {
       console.log(`❌ Not ${player.name}'s turn!`);
       return;
     }
 
-    // Check if house exists and belongs to this player
     const house = placedHouses[houseIndex];
     if (!house || house.userId !== userId) {
       console.log(`⚠️ Invalid house for city upgrade at ${houseIndex}!`);
@@ -479,20 +526,17 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if already a city
     if (placedCities[houseIndex]) {
       console.log(`⚠️ House ${houseIndex} is already a city!`);
       socket.emit('cityBuildFailed', { reason: 'Already a city' });
       return;
     }
 
-    // Deduct resources and check if player has enough
     if (!deductCityResources(userId)) {
       socket.emit('cityBuildFailed', { reason: 'Not enough resources' });
       return;
     }
 
-    // Mark this house as a city
     placedCities[houseIndex] = {
       userId,
       playerName: player.name,
@@ -502,7 +546,6 @@ io.on('connection', (socket) => {
       upgradedAt: new Date()
     };
 
-    // Add city to player's cities array
     player.cities.push({
       houseIndex,
       position,
@@ -513,7 +556,6 @@ io.on('connection', (socket) => {
 
     console.log(`🏛️ ${player.name} upgraded house ${houseIndex} to a city`);
 
-    // Broadcast to all clients
     io.emit('cityPlaced', {
       userId,
       playerName: player.name,
@@ -522,7 +564,6 @@ io.on('connection', (socket) => {
       position
     });
 
-    // Broadcast updated player data (resources and score)
     io.emit('playersUpdated', playerData.getPlayers());
   });
 
@@ -536,26 +577,22 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if it's this player's turn
     if (userId !== getCurrentPlayerUserId()) {
       console.log(`❌ Not ${player.name}'s turn!`);
       return;
     }
 
-    // Check if road is already occupied
     if (placedRoads[roadIndex]) {
       console.log(`⚠️ Road ${roadIndex} already occupied!`);
       socket.emit('roadSelectionFailed', { reason: 'Road already occupied' });
       return;
     }
 
-    // Deduct resources and check if player has enough
     if (!deductRoadResources(userId)) {
       socket.emit('roadSelectionFailed', { reason: 'Not enough resources' });
       return;
     }
 
-    // Store road data
     placedRoads[roadIndex] = {
       userId,
       playerName: player.name,
@@ -565,7 +602,6 @@ io.on('connection', (socket) => {
       placedAt: new Date()
     };
 
-    // Add road to player
     player.roads.push({
       roadIndex,
       position,
@@ -576,7 +612,6 @@ io.on('connection', (socket) => {
 
     console.log(`🏗️ ${player.name} built a road at index ${roadIndex}`);
 
-    // Broadcast to all clients
     io.emit('roadPlaced', {
       userId,
       playerName: player.name,
@@ -585,11 +620,10 @@ io.on('connection', (socket) => {
       position
     });
 
-    // Broadcast updated player data (resources)
     io.emit('playersUpdated', playerData.getPlayers());
   });
   
-  // Handle road selection
+  // Handle road selection (setup phase)
   socket.on('roadSelected', (data) => {
     const { userId, roadIndex, position } = data;
     const player = playerData.findPlayer(userId);
@@ -599,14 +633,12 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if road is already occupied
     if (placedRoads[roadIndex]) {
       console.log(`⚠️ Road ${roadIndex} already occupied!`);
       socket.emit('roadSelectionFailed', { reason: 'Road already occupied' });
       return;
     }
 
-    // Store road data
     placedRoads[roadIndex] = {
       userId,
       playerName: player.name,
@@ -616,7 +648,6 @@ io.on('connection', (socket) => {
       placedAt: new Date()
     };
 
-    // Add road to player
     player.roads.push({
       roadIndex,
       position,
@@ -627,7 +658,6 @@ io.on('connection', (socket) => {
 
     console.log(`🛣️ ${player.name} placed a road at index ${roadIndex}`);
 
-    // Broadcast to all clients
     io.emit('roadPlaced', {
       userId,
       playerName: player.name,
@@ -647,23 +677,34 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Check if it's this player's turn
     if (userId !== getCurrentPlayerUserId()) {
       console.log(`❌ Not ${player.name}'s turn!`);
       return;
     }
 
-    // Roll two dice
     const die1 = Math.floor(Math.random() * 6) + 1;
     const die2 = Math.floor(Math.random() * 6) + 1;
     const total = die1 + die2;
 
     console.log(`🎲 ${player.name} rolled: ${die1} + ${die2} = ${total}`);
 
-    // Distribute resources based on the roll
-    distributeResources(total);
+    if (total === 7) {
+      // Check if players need to discard (more than 7 cards)
+      const players = playerData.getPlayers();
+      players.forEach(p => {
+        const totalCards = Object.values(p.resources).reduce((sum, count) => sum + count, 0);
+        if (totalCards > 7) {
+          const cardsToDiscard = Math.floor(totalCards / 2);
+          socket.emit('discardRequired', {
+            userId: p.userId,
+            cardsToDiscard
+          });
+        }
+      });
+    } else {
+      distributeResources(total);
+    }
 
-    // Broadcast dice roll to all clients
     io.emit('diceRolled', {
       userId,
       playerName: player.name,
@@ -673,42 +714,80 @@ io.on('connection', (socket) => {
     });
   });
 
+  // Handle moving the robber
+  socket.on('moveRobber', (data) => {
+    const { userId, tileIndex } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    if (userId !== getCurrentPlayerUserId()) {
+      console.log(`❌ Not ${player.name}'s turn!`);
+      return;
+    }
+
+    console.log(`🦹 ${player.name} moved robber to tile ${tileIndex}`);
+    robberTileIndex = tileIndex;
+
+    // Find players adjacent to this tile who can be stolen from
+    const playersToStealFrom = getPlayersAdjacentToTile(tileIndex).filter(p => p.userId !== userId);
+
+    io.emit('robberMoved', {
+      userId,
+      tileIndex,
+      playersToStealFrom
+    });
+  });
+
+  // Handle stealing a resource
+  socket.on('stealResource', (data) => {
+    const { thiefUserId, victimUserId } = data;
+    
+    const result = stealRandomResource(thiefUserId, victimUserId);
+    
+    if (result) {
+      io.emit('resourceStolen', {
+        thief: thiefUserId,
+        thiefName: result.thiefName,
+        fromUserId: victimUserId,
+        fromName: result.victimName,
+        resource: result.resource
+      });
+      
+      io.emit('playersUpdated', playerData.getPlayers());
+    }
+  });
+
   // On endTurn from client
   socket.on('endTurn', () => {
     const players = playerData.getPlayers();
     if (players.length === 0) return;
 
-    // Check if we're still in setup phase
     if (!isSetupPhaseComplete()) {
-      // Setup phase turn logic
       if (setupPhase === 'forward') {
-        // Going forward through players
         if (currentTurnIndex < players.length - 1) {
           currentTurnIndex++;
         } else {
-          // Reached the end, switch to backward phase
           setupPhase = 'backward';
           console.log('🔄 Setup phase switching to BACKWARD');
-          // Don't increment, stay on last player for their second turn
         }
       } else {
-        // Going backward through players
         if (currentTurnIndex > 0) {
           currentTurnIndex--;
         } else {
-          // Setup complete, would normally transition to playing phase
           console.log('✅ Setup phase complete!');
         }
       }
     } else {
-      // Normal playing phase - cycle through players
       currentTurnIndex = (currentTurnIndex + 1) % players.length;
     }
 
     const nextPlayer = players[currentTurnIndex];
     console.log(`🔁 Turn passed to: ${nextPlayer.name} (${nextPlayer.userId})`);
 
-    // Broadcast to all clients
     broadcastCurrentTurn();
   });
 
@@ -717,12 +796,17 @@ io.on('connection', (socket) => {
     if (players.length === 0) return;
 
     currentTurnIndex = 0;
-    setupPhase = 'forward'; // Reset setup phase
-    placedHouses = {}; // Reset placed houses
-    placedRoads = {}; // Reset placed roads
-    placedCities = {}; // Reset placed cities
-    developmentCardDeck = createDevelopmentCardDeck(); // Initialize deck
+    setupPhase = 'forward';
+    placedHouses = {};
+    placedRoads = {};
+    placedCities = {};
+    developmentCardDeck = createDevelopmentCardDeck();
     largestArmyPlayer = null;
+    
+    // Reset robber to desert
+    if (gameBoard) {
+      robberTileIndex = gameBoard.resourceTiles.findIndex(tile => tile === 'Desert');
+    }
 
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
@@ -730,30 +814,19 @@ io.on('connection', (socket) => {
     broadcastCurrentTurn();
   });
 
-  // Add buy development card handler
+  // Buy development card handler
   socket.on('buyDevelopmentCard', (data) => {
     const { userId } = data;
     const player = playerData.findPlayer(userId);
 
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
-    }
+    if (!player || userId !== getCurrentPlayerUserId()) return;
 
-    // Check if it's this player's turn
-    if (userId !== getCurrentPlayerUserId()) {
-      console.log(`❌ Not ${player.name}'s turn!`);
-      return;
-    }
-
-    // Check if deck is empty
     if (developmentCardDeck.length === 0) {
       console.log(`⚠️ Development card deck is empty!`);
       socket.emit('buyCardFailed', { reason: 'Deck is empty' });
       return;
     }
 
-    // Check if player has enough resources (1 ore, 1 sheep, 1 wheat)
     if (!player.resources || player.resources.ore < 1 || 
         player.resources.sheep < 1 || player.resources.wheat < 1) {
       console.log(`❌ ${player.name} doesn't have enough resources for a development card`);
@@ -761,12 +834,10 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Deduct resources
     player.resources.ore -= 1;
     player.resources.sheep -= 1;
     player.resources.wheat -= 1;
 
-    // Draw a card from the deck
     const drawnCard = developmentCardDeck.pop();
     player.developmentCards[drawnCard] = (player.developmentCards[drawnCard] || 0) + 1;
 
@@ -777,15 +848,12 @@ io.on('connection', (socket) => {
 
     console.log(`🃏 ${player.name} bought a ${drawnCard} card (${developmentCardDeck.length} cards remaining)`);
 
-    // Notify player what they got
     socket.emit('cardBought', { cardType: drawnCard });
-
-    // Broadcast updated player data
     io.emit('playersUpdated', playerData.getPlayers());
     io.emit('deckUpdate', { cardsRemaining: developmentCardDeck.length });
   });
 
-  // Add play development card handlers
+  // Play knight card handler
   socket.on('playKnight', (data) => {
     const { userId } = data;
     const player = playerData.findPlayer(userId);
@@ -797,16 +865,13 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Use the knight card
     player.developmentCards.knight -= 1;
     player.playedKnights = (player.playedKnights || 0) + 1;
 
-    // Check for Largest Army (3+ knights and most among all players)
     const allPlayers = playerData.getPlayers();
     const maxKnights = Math.max(...allPlayers.map(p => p.playedKnights || 0));
     
     if (player.playedKnights >= 3 && player.playedKnights === maxKnights) {
-      // Remove Largest Army from previous holder
       if (largestArmyPlayer && largestArmyPlayer !== userId) {
         const prevPlayer = playerData.findPlayer(largestArmyPlayer);
         if (prevPlayer) {
@@ -814,7 +879,6 @@ io.on('connection', (socket) => {
         }
       }
       
-      // Award Largest Army
       if (largestArmyPlayer !== userId) {
         largestArmyPlayer = userId;
         playerData.updatePlayer(userId, { 
@@ -842,7 +906,7 @@ io.on('connection', (socket) => {
     socket.emit('knightPlayed', { userId, totalKnights: player.playedKnights });
   });
 
-  // Add other card play handlers similarly
+  // Play victory point card handler
   socket.on('playVictoryPoint', (data) => {
     const { userId } = data;
     const player = playerData.findPlayer(userId);
@@ -865,8 +929,6 @@ io.on('connection', (socket) => {
     console.log('❌ Client disconnected:', socket.id);
   });
 });
-
-
 
 // Get all players
 app.get('/api/players', (req, res) => {

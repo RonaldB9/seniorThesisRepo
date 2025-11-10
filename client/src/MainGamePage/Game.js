@@ -18,7 +18,8 @@ function Game() {
         housePlacedThisTurn, setHousePlacedThisTurn, roadPlacedThisTurn, setRoadPlacedThisTurn,
         allPlayers, gamePhase, diceRoll, isRolling, setIsRolling,
         buildingHouse, setBuildingHouse, buildingRoad, setBuildingRoad, buildingCity, setBuildingCity,
-        portRoadData, devCardDeckCount
+        portRoadData, devCardDeckCount, robberTileIndex, movingRobber, setMovingRobber,
+        playersToStealFrom, setPlayersToStealFrom, showStealDialog, setShowStealDialog
     } = gameState;
 
     const handleHouseClick = (index) => {
@@ -79,6 +80,28 @@ function Game() {
         }
     };
 
+    const handleTileClick = (tileIndex) => {
+        if (!movingRobber || userId !== currentTurnUserId || tileIndex === robberTileIndex) {
+            return;
+        }
+
+        console.log(`Moving robber to tile ${tileIndex}`);
+        socket.emit('moveRobber', {
+            userId,
+            tileIndex
+        });
+        setMovingRobber(false);
+    };
+
+    const handleStealFrom = (targetUserId) => {
+        socket.emit('stealResource', {
+            thiefUserId: userId,
+            victimUserId: targetUserId
+        });
+        setShowStealDialog(false);
+        setPlayersToStealFrom([]);
+    };
+
     const handleEndTurn = () => {
         if (userId && currentTurnUserId && userId === currentTurnUserId) {
             socket.emit('endTurn');
@@ -126,6 +149,13 @@ function Game() {
     const handleBuyDevelopmentCard = () => {
         if (userId === currentTurnUserId && gamePhase === 'playing' && canBuyDevCard()) {
             socket.emit('buyDevelopmentCard', { userId });
+        }
+    };
+
+    const handlePlayKnight = () => {
+        if (userId === currentTurnUserId && gamePhase === 'playing' && currentPlayer?.developmentCards?.knight > 0) {
+            socket.emit('playKnight', { userId });
+            setMovingRobber(true);
         }
     };
 
@@ -243,6 +273,7 @@ function Game() {
                     {buildingHouse && ' - Select a spot for your house'}
                     {buildingRoad && ' - Select a spot for your road'}
                     {buildingCity && ' - Select a settlement to upgrade'}
+                    {movingRobber && ' - Select a tile to move the robber'}
                 </div>
             )}
             
@@ -261,6 +292,44 @@ function Game() {
                         <div className="die">{diceRoll.die2}</div>
                     </div>
                     <div className="dice-total">Total: {diceRoll.total}</div>
+                    {diceRoll.total === 7 && (
+                        <div className="robber-message">Move the Robber! 🦹</div>
+                    )}
+                </div>
+            )}
+
+            {/* Steal Dialog */}
+            {showStealDialog && playersToStealFrom.length > 0 && (
+                <div className="steal-dialog-overlay">
+                    <div className="steal-dialog">
+                        <h3>Choose a player to steal from:</h3>
+                        <div className="steal-options">
+                            {playersToStealFrom.map((player) => (
+                                <button 
+                                    key={player.userId}
+                                    onClick={() => handleStealFrom(player.userId)}
+                                    className="steal-player-button"
+                                    style={{ borderColor: player.color }}
+                                >
+                                    <span style={{ color: player.color, fontWeight: 'bold' }}>
+                                        {player.name}
+                                    </span>
+                                    <span className="steal-card-count">
+                                        ({player.totalCards} cards)
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                        <button 
+                            onClick={() => {
+                                setShowStealDialog(false);
+                                setPlayersToStealFrom([]);
+                            }}
+                            className="steal-cancel-button"
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -292,6 +361,9 @@ function Game() {
                 availableRoadIndices={availableRoadIndices}
                 handleRoadClick={handleRoadClick}
                 buildingRoad={buildingRoad}
+                robberTileIndex={robberTileIndex}
+                movingRobber={movingRobber}
+                handleTileClick={handleTileClick}
             />
 
             <ActionButtons
@@ -321,6 +393,8 @@ function Game() {
                 handleEndTurn={handleEndTurn}
                 housePlacedThisTurn={housePlacedThisTurn}
                 roadPlacedThisTurn={roadPlacedThisTurn}
+                handlePlayKnight={handlePlayKnight}
+                movingRobber={movingRobber}
             />
         </div>
     );

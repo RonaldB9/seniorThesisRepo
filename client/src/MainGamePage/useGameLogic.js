@@ -46,6 +46,10 @@ export function useGameLogic() {
     const [buildingCity, setBuildingCity] = useState(false);
     const [portRoadData, setPortRoadData] = useState([]);
     const [devCardDeckCount, setDevCardDeckCount] = useState(25);
+    const [robberTileIndex, setRobberTileIndex] = useState(null);
+    const [movingRobber, setMovingRobber] = useState(false);
+    const [playersToStealFrom, setPlayersToStealFrom] = useState([]);
+    const [showStealDialog, setShowStealDialog] = useState(false);
 
     // Update unavailable houses based on placed houses
     const updateUnavailableHouses = (placedHousesObj) => {
@@ -120,6 +124,13 @@ export function useGameLogic() {
                 setPlacedCities(data);
             })
             .catch(err => console.error('Failed to fetch cities:', err));
+
+        fetch('http://localhost:3001/api/robber')
+            .then((res) => res.json())
+            .then((data) => {
+                setRobberTileIndex(data.tileIndex);
+            })
+            .catch(err => console.error('Failed to fetch robber:', err));
     }, []);
 
     // Socket listeners for deck updates
@@ -152,6 +163,9 @@ export function useGameLogic() {
         setBuildingHouse(false);
         setBuildingRoad(false);
         setBuildingCity(false);
+        setMovingRobber(false);
+        setShowStealDialog(false);
+        setPlayersToStealFrom([]);
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -212,6 +226,37 @@ export function useGameLogic() {
         const handleDiceRolled = (data) => {
             setDiceRoll(data);
             setIsRolling(false);
+            
+            // If rolled a 7, need to move robber
+            if (data.total === 7) {
+                setMovingRobber(true);
+            }
+        };
+
+        const handleRobberMoved = (data) => {
+            setRobberTileIndex(data.tileIndex);
+            setMovingRobber(false);
+            
+            // If current player and there are players to steal from
+            if (data.userId === userId && data.playersToStealFrom && data.playersToStealFrom.length > 0) {
+                setPlayersToStealFrom(data.playersToStealFrom);
+                setShowStealDialog(true);
+            }
+        };
+
+        const handleResourceStolen = (data) => {
+            if (data.fromUserId === userId) {
+                alert(`${data.thiefName} stole a resource from you!`);
+            } else if (data.thief === userId) {
+                alert(`You stole ${data.resource} from ${data.fromName}!`);
+            }
+        };
+
+        const handleDiscardRequired = (data) => {
+            if (data.userId === userId) {
+                alert(`You rolled a 7! You must discard ${data.cardsToDiscard} cards.`);
+                // TODO: Add discard UI
+            }
         };
 
         socket.on('currentTurn', handleCurrentTurn);
@@ -220,6 +265,9 @@ export function useGameLogic() {
         socket.on('cityPlaced', handleCityPlaced);
         socket.on('playersUpdated', handlePlayersUpdated);
         socket.on('diceRolled', handleDiceRolled);
+        socket.on('robberMoved', handleRobberMoved);
+        socket.on('resourceStolen', handleResourceStolen);
+        socket.on('discardRequired', handleDiscardRequired);
         
         if (socket.connected) {
             socket.emit('requestCurrentTurn');
@@ -232,6 +280,9 @@ export function useGameLogic() {
             socket.off('cityPlaced', handleCityPlaced);
             socket.off('playersUpdated', handlePlayersUpdated);
             socket.off('diceRolled', handleDiceRolled);
+            socket.off('robberMoved', handleRobberMoved);
+            socket.off('resourceStolen', handleResourceStolen);
+            socket.off('discardRequired', handleDiscardRequired);
         };
     }, [userId]);
 
@@ -268,6 +319,13 @@ export function useGameLogic() {
         buildingCity,
         setBuildingCity,
         portRoadData,
-        devCardDeckCount
+        devCardDeckCount,
+        robberTileIndex,
+        movingRobber,
+        setMovingRobber,
+        playersToStealFrom,
+        setPlayersToStealFrom,
+        showStealDialog,
+        setShowStealDialog
     };
 }

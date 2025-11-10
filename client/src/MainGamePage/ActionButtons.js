@@ -26,12 +26,14 @@ function ActionButtons({
     handleCancelBuild,
     handleEndTurn,
     housePlacedThisTurn,
-    roadPlacedThisTurn
+    roadPlacedThisTurn,
+    handlePlayKnight,
+    movingRobber
 }) {
     return (
         <div className="action-buttons">
             {/* Roll Dice Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && (
                 <button 
                     onClick={handleRollDice} 
                     disabled={diceRoll !== null || isRolling}
@@ -42,7 +44,7 @@ function ActionButtons({
             )}
             
             {/* Build House Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && (
                 <button 
                     onClick={handleBuildHouse} 
                     disabled={!canBuildHouse()}
@@ -64,7 +66,7 @@ function ActionButtons({
             )}
             
             {/* Build Road Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && (
                 <button 
                     onClick={handleBuildRoad} 
                     disabled={!canBuildRoad()}
@@ -84,7 +86,7 @@ function ActionButtons({
             )}
 
             {/* Build City Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && (
                 <button 
                     onClick={handleBuildCity} 
                     disabled={!canBuildCity()}
@@ -104,7 +106,7 @@ function ActionButtons({
             )}
 
             {/* Development Card Button */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && (
                 <button 
                     onClick={handleBuyDevelopmentCard}
                     disabled={!canBuyDevCard()}
@@ -112,6 +114,18 @@ function ActionButtons({
                     title={`Need: 1 Ore, 1 Sheep, 1 Wheat (${devCardDeckCount} cards left)`}
                 >
                     🃏 Buy Dev Card ({devCardDeckCount})
+                </button>
+            )}
+
+            {/* Play Knight Card Button */}
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && (
+                <button 
+                    onClick={handlePlayKnight}
+                    disabled={!currentPlayer?.developmentCards?.knight || currentPlayer.developmentCards.knight < 1}
+                    className="play-knight-button"
+                    title="Play a Knight card to move the robber"
+                >
+                    🗡️ Play Knight ({currentPlayer?.developmentCards?.knight || 0})
                 </button>
             )}
             
@@ -128,7 +142,11 @@ function ActionButtons({
             {/* End Turn Button */}
             <button 
                 onClick={handleEndTurn} 
-                disabled={gamePhase === 'setup' ? (!housePlacedThisTurn && !roadPlacedThisTurn) : !diceRoll}
+                disabled={
+                    (gamePhase === 'setup' && (!housePlacedThisTurn && !roadPlacedThisTurn)) || 
+                    (gamePhase === 'playing' && !diceRoll) ||
+                    movingRobber
+                }
                 className="end-turn-button"
             >
                 End Turn

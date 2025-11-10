@@ -12,6 +12,7 @@ import greenRoad from '../Images/greenRoad.png';
 import redRoad from '../Images/redRoad.png';
 import blueRoad from '../Images/blueRoad.png';
 import portRoad from '../Images/portRoad.png';
+import robber from '../Images/robber.jpg';
 import ThreetoOnePort from '../Images/3to1Port.jpg';
 import TwotoOneBrick from '../Images/2To1Brick.jpg';
 import TwotoOneSheep from '../Images/2To1Sheep.jpg';
@@ -55,7 +56,10 @@ function GameBoard({
     unavailableRoads,
     availableRoadIndices,
     handleRoadClick,
-    buildingRoad
+    buildingRoad,
+    robberTileIndex,
+    movingRobber,
+    handleTileClick
 }) {
     return (
         <div className="tiles-container">
@@ -64,45 +68,105 @@ function GameBoard({
                 {/* Resource Tiles - 5 Rows */}
                 <div className="tiles-row">
                     {[0, 1, 2].map(i => (
-                        <span key={i} className="tile">
+                        <span 
+                            key={i} 
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
+                            style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
+                        >
                             <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
-                            {resourceTokens[i] && <span className="token">{resourceTokens[i]}</span>}
+                            {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
+                            {robberTileIndex === i && (
+                                <img 
+                                    src={robber} 
+                                    alt="Robber" 
+                                    className="robber-icon"
+                                />
+                            )}
                         </span>
                     ))}
                 </div>
 
                 <div className="tiles-row">
                     {[11, 12, 13, 3].map(i => (
-                        <span key={i} className="tile">
+                        <span 
+                            key={i} 
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
+                            style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
+                        >
                             <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
-                            {resourceTokens[i] && <span className="token">{resourceTokens[i]}</span>}
+                            {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
+                            {robberTileIndex === i && (
+                                <img 
+                                    src={robber} 
+                                    alt="Robber" 
+                                    className="robber-icon"
+                                />
+                            )}
                         </span>
                     ))}
                 </div>
 
                 <div className="tiles-row">
                     {[10, 17, 18, 14, 4].map(i => (
-                        <span key={i} className="tile">
+                        <span 
+                            key={i} 
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
+                            style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
+                        >
                             <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
-                            {resourceTokens[i] && <span className="token">{resourceTokens[i]}</span>}
+                            {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
+                            {robberTileIndex === i && (
+                                <img 
+                                    src={robber} 
+                                    alt="Robber" 
+                                    className="robber-icon"
+                                />
+                            )}
                         </span>
                     ))}
                 </div>
 
                 <div className="tiles-row">
                     {[9, 16, 15, 5].map(i => (
-                        <span key={i} className="tile">
+                        <span 
+                            key={i} 
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
+                            style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
+                        >
                             <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
-                            {resourceTokens[i] && <span className="token">{resourceTokens[i]}</span>}
+                            {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
+                            {robberTileIndex === i && (
+                                <img 
+                                    src={robber} 
+                                    alt="Robber" 
+                                    className="robber-icon"
+                                />
+                            )}
                         </span>
                     ))}
                 </div>
 
                 <div className="tiles-row">
                     {[8, 7, 6].map(i => (
-                        <span key={i} className="tile">
+                        <span 
+                            key={i} 
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
+                            style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
+                        >
                             <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
-                            {resourceTokens[i] && <span className="token">{resourceTokens[i]}</span>}
+                            {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
+                            {robberTileIndex === i && (
+                                <img 
+                                    src={robber} 
+                                    alt="Robber" 
+                                    className="robber-icon"
+                                />
+                            )}
                         </span>
                     ))}
                 </div>
