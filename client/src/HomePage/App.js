@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
-import catanTitle from './Images/catanTitle.png';
-import Game from './Game';
-import socket from './socket';
+import catanTitle from '../Images/catanTitle.png';
+import Game from '../MainGamePage/Game';
+import socket from '../socket';
 
 
 function App() {

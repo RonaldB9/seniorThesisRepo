@@ -1,23 +1,23 @@
 import React from 'react';
-import brickTile from './Images/brickTile.png';
-import oreTile from './Images/oreTile.png';
-import woodTile from './Images/woodTile.png';
-import sheepTile from './Images/sheepTile.png';
-import wheatTile from './Images/wheatTile.png';
-import desertTile from './Images/desertTile.png';
-import chooseCircle from './Images/chooseCircle.png';
-import redHouse from './Images/redHouse.png';
-import greenHouse from './Images/greenHouse.png';
-import greenRoad from './Images/greenRoad.png';
-import redRoad from './Images/redRoad.png';
-import blueRoad from './Images/blueRoad.png';
-import portRoad from './Images/portRoad.png';
-import ThreetoOnePort from './Images/3to1Port.jpg';
-import TwotoOneBrick from './Images/2To1Brick.jpg';
-import TwotoOneSheep from './Images/2To1Sheep.jpg';
-import TwotoOneStone from './Images/2To1Stone.jpg';
-import TwotoOneWood from './Images/2To1Wood.jpg';
-import TwotoOneWheat from './Images/2To1Wheat.jpg';
+import brickTile from '../Images/brickTile.png';
+import oreTile from '../Images/oreTile.png';
+import woodTile from '../Images/woodTile.png';
+import sheepTile from '../Images/sheepTile.png';
+import wheatTile from '../Images/wheatTile.png';
+import desertTile from '../Images/desertTile.png';
+import chooseCircle from '../Images/chooseCircle.png';
+import redHouse from '../Images/redHouse.png';
+import greenHouse from '../Images/greenHouse.png';
+import greenRoad from '../Images/greenRoad.png';
+import redRoad from '../Images/redRoad.png';
+import blueRoad from '../Images/blueRoad.png';
+import portRoad from '../Images/portRoad.png';
+import ThreetoOnePort from '../Images/3to1Port.jpg';
+import TwotoOneBrick from '../Images/2To1Brick.jpg';
+import TwotoOneSheep from '../Images/2To1Sheep.jpg';
+import TwotoOneStone from '../Images/2To1Stone.jpg';
+import TwotoOneWood from '../Images/2To1Wood.jpg';
+import TwotoOneWheat from '../Images/2To1Wheat.jpg';
 
 const resourceImages = {
     Brick: brickTile,
@@ -332,7 +332,7 @@ function GameBoard({
                                 transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
                                 pointerEvents: 'none',
                                 width: '10px',
-                                height: '60px',
+                                height: '65px',
                                 zIndex: 1
                             }}
                         />

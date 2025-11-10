@@ -16,8 +16,6 @@
   width: 60%;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid black;
-  box-sizing: border-box;
   position: relative;
 }
 
@@ -208,6 +206,7 @@
 .build-road-button,
 .build-city-button,
 .cancel-build-button,
+.buy-dev-card-button,
 .end-turn-button {
     padding: 12px 24px;
     font-size: 16px;
@@ -236,6 +235,7 @@
     opacity: 0.6;
 }
 
+/*Build House Button*/
 .build-house-button {
     background-color: #8B4513;
     color: white;
@@ -253,6 +253,7 @@
     opacity: 0.6;
 }
 
+/*Build Road Button*/
 .build-road-button {
     background-color: #5D4E37;
     color: white;
@@ -270,9 +271,10 @@
     opacity: 0.6;
 }
 
+/*City Button*/
 .build-city-button {
     background-color: #FFD700;
-    color: #333;
+    color: white;
     font-weight: 900;
 }
 
@@ -289,6 +291,7 @@
     color: #666;
 }
 
+/*Cancel Button*/
 .cancel-build-button {
     background-color: #FFA500;
     color: white;
@@ -300,6 +303,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/*End turn */
 .end-turn-button {
     background-color: #FF6B6B;
     color: white;
@@ -317,6 +321,7 @@
     opacity: 0.6;
 }
 
+/*Your Turn*/
 .your-turn-banner {
     background-color: #4CAF50;
     color: white;
@@ -330,11 +335,13 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/*Ports*/
 .ports {
   position: absolute;
   width: 50px;
 }
 
+/*dev cards*/
 .player-dev-cards {
     display: flex;
     flex-wrap: wrap;
@@ -355,12 +362,12 @@
 .buy-dev-card-button {
     background-color: #9C27B0;
     color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .buy-dev-card-button:hover:not(:disabled) {
     background-color: #7B1FA2;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(156, 39, 176, 0.4);
 }
 
 .buy-dev-card-button:disabled {
