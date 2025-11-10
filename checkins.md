@@ -120,23 +120,26 @@ Time, I didn't have much time to work this weekend.
 ## Week 7 Summary (11/03/2025)
 ### This week I worked on:
 
-[Your answer here]
+Finishing the main game.
 
 ### This week I learned:
 
-[Your answer here]
+How to manage my code better.
 
 ### My successes this week were:
 
-[Your answer here]
+-Road placements work based on house positions. 
+-Added ports
+-Added functionality to build cities and buy development cards
+-Adding more files to organize code and keep files not too long.
 
 ### The challenges I faced this week were:
 
-[Your answer here]
+Managing my code and keeping it clean.
 
 ---
 
-## Week 8 Summary (MM/DD/YYYY)
+## Week 8 Summary (11/10/2025)
 ### This week I worked on:
 
 [Your answer here]
