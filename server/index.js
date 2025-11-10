@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
-const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData} = require('./gameData');
+const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData, createDevelopmentCardDeck} = require('./gameData');
 const playerData = require('./playerData');
 
 // Clear all players on server startup
@@ -30,6 +30,8 @@ let gameBoard = null;
 let placedHouses = {}; // Track which house indices are already occupied with house data
 let placedRoads = {}; // Track which road indices are already occupied with road data
 let placedCities = {}; // Track which houses have been upgraded to cities
+let developmentCardDeck = [];
+let largestArmyPlayer = null; // Track who has largest army
 
 // Generate board data
 app.get('/api/board', (req, res) => {
@@ -75,6 +77,7 @@ app.post('/api/register', (req, res) => {
 
   let existing = playerData.findPlayer(userId);
   if (!existing) {
+    // When creating a new player in server/index.js, add:
     const newPlayer = {
       userId,
       name: `Player ${playerData.getPlayers().length + 1}`,
@@ -88,6 +91,14 @@ app.post('/api/register', (req, res) => {
         wheat: 10,
         ore: 10
       },
+      developmentCards: {
+        knight: 0,
+        victoryPoint: 0,
+        roadBuilding: 0,
+        yearOfPlenty: 0,
+        monopoly: 0
+      },
+      playedKnights: 0, // Track for Largest Army
       houses: [],
       cities: [],
       roads: []
@@ -710,6 +721,8 @@ io.on('connection', (socket) => {
     placedHouses = {}; // Reset placed houses
     placedRoads = {}; // Reset placed roads
     placedCities = {}; // Reset placed cities
+    developmentCardDeck = createDevelopmentCardDeck(); // Initialize deck
+    largestArmyPlayer = null;
 
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
@@ -717,10 +730,143 @@ io.on('connection', (socket) => {
     broadcastCurrentTurn();
   });
 
+  // Add buy development card handler
+  socket.on('buyDevelopmentCard', (data) => {
+    const { userId } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Check if it's this player's turn
+    if (userId !== getCurrentPlayerUserId()) {
+      console.log(`❌ Not ${player.name}'s turn!`);
+      return;
+    }
+
+    // Check if deck is empty
+    if (developmentCardDeck.length === 0) {
+      console.log(`⚠️ Development card deck is empty!`);
+      socket.emit('buyCardFailed', { reason: 'Deck is empty' });
+      return;
+    }
+
+    // Check if player has enough resources (1 ore, 1 sheep, 1 wheat)
+    if (!player.resources || player.resources.ore < 1 || 
+        player.resources.sheep < 1 || player.resources.wheat < 1) {
+      console.log(`❌ ${player.name} doesn't have enough resources for a development card`);
+      socket.emit('buyCardFailed', { reason: 'Not enough resources' });
+      return;
+    }
+
+    // Deduct resources
+    player.resources.ore -= 1;
+    player.resources.sheep -= 1;
+    player.resources.wheat -= 1;
+
+    // Draw a card from the deck
+    const drawnCard = developmentCardDeck.pop();
+    player.developmentCards[drawnCard] = (player.developmentCards[drawnCard] || 0) + 1;
+
+    playerData.updatePlayer(userId, { 
+      resources: player.resources,
+      developmentCards: player.developmentCards
+    });
+
+    console.log(`🃏 ${player.name} bought a ${drawnCard} card (${developmentCardDeck.length} cards remaining)`);
+
+    // Notify player what they got
+    socket.emit('cardBought', { cardType: drawnCard });
+
+    // Broadcast updated player data
+    io.emit('playersUpdated', playerData.getPlayers());
+    io.emit('deckUpdate', { cardsRemaining: developmentCardDeck.length });
+  });
+
+  // Add play development card handlers
+  socket.on('playKnight', (data) => {
+    const { userId } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player || userId !== getCurrentPlayerUserId()) return;
+
+    if (player.developmentCards.knight < 1) {
+      socket.emit('playCardFailed', { reason: 'No knight cards' });
+      return;
+    }
+
+    // Use the knight card
+    player.developmentCards.knight -= 1;
+    player.playedKnights = (player.playedKnights || 0) + 1;
+
+    // Check for Largest Army (3+ knights and most among all players)
+    const allPlayers = playerData.getPlayers();
+    const maxKnights = Math.max(...allPlayers.map(p => p.playedKnights || 0));
+    
+    if (player.playedKnights >= 3 && player.playedKnights === maxKnights) {
+      // Remove Largest Army from previous holder
+      if (largestArmyPlayer && largestArmyPlayer !== userId) {
+        const prevPlayer = playerData.findPlayer(largestArmyPlayer);
+        if (prevPlayer) {
+          playerData.updatePlayer(largestArmyPlayer, { score: prevPlayer.score - 2 });
+        }
+      }
+      
+      // Award Largest Army
+      if (largestArmyPlayer !== userId) {
+        largestArmyPlayer = userId;
+        playerData.updatePlayer(userId, { 
+          developmentCards: player.developmentCards,
+          playedKnights: player.playedKnights,
+          score: player.score + 2
+        });
+        console.log(`🗡️ ${player.name} now has Largest Army!`);
+      } else {
+        playerData.updatePlayer(userId, { 
+          developmentCards: player.developmentCards,
+          playedKnights: player.playedKnights
+        });
+      }
+    } else {
+      playerData.updatePlayer(userId, { 
+        developmentCards: player.developmentCards,
+        playedKnights: player.playedKnights
+      });
+    }
+
+    console.log(`🗡️ ${player.name} played a Knight card! (Total: ${player.playedKnights})`);
+    
+    io.emit('playersUpdated', playerData.getPlayers());
+    socket.emit('knightPlayed', { userId, totalKnights: player.playedKnights });
+  });
+
+  // Add other card play handlers similarly
+  socket.on('playVictoryPoint', (data) => {
+    const { userId } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player || player.developmentCards.victoryPoint < 1) return;
+
+    player.developmentCards.victoryPoint -= 1;
+    player.score += 1;
+
+    playerData.updatePlayer(userId, { 
+      developmentCards: player.developmentCards,
+      score: player.score
+    });
+
+    console.log(`🏆 ${player.name} revealed a Victory Point card!`);
+    io.emit('playersUpdated', playerData.getPlayers());
+  });
+
   socket.on('disconnect', () => {
     console.log('❌ Client disconnected:', socket.id);
   });
 });
+
+
 
 // Get all players
 app.get('/api/players', (req, res) => {

@@ -334,3 +334,37 @@
   position: absolute;
   width: 50px;
 }
+
+.player-dev-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+}
+
+.dev-card-item {
+    font-size: 0.8em;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.buy-dev-card-button {
+    background-color: #9C27B0;
+    color: white;
+}
+
+.buy-dev-card-button:hover:not(:disabled) {
+    background-color: #7B1FA2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(156, 39, 176, 0.4);
+}
+
+.buy-dev-card-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

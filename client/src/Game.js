@@ -59,6 +59,8 @@ function Game() {
     const [buildingRoad, setBuildingRoad] = useState(false);
     const [buildingCity, setBuildingCity] = useState(false);
     const [portRoadData, setPortRoadData] = useState([]);
+    const [devCardDeckCount, setDevCardDeckCount] = useState(25);
+    const [showDevCardMenu, setShowDevCardMenu] = useState(false);
 
 
     // Get userId on mount
@@ -117,6 +119,39 @@ function Game() {
         })
         .catch(err => console.error('Failed to fetch cities:', err));
     }, []);
+
+    // Add socket listener for deck updates
+    useEffect(() => {
+    const handleDeckUpdate = (data) => {
+        setDevCardDeckCount(data.cardsRemaining);
+    };
+
+    const handleCardBought = (data) => {
+        alert(`You received a ${data.cardType} card!`);
+    };
+
+    socket.on('deckUpdate', handleDeckUpdate);
+    socket.on('cardBought', handleCardBought);
+    
+    return () => {
+        socket.off('deckUpdate', handleDeckUpdate);
+        socket.off('cardBought', handleCardBought);
+    };
+    }, []);
+
+    // Add buy card function
+    const handleBuyDevelopmentCard = () => {
+    if (userId === currentTurnUserId && gamePhase === 'playing' && canBuyDevCard()) {
+        socket.emit('buyDevelopmentCard', { userId });
+    }
+    };
+
+    // Check if player can afford a dev card
+    const canBuyDevCard = () => {
+    if (!currentPlayer || !currentPlayer.resources) return false;
+    const { ore, sheep, wheat } = currentPlayer.resources;
+    return ore >= 1 && sheep >= 1 && wheat >= 1 && devCardDeckCount > 0;
+    };
 
     // Helper function to find adjacent houses
     const getAdjacentHouses = (houseIndex) => {
@@ -532,6 +567,16 @@ function Game() {
                             <div className="resource-item">⛏️ {player.resources.ore || 0}</div>
                         </div>
                     )}
+
+                    {player.userId === userId && player.developmentCards && (
+                    <div className="player-dev-cards">
+                        <div className="dev-card-item">🗡️ Knights: {player.developmentCards.knight || 0}</div>
+                        <div className="dev-card-item">🏆 VP: {player.developmentCards.victoryPoint || 0}</div>
+                        <div className="dev-card-item">🛣️ Road Building: {player.developmentCards.roadBuilding || 0}</div>
+                        <div className="dev-card-item">🎁 Year of Plenty: {player.developmentCards.yearOfPlenty || 0}</div>
+                        <div className="dev-card-item">💰 Monopoly: {player.developmentCards.monopoly || 0}</div>
+                    </div>
+                    )}
                 </div>
             ))}
         </div>
@@ -941,6 +986,18 @@ function Game() {
                     >
                         🏛️ Build City
                     </button>
+                )}
+
+                {/* Development Card Button */}
+                {gamePhase === 'playing' && userId === currentTurnUserId && (
+                <button 
+                    onClick={handleBuyDevelopmentCard}
+                    disabled={!canBuyDevCard()}
+                    className="buy-dev-card-button"
+                    title={`Need: 1 Ore, 1 Sheep, 1 Wheat (${devCardDeckCount} cards left)`}
+                >
+                    🃏 Buy Dev Card ({devCardDeckCount})
+                </button>
                 )}
                 
                 {/* Cancel Build Button */}

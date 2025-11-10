@@ -208,9 +208,29 @@ function getPortRoadData() {
     return portRoadMappings;
 }
 
+function createDevelopmentCardDeck() {
+    // Standard Catan development card distribution
+    const deck = [
+        ...Array(14).fill('knight'),
+        ...Array(5).fill('victoryPoint'),
+        ...Array(2).fill('roadBuilding'),
+        ...Array(2).fill('yearOfPlenty'),
+        ...Array(2).fill('monopoly')
+    ];
+    
+    // Shuffle the deck
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    
+    return deck;
+}
+
 module.exports = {
   generateCatanBoard,
   getHouseTileData,
   getRoadSpotData,
-  getPortRoadData
+  getPortRoadData,
+  createDevelopmentCardDeck
 };
