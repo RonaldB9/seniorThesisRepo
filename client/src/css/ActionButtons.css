@@ -1,0 +1,111 @@
+/*Build House Button*/
+.build-house-button {
+    background-color: #8B4513;
+    color: white;
+}
+
+.build-house-button:hover:not(:disabled) {
+    background-color: #6F3609;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.build-house-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/*Build Road Button*/
+.build-road-button {
+    background-color: #5D4E37;
+    color: white;
+}
+
+.build-road-button:hover:not(:disabled) {
+    background-color: #4A3F2F;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.build-road-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/*City Button*/
+.build-city-button {
+    background-color: #FFD700;
+    color: white;
+    font-weight: 900;
+}
+
+.build-city-button:hover:not(:disabled) {
+    background-color: #FFC500;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.5);
+}
+
+.build-city-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    color: #666;
+}
+
+/*Cancel Button*/
+.cancel-build-button {
+    background-color: #FFA500;
+    color: white;
+}
+
+.cancel-build-button:hover {
+    background-color: #FF8C00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/*End turn */
+.end-turn-button {
+    background-color: #FF6B6B;
+    color: white;
+}
+
+.end-turn-button:hover:not(:disabled) {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.end-turn-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.action-buttons {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+.roll-dice-button,
+.build-house-button,
+.build-road-button,
+.build-city-button,
+.cancel-build-button,
+.end-turn-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

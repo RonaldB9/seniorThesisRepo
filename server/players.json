@@ -6,7 +6,7 @@
     "score": 0,
     "color": "red",
     "resources": {
-      "wood": 4,
+      "wood": 6,
       "brick": 0,
       "sheep": 0,
       "wheat": 1,
@@ -98,12 +98,12 @@
       "wood": 2,
       "brick": 0,
       "sheep": 0,
-      "wheat": 4,
+      "wheat": 3,
       "ore": 11
     },
     "developmentCards": {
       "knight": 0,
-      "victoryPoint": 0,
+      "victoryPoint": 1,
       "roadBuilding": 0,
       "yearOfPlenty": 0,
       "monopoly": 0
