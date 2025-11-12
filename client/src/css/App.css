@@ -1,8 +1,28 @@
 .background {
   width: 90%;
-  background-color: lightblue;
+  background-image: url('../Images/backgroundSunset.jpg');
+  background-size: cover;       /* fills the screen */
+  background-position: center;  /* centers the image */
+  background-repeat: no-repeat; /* no tiling */
+  height: 100vh;                /* full viewport height */
+  width: 100vw;
   margin-left: auto;
   margin-right: auto;
+  opacity: 0;                  /* start invisible */
+  animation: fadeIn 5s ease-in forwards;  /* fade-in effect */
+}
+
+.loadBackround {
+  background-color: rgb(219, 87, 39);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .title {
@@ -16,7 +36,7 @@
 .images {
   display: flex;
   justify-content: center;
-  height: 100px;
+  height: 200px;
 }
 
 .playerStartUp {
@@ -52,4 +72,21 @@
 
 .startText {
   text-align: center;
+}
+
+.sheep {
+  width: 50px;
+  height: 50px;
+  bottom: 10%;
+  position: absolute;
+  animation: moveSideToSide 3s ease-in-out infinite alternate;
+}
+
+@keyframes moveSideToSide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100px); /* move 100px right */
+  }
 }

@@ -1,3 +1,7 @@
+.backgroundGame {
+    background-color: lightblue;
+}
+
 .tiles {
     width: 125px;
     height: auto;

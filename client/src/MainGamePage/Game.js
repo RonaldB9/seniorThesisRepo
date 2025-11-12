@@ -271,7 +271,7 @@ function Game() {
     const upgradeableSettlements = getUpgradeableSettlements();
 
     return (
-        <div className="background">
+        <div className="backgroundGame">
             
             <div
                 className={`your-turn-banner ${
