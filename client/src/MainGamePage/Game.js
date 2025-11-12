@@ -272,13 +272,15 @@ function Game() {
 
     return (
         <div className="background">
-            <div className="images">
-                <img src={catanTitle} alt="Catan Title"/>
-            </div>
             
-            {userId === currentTurnUserId && (
-                <div className="your-turn-banner">
-                    🎯 Your Turn! 
+            <div
+                className={`your-turn-banner ${
+                    userId === currentTurnUserId ? 'your-turn' : 'not-your-turn'
+                }`}
+                >
+                {userId === currentTurnUserId ? (
+                    <>
+                    🎯 Your Turn!
                     {gamePhase === 'setup' && selectedHouseIndex !== null && ` (House ${selectedHouseIndex} selected)`}
                     {gamePhase === 'setup' && selectedRoadIndex !== null && ` (Road ${selectedRoadIndex} selected)`}
                     {gamePhase === 'playing' && !diceRoll && ' Roll the dice!'}
@@ -287,8 +289,11 @@ function Game() {
                     {buildingRoad && ' - Select a spot for your road'}
                     {buildingCity && ' - Select a settlement to upgrade'}
                     {movingRobber && ' - Select a tile to move the robber'}
-                </div>
-            )}
+                    </>
+                ) : (
+                    <>⏳ Not your turn</>
+                )}
+            </div>
 
             <Scoreboard 
                 allPlayers={allPlayers} 

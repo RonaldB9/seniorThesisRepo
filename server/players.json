@@ -3,151 +3,102 @@
     "userId": "73b9025b-c5ef-41ac-802b-254cf09500f5",
     "name": "Player 1",
     "ready": true,
-    "score": 2,
+    "score": 1,
     "color": "red",
     "resources": {
-      "wood": 7,
-      "brick": 8,
-      "sheep": 6,
-      "wheat": 3,
-      "ore": 3
+      "wood": 0,
+      "brick": 0,
+      "sheep": 0,
+      "wheat": 4,
+      "ore": 0
     },
     "developmentCards": {
-      "knight": 0,
-      "victoryPoint": 1,
+      "knight": 5,
+      "victoryPoint": 0,
       "roadBuilding": 0,
       "yearOfPlenty": 1,
       "monopoly": 0
     },
-    "playedKnights": 3,
+    "playedKnights": 0,
     "houses": [
       {
-        "houseIndex": 18,
+        "houseIndex": 44,
+        "position": {
+          "x": -65,
+          "y": 158,
+          "tiles": [
+            7,
+            8,
+            16
+          ]
+        },
+        "placedAt": "2025-11-12T02:04:05.393Z"
+      },
+      {
+        "houseIndex": 13,
         "position": {
           "x": 0,
-          "y": -62,
-          "tiles": [
-            12,
-            13,
-            18
-          ]
-        },
-        "placedAt": "2025-11-12T01:54:53.680Z"
-      },
-      {
-        "houseIndex": 22,
-        "position": {
-          "x": -185,
-          "y": -32,
-          "tiles": [
-            10,
-            11,
-            17
-          ]
-        },
-        "placedAt": "2025-11-12T01:55:01.807Z"
-      },
-      {
-        "houseIndex": 12,
-        "position": {
-          "x": -125,
           "y": -127,
           "tiles": [
-            0,
-            11,
-            12
+            1,
+            12,
+            13
           ]
         },
-        "placedAt": "2025-11-12T01:55:12.385Z"
+        "placedAt": "2025-11-12T02:04:16.645Z"
       }
     ],
     "cities": [
       {
-        "houseIndex": 18,
+        "houseIndex": 44,
         "position": {
-          "x": 0,
-          "y": -62,
+          "x": -65,
+          "y": 158,
           "tiles": [
-            12,
-            13,
-            18
+            7,
+            8,
+            16
           ]
         },
-        "upgradedAt": "2025-11-12T01:55:06.469Z"
+        "upgradedAt": "2025-11-12T02:04:34.942Z"
       }
     ],
     "roads": [
       {
-        "roadIndex": 27,
+        "roadIndex": 57,
         "position": {
           "x": -35,
-          "y": -45,
+          "y": 140,
           "connectedHouses": [
-            18,
-            23
+            40,
+            44
           ],
           "connectedRoads": [
-            26,
-            28,
-            35,
-            20
+            56,
+            58,
+            51,
+            63
           ]
         },
-        "placedAt": "2025-11-12T01:54:54.094Z"
+        "placedAt": "2025-11-12T02:04:05.630Z"
       },
       {
-        "roadIndex": 25,
+        "roadIndex": 20,
         "position": {
-          "x": -160,
-          "y": -45,
-          "connectedHouses": [
-            17,
-            22
-          ],
-          "connectedRoads": [
-            19,
-            24,
-            26,
-            34
-          ]
-        },
-        "placedAt": "2025-11-12T01:55:02.006Z"
-      },
-      {
-        "roadIndex": 35,
-        "position": {
-          "x": -60,
-          "y": 0,
-          "connectedHouses": [
-            23,
-            29
-          ],
-          "connectedRoads": [
-            26,
-            27,
-            42,
-            43
-          ]
-        },
-        "placedAt": "2025-11-12T01:55:08.466Z"
-      },
-      {
-        "roadIndex": 19,
-        "position": {
-          "x": -125,
+          "x": 0,
           "y": -95,
           "connectedHouses": [
-            12,
-            17
+            13,
+            18
           ],
           "connectedRoads": [
-            11,
-            12,
-            25,
-            26
+            13,
+            14,
+            27,
+            28
           ]
         },
-        "placedAt": "2025-11-12T01:55:11.031Z"
+        "placedAt": "2025-11-12T02:04:17.422Z"
       }
     ]
   },
@@ -155,96 +106,82 @@
     "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
     "name": "Player 2",
     "ready": true,
-    "score": 2,
+    "score": 1,
     "color": "green",
     "resources": {
-      "wood": 8,
-      "brick": 6,
-      "sheep": 9,
-      "wheat": 7,
-      "ore": 6
+      "wood": 1,
+      "brick": 2,
+      "sheep": 0,
+      "wheat": 1,
+      "ore": 4
     },
     "developmentCards": {
-      "knight": 0,
-      "victoryPoint": 0,
+      "knight": 2,
+      "victoryPoint": 1,
       "roadBuilding": 0,
       "yearOfPlenty": 0,
-      "monopoly": 1
+      "monopoly": 0
     },
     "playedKnights": 0,
     "houses": [
       {
-        "houseIndex": 29,
+        "houseIndex": 17,
         "position": {
-          "x": -65,
+          "x": -125,
+          "y": -62,
+          "tiles": [
+            11,
+            12,
+            17
+          ]
+        },
+        "placedAt": "2025-11-12T02:04:09.179Z"
+      },
+      {
+        "houseIndex": 30,
+        "position": {
+          "x": 65,
           "y": 33,
           "tiles": [
-            16,
-            17,
+            14,
+            15,
             18
           ]
         },
-        "placedAt": "2025-11-12T01:54:56.615Z"
+        "placedAt": "2025-11-12T02:04:13.911Z"
       },
       {
-        "houseIndex": 36,
+        "houseIndex": 16,
         "position": {
-          "x": 125,
-          "y": 58,
+          "x": -250,
+          "y": -62,
           "tiles": [
-            5,
-            14,
-            15
+            10,
+            11
           ]
         },
-        "placedAt": "2025-11-12T01:54:58.656Z"
-      },
-      {
-        "houseIndex": 37,
-        "position": {
-          "x": 250,
-          "y": 58,
-          "tiles": [
-            4,
-            5
-          ]
-        },
-        "placedAt": "2025-11-12T01:56:03.830Z"
+        "placedAt": "2025-11-12T02:05:06.219Z"
       }
     ],
-    "cities": [
-      {
-        "houseIndex": 36,
-        "position": {
-          "x": 125,
-          "y": 58,
-          "tiles": [
-            5,
-            14,
-            15
-          ]
-        },
-        "upgradedAt": "2025-11-12T01:56:06.670Z"
-      }
-    ],
+    "cities": [],
     "roads": [
       {
-        "roadIndex": 43,
+        "roadIndex": 26,
         "position": {
-          "x": -35,
-          "y": 45,
+          "x": -90,
+          "y": -45,
           "connectedHouses": [
-            29,
-            35
+            17,
+            23
           ],
           "connectedRoads": [
-            35,
-            42,
-            44,
-            51
+            19,
+            25,
+            27,
+            35
           ]
         },
-        "placedAt": "2025-11-12T01:54:56.816Z"
+        "placedAt": "2025-11-12T02:04:09.526Z"
       },
       {
         "roadIndex": 45,
@@ -262,43 +199,61 @@
             52
           ]
         },
-        "placedAt": "2025-11-12T01:54:58.870Z"
+        "placedAt": "2025-11-12T02:04:14.117Z"
       },
       {
-        "roadIndex": 46,
+        "roadIndex": 25,
         "position": {
-          "x": 160,
-          "y": 45,
+          "x": -160,
+          "y": -45,
           "connectedHouses": [
-            31,
-            36
+            17,
+            22
           ],
           "connectedRoads": [
-            37,
-            45,
-            47,
-            52
+            19,
+            24,
+            26,
+            34
           ]
         },
-        "placedAt": "2025-11-12T01:56:01.154Z"
+        "placedAt": "2025-11-12T02:05:00.527Z"
       },
       {
-        "roadIndex": 47,
+        "roadIndex": 24,
         "position": {
-          "x": 220,
-          "y": 45,
+          "x": -220,
+          "y": -45,
           "connectedHouses": [
-            31,
-            37
+            16,
+            22
           ],
           "connectedRoads": [
-            37,
-            46,
-            48,
-            53
+            18,
+            23,
+            25,
+            34
           ]
         },
-        "placedAt": "2025-11-12T01:56:02.470Z"
+        "placedAt": "2025-11-12T02:05:01.780Z"
+      },
+      {
+        "roadIndex": 19,
+        "position": {
+          "x": -125,
+          "y": -95,
+          "connectedHouses": [
+            12,
+            17
+          ],
+          "connectedRoads": [
+            11,
+            12,
+            25,
+            26
+          ]
+        },
+        "placedAt": "2025-11-12T02:05:04.608Z"
       }
     ]
   }

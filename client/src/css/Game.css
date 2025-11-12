@@ -11,12 +11,14 @@
   justify-content: center;
   gap: 0px;
   margin-top: 20px;
-  padding-top: 10px;
-  padding-bottom: 40px;
+  padding-top: 50px;
+  padding-bottom: 70px;
   width: 60%;
   margin-left: auto;
   margin-right: auto;
   position: relative;
+  border: 1px solid black;
+  box-sizing: border-box;
 }
 
 .tile {
@@ -108,6 +110,11 @@
     color: #FF6B6B;
     font-size: 0.9em;
     animation: pulse 1.5s ease-in-out infinite;
+}
+
+.your-turn-banner.not-your-turn {
+  background-color: #d9534f; /* red */
+  color: white;
 }
 
 @keyframes pulse {
