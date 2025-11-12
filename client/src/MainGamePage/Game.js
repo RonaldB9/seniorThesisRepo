@@ -1,6 +1,7 @@
 import React from 'react';
 import '../css/App.css';
 import '../css/Game.css'; 
+import '../css/Robber.css'; 
 import catanTitle from '../Images/catanTitle.png';
 import socket from '../socket';
 import { useGameLogic } from './useGameLogic';
