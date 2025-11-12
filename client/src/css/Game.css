@@ -376,23 +376,7 @@
     opacity: 0.6;
 }
 
-/* Robber Icon on Tiles */
-.robber-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    border: 2px solid #333;
-}
-
 /* Tile Selectable State when moving robber */
-/* Replace the existing .tile-selectable styles in Game.css with this: */
 
 .tile-selectable {
     position: relative;
@@ -496,6 +480,21 @@
     );
     pointer-events: none;
     z-index: 1;
+}
+
+/* Robber Icon on Tiles */
+.robber-icon {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 2px solid #333;
 }
 
 /* Robber Message in Dice Display */
