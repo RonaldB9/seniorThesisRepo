@@ -7,6 +7,7 @@ import { useGameLogic } from './useGameLogic';
 import GameBoard from './GameBoard';
 import Scoreboard from './Scoreboard';
 import ActionButtons from './ActionButtons';
+import DiscardDialog from './DiscardDialog';
 
 function Game() {
     const gameState = useGameLogic();
@@ -19,7 +20,8 @@ function Game() {
         allPlayers, gamePhase, diceRoll, isRolling, setIsRolling,
         buildingHouse, setBuildingHouse, buildingRoad, setBuildingRoad, buildingCity, setBuildingCity,
         portRoadData, devCardDeckCount, robberTileIndex, movingRobber, setMovingRobber,
-        playersToStealFrom, setPlayersToStealFrom, showStealDialog, setShowStealDialog
+        playersToStealFrom, setPlayersToStealFrom, showStealDialog, setShowStealDialog,
+        needsToDiscard, setNeedsToDiscard, cardsToDiscard
     } = gameState;
 
     const handleHouseClick = (index) => {
@@ -100,6 +102,14 @@ function Game() {
         });
         setShowStealDialog(false);
         setPlayersToStealFrom([]);
+    };
+
+    const handleDiscard = (selectedCards) => {
+        socket.emit('discardCards', {
+            userId,
+            cards: selectedCards
+        });
+        setNeedsToDiscard(false);
     };
 
     const handleEndTurn = () => {
@@ -296,6 +306,16 @@ function Game() {
                         <div className="robber-message">Move the Robber! 🦹</div>
                     )}
                 </div>
+            )}
+
+            {/* Discard Dialog */}
+            {needsToDiscard && currentPlayer && (
+                <DiscardDialog
+                    currentPlayer={currentPlayer}
+                    cardsToDiscard={cardsToDiscard}
+                    onDiscard={handleDiscard}
+                    onCancel={() => setNeedsToDiscard(false)}
+                />
             )}
 
             {/* Steal Dialog */}

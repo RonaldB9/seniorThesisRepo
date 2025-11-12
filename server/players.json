@@ -6,10 +6,10 @@
     "score": 0,
     "color": "red",
     "resources": {
-      "wood": 13,
-      "brick": 10,
-      "sheep": 14,
-      "wheat": 10,
+      "wood": 2,
+      "brick": 0,
+      "sheep": 0,
+      "wheat": 6,
       "ore": 10
     },
     "developmentCards": {
@@ -22,30 +22,30 @@
     "playedKnights": 0,
     "houses": [
       {
-        "houseIndex": 18,
+        "houseIndex": 23,
         "position": {
-          "x": 0,
-          "y": -62,
+          "x": -65,
+          "y": -32,
           "tiles": [
             12,
-            13,
+            17,
             18
           ]
         },
-        "placedAt": "2025-11-10T23:39:52.188Z"
+        "placedAt": "2025-11-12T01:03:50.838Z"
       },
       {
-        "houseIndex": 31,
+        "houseIndex": 34,
         "position": {
-          "x": 185,
-          "y": 33,
+          "x": -125,
+          "y": 58,
           "tiles": [
-            4,
-            5,
-            14
+            9,
+            16,
+            17
           ]
         },
-        "placedAt": "2025-11-10T23:40:00.087Z"
+        "placedAt": "2025-11-12T01:03:58.753Z"
       }
     ],
     "cities": [],
@@ -66,25 +66,25 @@
             20
           ]
         },
-        "placedAt": "2025-11-10T23:39:52.665Z"
+        "placedAt": "2025-11-12T01:03:51.339Z"
       },
       {
-        "roadIndex": 46,
+        "roadIndex": 50,
         "position": {
-          "x": 160,
-          "y": 45,
+          "x": -125,
+          "y": 95,
           "connectedHouses": [
-            31,
-            36
+            34,
+            39
           ],
           "connectedRoads": [
-            37,
-            45,
-            47,
-            52
+            41,
+            42,
+            55,
+            56
           ]
         },
-        "placedAt": "2025-11-10T23:40:00.605Z"
+        "placedAt": "2025-11-12T01:03:59.000Z"
       }
     ]
   },
@@ -95,10 +95,10 @@
     "score": 0,
     "color": "green",
     "resources": {
-      "wood": 13,
-      "brick": 10,
-      "sheep": 12,
-      "wheat": 14,
+      "wood": 0,
+      "brick": 0,
+      "sheep": 7,
+      "wheat": 10,
       "ore": 10
     },
     "developmentCards": {
@@ -111,17 +111,17 @@
     "playedKnights": 0,
     "houses": [
       {
-        "houseIndex": 19,
+        "houseIndex": 24,
         "position": {
-          "x": 125,
-          "y": -62,
+          "x": 65,
+          "y": -32,
           "tiles": [
-            3,
             13,
-            14
+            14,
+            18
           ]
         },
-        "placedAt": "2025-11-10T23:39:55.057Z"
+        "placedAt": "2025-11-12T01:03:53.969Z"
       },
       {
         "houseIndex": 35,
@@ -134,28 +134,28 @@
             18
           ]
         },
-        "placedAt": "2025-11-10T23:39:57.366Z"
+        "placedAt": "2025-11-12T01:03:56.359Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 30,
+        "roadIndex": 36,
         "position": {
-          "x": 160,
-          "y": -45,
+          "x": 60,
+          "y": 0,
           "connectedHouses": [
-            19,
-            25
+            24,
+            30
           ],
           "connectedRoads": [
-            21,
+            28,
             29,
-            31,
-            37
+            44,
+            45
           ]
         },
-        "placedAt": "2025-11-10T23:39:55.346Z"
+        "placedAt": "2025-11-12T01:03:54.242Z"
       },
       {
         "roadIndex": 51,
@@ -173,7 +173,7 @@
             58
           ]
         },
-        "placedAt": "2025-11-10T23:39:57.685Z"
+        "placedAt": "2025-11-12T01:03:56.613Z"
       }
     ]
   }

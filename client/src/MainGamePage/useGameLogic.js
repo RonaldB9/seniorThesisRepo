@@ -50,6 +50,10 @@ export function useGameLogic() {
     const [movingRobber, setMovingRobber] = useState(false);
     const [playersToStealFrom, setPlayersToStealFrom] = useState([]);
     const [showStealDialog, setShowStealDialog] = useState(false);
+    
+    // NEW: Discard state
+    const [needsToDiscard, setNeedsToDiscard] = useState(false);
+    const [cardsToDiscard, setCardsToDiscard] = useState(0);
 
     // Update unavailable houses based on placed houses
     const updateUnavailableHouses = (placedHousesObj) => {
@@ -166,6 +170,8 @@ export function useGameLogic() {
         setMovingRobber(false);
         setShowStealDialog(false);
         setPlayersToStealFrom([]);
+        setNeedsToDiscard(false);
+        setCardsToDiscard(0);
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -252,10 +258,20 @@ export function useGameLogic() {
             }
         };
 
+        // NEW: Handle discard requirement
         const handleDiscardRequired = (data) => {
             if (data.userId === userId) {
-                alert(`You rolled a 7! You must discard ${data.cardsToDiscard} cards.`);
-                // TODO: Add discard UI
+                setNeedsToDiscard(true);
+                setCardsToDiscard(data.cardsToDiscard);
+                console.log(`Need to discard ${data.cardsToDiscard} cards`);
+            }
+        };
+
+        // NEW: Handle discard completion
+        const handleDiscardComplete = (data) => {
+            if (data.userId === userId) {
+                setNeedsToDiscard(false);
+                setCardsToDiscard(0);
             }
         };
 
@@ -268,6 +284,7 @@ export function useGameLogic() {
         socket.on('robberMoved', handleRobberMoved);
         socket.on('resourceStolen', handleResourceStolen);
         socket.on('discardRequired', handleDiscardRequired);
+        socket.on('discardComplete', handleDiscardComplete);
         
         if (socket.connected) {
             socket.emit('requestCurrentTurn');
@@ -283,6 +300,7 @@ export function useGameLogic() {
             socket.off('robberMoved', handleRobberMoved);
             socket.off('resourceStolen', handleResourceStolen);
             socket.off('discardRequired', handleDiscardRequired);
+            socket.off('discardComplete', handleDiscardComplete);
         };
     }, [userId]);
 
@@ -326,6 +344,9 @@ export function useGameLogic() {
         playersToStealFrom,
         setPlayersToStealFrom,
         showStealDialog,
-        setShowStealDialog
+        setShowStealDialog,
+        needsToDiscard,
+        setNeedsToDiscard,
+        cardsToDiscard
     };
 }

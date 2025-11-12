@@ -392,6 +392,8 @@
 }
 
 /* Tile Selectable State when moving robber */
+/* Replace the existing .tile-selectable styles in Game.css with this: */
+
 .tile-selectable {
     position: relative;
     transition: all 0.3s ease;
@@ -403,26 +405,97 @@
     filter: brightness(1.2);
 }
 
+/* Black outer hexagon border - MUCH THICKER */
+.tile-selectable::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    pointer-events: none;
+    clip-path: polygon(
+        50% 1%,
+        99% 26%,
+        99% 74%,
+        50% 99%,
+        1% 74%,
+        1% 26%
+    );
+}
+
+/* Gold middle hexagon border - THICKER */
 .tile-selectable::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: #FFD700;
+    pointer-events: none;
+    animation: pulseBorder 1.5s ease-in-out infinite;
+    clip-path: polygon(
+        50% 4%,
+        96% 27.5%,
+        96% 72.5%,
+        50% 96%,
+        4% 72.5%,
+        4% 27.5%
+    );
+    filter: drop-shadow(0 0 15px #FFD700);
+}
+
+.tile-selectable:hover::after {
+    background: #FFD700;
+    opacity: 1;
+}
+
+/* Transparent inner hexagon (creates the border effect by cutting out the middle) */
+.tile-selectable .tiles {
+    position: relative;
+}
+
+/* Apply the same hexagon clip to the tile images for better visual consistency */
+.tile-selectable .tiles {
+    clip-path: polygon(
+        50% 0%, 
+        100% 25%, 
+        100% 75%, 
+        50% 100%, 
+        0% 75%, 
+        0% 25%
+    );
+}
+
+@keyframes pulseBorder {
+    0%, 100% {
+        opacity: 0.1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+}
+
+/* Optional: Add a glowing hexagon overlay on hover */
+.tile-selectable:hover::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    border: 3px solid #FFD700;
-    border-radius: 10px;
+    background: rgba(255, 215, 0, 0.2);
+    clip-path: polygon(
+        50% 0%, 
+        100% 25%, 
+        100% 75%, 
+        50% 100%, 
+        0% 75%, 
+        0% 25%
+    );
     pointer-events: none;
-    animation: pulseBorder 1.5s ease-in-out infinite;
-}
-
-@keyframes pulseBorder {
-    0%, 100% {
-        opacity: 0.5;
-    }
-    50% {
-        opacity: 1;
-    }
+    z-index: 1;
 }
 
 /* Robber Message in Dice Display */

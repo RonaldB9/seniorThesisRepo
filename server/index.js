@@ -504,6 +504,52 @@ io.on('connection', (socket) => {
     io.emit('playersUpdated', playerData.getPlayers());
   });
 
+  // Handle discard cards
+  socket.on('discardCards', (data) => {
+    const { userId, cards } = data;
+    const player = playerData.findPlayer(userId);
+
+    if (!player) {
+      console.log(`❌ Player not found: ${userId}`);
+      return;
+    }
+
+    // Validate the discard
+    const totalDiscarding = Object.values(cards).reduce((sum, count) => sum + count, 0);
+    const totalCards = Object.values(player.resources).reduce((sum, count) => sum + count, 0);
+    const shouldDiscard = Math.floor(totalCards / 2);
+
+    if (totalDiscarding !== shouldDiscard) {
+      console.log(`❌ ${player.name} tried to discard ${totalDiscarding} but should discard ${shouldDiscard}`);
+      socket.emit('discardFailed', { reason: 'Incorrect number of cards' });
+      return;
+    }
+
+    // Validate player has the cards
+    for (const [resource, count] of Object.entries(cards)) {
+      if (player.resources[resource] < count) {
+        console.log(`❌ ${player.name} doesn't have enough ${resource} to discard`);
+        socket.emit('discardFailed', { reason: 'Not enough resources' });
+        return;
+      }
+    }
+
+    // Deduct the cards
+    for (const [resource, count] of Object.entries(cards)) {
+      player.resources[resource] -= count;
+    }
+
+    playerData.updatePlayer(userId, { resources: player.resources });
+
+    console.log(`✅ ${player.name} discarded ${totalDiscarding} cards`);
+
+    // Notify player that discard is complete
+    socket.emit('discardComplete', { userId });
+    
+    // Update all players
+    io.emit('playersUpdated', playerData.getPlayers());
+  });
+
   // Handle building a city (playing phase)
   socket.on('buildCity', (data) => {
     const { userId, houseIndex, position } = data;
