@@ -287,8 +287,6 @@ function Game() {
                     {movingRobber && ' - Select a tile to move the robber'}
                 </div>
             )}
-            
-            <h1 className="title">Game {gamePhase === 'setup' ? '(Setup)' : '(Playing)'}</h1>
 
             <Scoreboard 
                 allPlayers={allPlayers} 

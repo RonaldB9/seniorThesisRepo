@@ -6,11 +6,11 @@
     "score": 0,
     "color": "red",
     "resources": {
-      "wood": 2,
+      "wood": 4,
       "brick": 0,
       "sheep": 0,
-      "wheat": 6,
-      "ore": 10
+      "wheat": 1,
+      "ore": 7
     },
     "developmentCards": {
       "knight": 0,
@@ -95,11 +95,11 @@
     "score": 0,
     "color": "green",
     "resources": {
-      "wood": 0,
+      "wood": 2,
       "brick": 0,
-      "sheep": 7,
-      "wheat": 10,
-      "ore": 10
+      "sheep": 0,
+      "wheat": 4,
+      "ore": 11
     },
     "developmentCards": {
       "knight": 0,
