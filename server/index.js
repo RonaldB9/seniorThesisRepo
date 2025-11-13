@@ -6,6 +6,7 @@ const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData, 
 const playerData = require('./playerData');
 const { handleRoadSelected, handleBuildRoad } = require('./roadFunctions');
 const { handleHouseSelected, handleBuildHouse, handleBuildCity } = require('./buildingFunctions');
+const { handleMoveRobber, handleStealResource, handleBuyDevelopmentCard, handlePlayKnight, handlePlayVictoryPoint} = require('./DevelopmentCards');
 
 // Clear all players on server startup
 const { writePlayers } = require('./playerData');
@@ -535,49 +536,15 @@ io.on('connection', (socket) => {
 
   // Handle moving the robber
   socket.on('moveRobber', (data) => {
-    const { userId, tileIndex } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
+    const result = handleMoveRobber(data, getCurrentPlayerUserId, placedHouses, gameBoard, io);
+    if (result.success) {
+      robberTileIndex = result.robberTileIndex;
     }
-
-    if (userId !== getCurrentPlayerUserId()) {
-      console.log(`❌ Not ${player.name}'s turn!`);
-      return;
-    }
-
-    console.log(`🦹 ${player.name} moved robber to tile ${tileIndex}`);
-    robberTileIndex = tileIndex;
-
-    // Find players adjacent to this tile who can be stolen from
-    const playersToStealFrom = getPlayersAdjacentToTile(tileIndex).filter(p => p.userId !== userId);
-
-    io.emit('robberMoved', {
-      userId,
-      tileIndex,
-      playersToStealFrom
-    });
   });
 
   // Handle stealing a resource
   socket.on('stealResource', (data) => {
-    const { thiefUserId, victimUserId } = data;
-    
-    const result = stealRandomResource(thiefUserId, victimUserId);
-    
-    if (result) {
-      io.emit('resourceStolen', {
-        thief: thiefUserId,
-        thiefName: result.thiefName,
-        fromUserId: victimUserId,
-        fromName: result.victimName,
-        resource: result.resource
-      });
-      
-      io.emit('playersUpdated', playerData.getPlayers());
-    }
+    handleStealResource(data, io);
   });
 
   // On endTurn from client
@@ -635,117 +602,23 @@ io.on('connection', (socket) => {
 
   // Buy development card handler
   socket.on('buyDevelopmentCard', (data) => {
-    const { userId } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player || userId !== getCurrentPlayerUserId()) return;
-
-    if (developmentCardDeck.length === 0) {
-      console.log(`⚠️ Development card deck is empty!`);
-      socket.emit('buyCardFailed', { reason: 'Deck is empty' });
-      return;
+    const result = handleBuyDevelopmentCard(data, getCurrentPlayerUserId, developmentCardDeck, io, socket);
+    if (result.success) {
+      developmentCardDeck = result.deck;
     }
-
-    if (!player.resources || player.resources.ore < 1 || 
-        player.resources.sheep < 1 || player.resources.wheat < 1) {
-      console.log(`❌ ${player.name} doesn't have enough resources for a development card`);
-      socket.emit('buyCardFailed', { reason: 'Not enough resources' });
-      return;
-    }
-
-    player.resources.ore -= 1;
-    player.resources.sheep -= 1;
-    player.resources.wheat -= 1;
-
-    const drawnCard = developmentCardDeck.pop();
-    player.developmentCards[drawnCard] = (player.developmentCards[drawnCard] || 0) + 1;
-
-    playerData.updatePlayer(userId, { 
-      resources: player.resources,
-      developmentCards: player.developmentCards
-    });
-
-    console.log(`🃏 ${player.name} bought a ${drawnCard} card (${developmentCardDeck.length} cards remaining)`);
-
-    socket.emit('cardBought', { cardType: drawnCard });
-    io.emit('playersUpdated', playerData.getPlayers());
-    io.emit('deckUpdate', { cardsRemaining: developmentCardDeck.length });
   });
 
   // Play knight card handler
   socket.on('playKnight', (data) => {
-    const { userId } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player || userId !== getCurrentPlayerUserId()) return;
-
-    if (player.developmentCards.knight < 1) {
-      socket.emit('playCardFailed', { reason: 'No knight cards' });
-      return;
+    const result = handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, socket);
+    if (result.success) {
+      largestArmyPlayer = result.largestArmyPlayer;
     }
-
-    player.developmentCards.knight -= 1;
-    player.playedKnights = (player.playedKnights || 0) + 1;
-
-    const allPlayers = playerData.getPlayers();
-    const maxKnights = Math.max(...allPlayers.map(p => p.playedKnights || 0));
-    
-    if (player.playedKnights >= 3 && player.playedKnights === maxKnights) {
-      if (largestArmyPlayer && largestArmyPlayer !== userId) {
-        const prevPlayer = playerData.findPlayer(largestArmyPlayer);
-        if (prevPlayer) {
-          playerData.updatePlayer(largestArmyPlayer, { score: prevPlayer.score - 2 });
-        }
-      }
-      
-      if (largestArmyPlayer !== userId) {
-        largestArmyPlayer = userId;
-        playerData.updatePlayer(userId, { 
-          developmentCards: player.developmentCards,
-          playedKnights: player.playedKnights,
-          score: player.score + 2
-        });
-        console.log(`🗡️ ${player.name} now has Largest Army!`);
-      } else {
-        playerData.updatePlayer(userId, { 
-          developmentCards: player.developmentCards,
-          playedKnights: player.playedKnights
-        });
-      }
-    } else {
-      playerData.updatePlayer(userId, { 
-        developmentCards: player.developmentCards,
-        playedKnights: player.playedKnights
-      });
-    }
-
-    console.log(`🗡️ ${player.name} played a Knight card! (Total: ${player.playedKnights})`);
-    
-    io.emit('playersUpdated', playerData.getPlayers());
-    socket.emit('knightPlayed', { userId, totalKnights: player.playedKnights });
   });
 
   // Play victory point card handler
   socket.on('playVictoryPoint', (data) => {
-    const { userId } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player || player.developmentCards.victoryPoint < 1) return;
-
-    player.developmentCards.victoryPoint -= 1;
-    player.score += 1;
-
-    playerData.updatePlayer(userId, { 
-      developmentCards: player.developmentCards,
-      score: player.score
-    });
-
-    console.log(`🏆 ${player.name} revealed a Victory Point card!`);
-    io.emit('playersUpdated', playerData.getPlayers());
-  });
-
-  socket.on('disconnect', () => {
-    console.log('❌ Client disconnected:', socket.id);
+    handlePlayVictoryPoint(data, io);
   });
 });
 
