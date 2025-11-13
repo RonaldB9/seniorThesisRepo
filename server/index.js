@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData, createDevelopmentCardDeck} = require('./gameData');
 const playerData = require('./playerData');
+const { handleRoadSelected, handleBuildRoad } = require('./roadFunctions');
 
 // Clear all players on server startup
 const { writePlayers } = require('./playerData');
@@ -615,102 +616,18 @@ io.on('connection', (socket) => {
 
   // Handle building a road (playing phase)
   socket.on('buildRoad', (data) => {
-    const { userId, roadIndex, position } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
+    const result = handleBuildRoad(data, placedRoads, getCurrentPlayerUserId, io);
+    if (!result.success) {
+      socket.emit('roadSelectionFailed', { reason: result.error });
     }
-
-    if (userId !== getCurrentPlayerUserId()) {
-      console.log(`❌ Not ${player.name}'s turn!`);
-      return;
-    }
-
-    if (placedRoads[roadIndex]) {
-      console.log(`⚠️ Road ${roadIndex} already occupied!`);
-      socket.emit('roadSelectionFailed', { reason: 'Road already occupied' });
-      return;
-    }
-
-    if (!deductRoadResources(userId)) {
-      socket.emit('roadSelectionFailed', { reason: 'Not enough resources' });
-      return;
-    }
-
-    placedRoads[roadIndex] = {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      roadIndex,
-      position,
-      placedAt: new Date()
-    };
-
-    player.roads.push({
-      roadIndex,
-      position,
-      placedAt: new Date()
-    });
-
-    playerData.updatePlayer(userId, { roads: player.roads });
-
-    console.log(`🏗️ ${player.name} built a road at index ${roadIndex}`);
-
-    io.emit('roadPlaced', {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      roadIndex,
-      position
-    });
-
-    io.emit('playersUpdated', playerData.getPlayers());
   });
   
   // Handle road selection (setup phase)
   socket.on('roadSelected', (data) => {
-    const { userId, roadIndex, position } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
+    const result = handleRoadSelected(data, placedRoads, io);
+    if (!result.success) {
+      socket.emit('roadSelectionFailed', { reason: result.error });
     }
-
-    if (placedRoads[roadIndex]) {
-      console.log(`⚠️ Road ${roadIndex} already occupied!`);
-      socket.emit('roadSelectionFailed', { reason: 'Road already occupied' });
-      return;
-    }
-
-    placedRoads[roadIndex] = {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      roadIndex,
-      position,
-      placedAt: new Date()
-    };
-
-    player.roads.push({
-      roadIndex,
-      position,
-      placedAt: new Date()
-    });
-
-    playerData.updatePlayer(userId, { roads: player.roads });
-
-    console.log(`🛣️ ${player.name} placed a road at index ${roadIndex}`);
-
-    io.emit('roadPlaced', {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      roadIndex,
-      position
-    });
   });
 
   // Handle dice roll
