@@ -5,6 +5,7 @@ const { Server } = require('socket.io');
 const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData, createDevelopmentCardDeck} = require('./gameData');
 const playerData = require('./playerData');
 const { handleRoadSelected, handleBuildRoad } = require('./roadFunctions');
+const { handleHouseSelected, handleBuildHouse, handleBuildCity } = require('./buildingFunctions');
 
 // Clear all players on server startup
 const { writePlayers } = require('./playerData');
@@ -401,108 +402,18 @@ io.on('connection', (socket) => {
 
   // Handle house selection (setup phase)
   socket.on('houseSelected', (data) => {
-    const { userId, houseIndex, position } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
+    const result = handleHouseSelected(data, placedHouses, setupPhase, gameBoard, io);
+    if (!result.success) {
+      socket.emit('houseSelectionFailed', { reason: result.error });
     }
-
-    if (placedHouses[houseIndex]) {
-      console.log(`⚠️ House ${houseIndex} already occupied!`);
-      socket.emit('houseSelectionFailed', { reason: 'House already occupied' });
-      return;
-    }
-
-    placedHouses[houseIndex] = {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      houseIndex,
-      position,
-      placedAt: new Date()
-    };
-
-    player.houses.push({
-      houseIndex,
-      position,
-      placedAt: new Date()
-    });
-
-    playerData.updatePlayer(userId, { houses: player.houses });
-
-    console.log(`🏠 ${player.name} placed a house at index ${houseIndex}`);
-
-    const playerHouseCount = player.houses.length;
-    if (playerHouseCount === 2 && setupPhase === 'backward') {
-      console.log(`🎁 Second house placement - giving initial resources!`);
-      giveResourcesForHouse(houseIndex, userId);
-    }
-
-    io.emit('housePlaced', {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      houseIndex,
-      position
-    });
   });
   
   // Handle building a house (playing phase)
   socket.on('buildHouse', (data) => {
-    const { userId, houseIndex, position } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
+    const result = handleBuildHouse(data, placedHouses, getCurrentPlayerUserId, io);
+    if (!result.success) {
+      socket.emit('houseSelectionFailed', { reason: result.error });
     }
-
-    if (userId !== getCurrentPlayerUserId()) {
-      console.log(`❌ Not ${player.name}'s turn!`);
-      return;
-    }
-
-    if (placedHouses[houseIndex]) {
-      console.log(`⚠️ House ${houseIndex} already occupied!`);
-      socket.emit('houseSelectionFailed', { reason: 'House already occupied' });
-      return;
-    }
-
-    if (!deductHouseResources(userId)) {
-      socket.emit('houseSelectionFailed', { reason: 'Not enough resources' });
-      return;
-    }
-
-    placedHouses[houseIndex] = {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      houseIndex,
-      position,
-      placedAt: new Date()
-    };
-
-    player.houses.push({
-      houseIndex,
-      position,
-      placedAt: new Date()
-    });
-
-    playerData.updatePlayer(userId, { houses: player.houses });
-
-    console.log(`🏗️ ${player.name} built a house at index ${houseIndex}`);
-
-    io.emit('housePlaced', {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      houseIndex,
-      position
-    });
-
-    io.emit('playersUpdated', playerData.getPlayers());
   });
 
   // Handle discard cards
@@ -553,65 +464,10 @@ io.on('connection', (socket) => {
 
   // Handle building a city (playing phase)
   socket.on('buildCity', (data) => {
-    const { userId, houseIndex, position } = data;
-    const player = playerData.findPlayer(userId);
-
-    if (!player) {
-      console.log(`❌ Player not found: ${userId}`);
-      return;
+    const result = handleBuildCity(data, placedHouses, placedCities, getCurrentPlayerUserId, io);
+    if (!result.success) {
+      socket.emit('cityBuildFailed', { reason: result.error });
     }
-
-    if (userId !== getCurrentPlayerUserId()) {
-      console.log(`❌ Not ${player.name}'s turn!`);
-      return;
-    }
-
-    const house = placedHouses[houseIndex];
-    if (!house || house.userId !== userId) {
-      console.log(`⚠️ Invalid house for city upgrade at ${houseIndex}!`);
-      socket.emit('cityBuildFailed', { reason: 'Invalid settlement for upgrade' });
-      return;
-    }
-
-    if (placedCities[houseIndex]) {
-      console.log(`⚠️ House ${houseIndex} is already a city!`);
-      socket.emit('cityBuildFailed', { reason: 'Already a city' });
-      return;
-    }
-
-    if (!deductCityResources(userId)) {
-      socket.emit('cityBuildFailed', { reason: 'Not enough resources' });
-      return;
-    }
-
-    placedCities[houseIndex] = {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      houseIndex,
-      position,
-      upgradedAt: new Date()
-    };
-
-    player.cities.push({
-      houseIndex,
-      position,
-      upgradedAt: new Date()
-    });
-
-    playerData.updatePlayer(userId, { cities: player.cities });
-
-    console.log(`🏛️ ${player.name} upgraded house ${houseIndex} to a city`);
-
-    io.emit('cityPlaced', {
-      userId,
-      playerName: player.name,
-      playerColor: player.color,
-      houseIndex,
-      position
-    });
-
-    io.emit('playersUpdated', playerData.getPlayers());
   });
 
   // Handle building a road (playing phase)
