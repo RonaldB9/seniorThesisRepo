@@ -28,12 +28,17 @@ function ActionButtons({
     housePlacedThisTurn,
     roadPlacedThisTurn,
     handlePlayKnight,
-    movingRobber
+    handlePlayYearOfPlenty,
+    handlePlayMonopoly,
+    handlePlayRoadBuilding,
+    handlePlayVictoryPoint,
+    movingRobber,
+    buildingFreeRoads
 }) {
     return (
         <div className="action-buttons">
             {/* Roll Dice Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleRollDice} 
                     disabled={diceRoll !== null || isRolling}
@@ -44,7 +49,7 @@ function ActionButtons({
             )}
             
             {/* Build House Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuildHouse} 
                     disabled={!canBuildHouse()}
@@ -66,7 +71,7 @@ function ActionButtons({
             )}
             
             {/* Build Road Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuildRoad} 
                     disabled={!canBuildRoad()}
@@ -86,7 +91,7 @@ function ActionButtons({
             )}
 
             {/* Build City Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuildCity} 
                     disabled={!canBuildCity()}
@@ -106,7 +111,7 @@ function ActionButtons({
             )}
 
             {/* Development Card Button */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && (
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuyDevelopmentCard}
                     disabled={!canBuyDevCard()}
@@ -117,16 +122,59 @@ function ActionButtons({
                 </button>
             )}
 
-            {/* Play Knight Card Button */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && (
-                <button 
-                    onClick={handlePlayKnight}
-                    disabled={!currentPlayer?.developmentCards?.knight || currentPlayer.developmentCards.knight < 1}
-                    className="play-knight-button"
-                    title="Play a Knight card to move the robber"
-                >
-                    🗡️ Play Knight ({currentPlayer?.developmentCards?.knight || 0})
-                </button>
+            {/* Development Card Play Buttons */}
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
+                <>
+                    {/* Play Knight Card Button */}
+                    <button 
+                        onClick={handlePlayKnight}
+                        disabled={!currentPlayer?.developmentCards?.knight || currentPlayer.developmentCards.knight < 1}
+                        className="play-knight-button"
+                        title="Play a Knight card to move the robber"
+                    >
+                        🗡️ Knight ({currentPlayer?.developmentCards?.knight || 0})
+                    </button>
+
+                    {/* Play Year of Plenty Button */}
+                    <button 
+                        onClick={handlePlayYearOfPlenty}
+                        disabled={!currentPlayer?.developmentCards?.yearOfPlenty || currentPlayer.developmentCards.yearOfPlenty < 1}
+                        className="play-year-button"
+                        title="Take 2 resources from the bank"
+                    >
+                        🎁 Year of Plenty ({currentPlayer?.developmentCards?.yearOfPlenty || 0})
+                    </button>
+
+                    {/* Play Monopoly Button */}
+                    <button 
+                        onClick={handlePlayMonopoly}
+                        disabled={!currentPlayer?.developmentCards?.monopoly || currentPlayer.developmentCards.monopoly < 1}
+                        className="play-monopoly-button"
+                        title="Take all of one resource from other players"
+                    >
+                        💰 Monopoly ({currentPlayer?.developmentCards?.monopoly || 0})
+                    </button>
+
+                    {/* Play Road Building Button */}
+                    <button 
+                        onClick={handlePlayRoadBuilding}
+                        disabled={!currentPlayer?.developmentCards?.roadBuilding || currentPlayer.developmentCards.roadBuilding < 1}
+                        className="play-road-building-button"
+                        title="Build 2 roads for free"
+                    >
+                        🛣️ Road Building ({currentPlayer?.developmentCards?.roadBuilding || 0})
+                    </button>
+
+                    {/* Play Victory Point Button */}
+                    <button 
+                        onClick={handlePlayVictoryPoint}
+                        disabled={!currentPlayer?.developmentCards?.victoryPoint || currentPlayer.developmentCards.victoryPoint < 1}
+                        className="play-victory-button"
+                        title="Reveal a victory point card"
+                    >
+                        🏆 Victory Point ({currentPlayer?.developmentCards?.victoryPoint || 0})
+                    </button>
+                </>
             )}
             
             {/* Cancel Build Button */}
@@ -145,7 +193,8 @@ function ActionButtons({
                 disabled={
                     (gamePhase === 'setup' && (!housePlacedThisTurn && !roadPlacedThisTurn)) || 
                     (gamePhase === 'playing' && !diceRoll) ||
-                    movingRobber
+                    movingRobber ||
+                    buildingFreeRoads
                 }
                 className="end-turn-button"
             >

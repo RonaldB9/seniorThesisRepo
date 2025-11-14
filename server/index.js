@@ -6,7 +6,9 @@ const { generateCatanBoard, getHouseTileData, getRoadSpotData, getPortRoadData, 
 const playerData = require('./playerData');
 const { handleRoadSelected, handleBuildRoad } = require('./roadFunctions');
 const { handleHouseSelected, handleBuildHouse, handleBuildCity } = require('./buildingFunctions');
-const { handleMoveRobber, handleStealResource, handleBuyDevelopmentCard, handlePlayKnight, handlePlayVictoryPoint} = require('./DevelopmentCards');
+const { 
+    handleMoveRobber, handleStealResource, handleBuyDevelopmentCard, handlePlayKnight, 
+    handlePlayYearOfPlenty, handlePlayMonopoly, handlePlayRoadBuilding, handlePlayVictoryPoint} = require('./DevelopmentCards');
 
 // Clear all players on server startup
 const { writePlayers } = require('./playerData');
@@ -415,6 +417,72 @@ io.on('connection', (socket) => {
     if (!result.success) {
       socket.emit('houseSelectionFailed', { reason: result.error });
     }
+  });
+
+  // Play Year of Plenty card handler
+  socket.on('playYearOfPlenty', (data) => {
+      handlePlayYearOfPlenty(data, getCurrentPlayerUserId, io, socket);
+  });
+
+  // Play Monopoly card handler
+  socket.on('playMonopoly', (data) => {
+      handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket);
+  });
+
+  // Play Road Building card handler
+  socket.on('playRoadBuilding', (data) => {
+      handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket);
+  });
+
+  // Build free road (from Road Building card)
+  socket.on('buildFreeRoad', (data) => {
+      const { userId, roadIndex, position } = data;
+      const player = playerData.findPlayer(userId);
+
+      if (!player) {
+          console.log(`❌ Player not found: ${userId}`);
+          return;
+      }
+
+      if (userId !== getCurrentPlayerUserId()) {
+          console.log(`❌ Not ${player.name}'s turn!`);
+          return;
+      }
+
+      if (placedRoads[roadIndex]) {
+          console.log(`⚠️ Road ${roadIndex} already occupied!`);
+          return;
+      }
+
+      // No resource deduction for free roads
+      placedRoads[roadIndex] = {
+          userId,
+          playerName: player.name,
+          playerColor: player.color,
+          roadIndex,
+          position,
+          placedAt: new Date()
+      };
+
+      player.roads.push({
+          roadIndex,
+          position,
+          placedAt: new Date()
+      });
+
+      playerData.updatePlayer(userId, { roads: player.roads });
+
+      console.log(`🛣️ ${player.name} built a FREE road at index ${roadIndex}`);
+
+      io.emit('roadPlaced', {
+          userId,
+          playerName: player.name,
+          playerColor: player.color,
+          roadIndex,
+          position
+      });
+
+      io.emit('playersUpdated', playerData.getPlayers());
   });
 
   // Handle discard cards

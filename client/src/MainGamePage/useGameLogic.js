@@ -50,6 +50,11 @@ export function useGameLogic() {
     const [movingRobber, setMovingRobber] = useState(false);
     const [playersToStealFrom, setPlayersToStealFrom] = useState([]);
     const [showStealDialog, setShowStealDialog] = useState(false);
+    const [showYearOfPlentyDialog, setShowYearOfPlentyDialog] = useState(false);
+    const [showMonopolyDialog, setShowMonopolyDialog] = useState(false);
+    const [showRoadBuildingDialog, setShowRoadBuildingDialog] = useState(false);
+    const [buildingFreeRoads, setBuildingFreeRoads] = useState(false);
+    const [freeRoadsRemaining, setFreeRoadsRemaining] = useState(0);
     
     // NEW: Discard state
     const [needsToDiscard, setNeedsToDiscard] = useState(false);
@@ -347,6 +352,16 @@ export function useGameLogic() {
         setShowStealDialog,
         needsToDiscard,
         setNeedsToDiscard,
-        cardsToDiscard
+        cardsToDiscard,
+        showYearOfPlentyDialog,
+        setShowYearOfPlentyDialog,
+        showMonopolyDialog,
+        setShowMonopolyDialog,
+        showRoadBuildingDialog,
+        setShowRoadBuildingDialog,
+        buildingFreeRoads,
+        setBuildingFreeRoads,
+        freeRoadsRemaining,
+        setFreeRoadsRemaining
     };
 }

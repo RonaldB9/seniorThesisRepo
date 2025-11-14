@@ -3,148 +3,88 @@
     "userId": "73b9025b-c5ef-41ac-802b-254cf09500f5",
     "name": "Player 1",
     "ready": true,
-    "score": 2,
+    "score": 0,
     "color": "red",
     "resources": {
-      "wood": 2,
-      "brick": 0,
-      "sheep": 3,
-      "wheat": 8,
-      "ore": 8
+      "wood": 13,
+      "brick": 11,
+      "sheep": 5,
+      "wheat": 9,
+      "ore": 5
     },
     "developmentCards": {
       "knight": 0,
-      "victoryPoint": 0,
+      "victoryPoint": 2,
       "roadBuilding": 0,
       "yearOfPlenty": 0,
       "monopoly": 0
     },
-    "playedKnights": 0,
+    "playedKnights": 1,
     "houses": [
       {
-        "houseIndex": 18,
+        "houseIndex": 17,
         "position": {
-          "x": 0,
+          "x": -125,
           "y": -62,
           "tiles": [
+            11,
             12,
-            13,
-            18
+            17
           ]
         },
-        "placedAt": "2025-11-13T00:26:58.225Z"
+        "placedAt": "2025-11-14T00:16:24.156Z"
       },
       {
-        "houseIndex": 39,
+        "houseIndex": 28,
         "position": {
-          "x": -125,
-          "y": 128,
+          "x": -185,
+          "y": 33,
           "tiles": [
-            8,
             9,
-            16
+            10,
+            17
           ]
         },
-        "placedAt": "2025-11-13T00:27:07.111Z"
-      },
-      {
-        "houseIndex": 51,
-        "position": {
-          "x": -125,
-          "y": 248,
-          "tiles": [
-            8
-          ]
-        },
-        "placedAt": "2025-11-13T00:27:14.621Z"
+        "placedAt": "2025-11-14T00:16:32.373Z"
       }
     ],
-    "cities": [
-      {
-        "houseIndex": 39,
-        "position": {
-          "x": -125,
-          "y": 128,
-          "tiles": [
-            8,
-            9,
-            16
-          ]
-        },
-        "upgradedAt": "2025-11-13T00:27:11.777Z"
-      }
-    ],
+    "cities": [],
     "roads": [
       {
-        "roadIndex": 28,
+        "roadIndex": 26,
         "position": {
-          "x": 35,
+          "x": -90,
           "y": -45,
           "connectedHouses": [
-            18,
-            24
+            17,
+            23
           ],
           "connectedRoads": [
-            20,
+            19,
+            25,
             27,
-            29,
-            36
+            35
           ]
         },
-        "placedAt": "2025-11-13T00:26:58.687Z"
+        "placedAt": "2025-11-14T00:16:24.392Z"
       },
       {
-        "roadIndex": 56,
+        "roadIndex": 34,
         "position": {
-          "x": -90,
-          "y": 140,
+          "x": -185,
+          "y": 0,
           "connectedHouses": [
-            39,
-            44
+            22,
+            28
           ],
           "connectedRoads": [
-            55,
-            57,
-            50,
-            63
+            24,
+            25,
+            40,
+            41
           ]
         },
-        "placedAt": "2025-11-13T00:27:07.783Z"
-      },
-      {
-        "roadIndex": 63,
-        "position": {
-          "x": -60,
-          "y": 190,
-          "connectedHouses": [
-            44,
-            48
-          ],
-          "connectedRoads": [
-            56,
-            57,
-            67,
-            68
-          ]
-        },
-        "placedAt": "2025-11-13T00:27:10.281Z"
-      },
-      {
-        "roadIndex": 67,
-        "position": {
-          "x": -90,
-          "y": 235,
-          "connectedHouses": [
-            48,
-            51
-          ],
-          "connectedRoads": [
-            66,
-            68,
-            63
-          ]
-        },
-        "placedAt": "2025-11-13T00:27:13.504Z"
+        "placedAt": "2025-11-14T00:16:32.771Z"
       }
     ]
   },
@@ -155,10 +95,10 @@
     "score": 0,
     "color": "green",
     "resources": {
-      "wood": 11,
+      "wood": 10,
       "brick": 10,
-      "sheep": 11,
-      "wheat": 9,
+      "sheep": 10,
+      "wheat": 12,
       "ore": 11
     },
     "developmentCards": {
@@ -171,6 +111,19 @@
     "playedKnights": 0,
     "houses": [
       {
+        "houseIndex": 30,
+        "position": {
+          "x": 65,
+          "y": 33,
+          "tiles": [
+            14,
+            15,
+            18
+          ]
+        },
+        "placedAt": "2025-11-14T00:16:26.653Z"
+      },
+      {
         "houseIndex": 29,
         "position": {
           "x": -65,
@@ -181,59 +134,46 @@
             18
           ]
         },
-        "placedAt": "2025-11-13T00:27:02.130Z"
-      },
-      {
-        "houseIndex": 41,
-        "position": {
-          "x": 125,
-          "y": 128,
-          "tiles": [
-            5,
-            6,
-            15
-          ]
-        },
-        "placedAt": "2025-11-13T00:27:03.962Z"
+        "placedAt": "2025-11-14T00:16:28.636Z"
       }
     ],
     "cities": [],
     "roads": [
       {
-        "roadIndex": 43,
+        "roadIndex": 45,
         "position": {
-          "x": -35,
+          "x": 90,
+          "y": 45,
+          "connectedHouses": [
+            30,
+            36
+          ],
+          "connectedRoads": [
+            36,
+            44,
+            46,
+            52
+          ]
+        },
+        "placedAt": "2025-11-14T00:16:26.852Z"
+      },
+      {
+        "roadIndex": 42,
+        "position": {
+          "x": -90,
           "y": 45,
           "connectedHouses": [
             29,
-            35
+            34
           ],
           "connectedRoads": [
             35,
-            42,
-            44,
-            51
+            41,
+            43,
+            50
           ]
         },
-        "placedAt": "2025-11-13T00:27:02.326Z"
-      },
-      {
-        "roadIndex": 52,
-        "position": {
-          "x": 125,
-          "y": 95,
-          "connectedHouses": [
-            36,
-            41
-          ],
-          "connectedRoads": [
-            45,
-            46,
-            59,
-            60
-          ]
-        },
-        "placedAt": "2025-11-13T00:27:04.167Z"
+        "placedAt": "2025-11-14T00:16:29.372Z"
       }
     ]
   }

@@ -11,6 +11,7 @@ import GameBoard from './GameBoard';
 import Scoreboard from './Scoreboard';
 import ActionButtons from './ActionButtons';
 import DiscardDialog from './DiscardDialog';
+import { YearOfPlentyDialog, MonopolyDialog, RoadBuildingDialog } from './DevelopmentCardDialogs';
 
 function Game() {
     const gameState = useGameLogic();
@@ -24,7 +25,9 @@ function Game() {
         buildingHouse, setBuildingHouse, buildingRoad, setBuildingRoad, buildingCity, setBuildingCity,
         portRoadData, devCardDeckCount, robberTileIndex, movingRobber, setMovingRobber,
         playersToStealFrom, setPlayersToStealFrom, showStealDialog, setShowStealDialog,
-        needsToDiscard, setNeedsToDiscard, cardsToDiscard
+        needsToDiscard, setNeedsToDiscard, cardsToDiscard, showYearOfPlentyDialog, setShowYearOfPlentyDialog,
+        showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
+        buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining
     } = gameState;
 
     const handleHouseClick = (index) => {
@@ -73,8 +76,8 @@ function Game() {
             });
         }
         
-        // Playing phase logic - building road
-        if (userId === currentTurnUserId && buildingRoad && gamePhase === 'playing') {
+        // Playing phase logic - building road (paid)
+        if (userId === currentTurnUserId && buildingRoad && !buildingFreeRoads && gamePhase === 'playing') {
             setSelectedRoadIndex(index);
             socket.emit('buildRoad', {
                 userId,
@@ -82,6 +85,23 @@ function Game() {
                 position: roadData[index]
             });
             setBuildingRoad(false);
+        }
+        
+        // Road Building card - free roads
+        if (userId === currentTurnUserId && buildingFreeRoads && freeRoadsRemaining > 0 && gamePhase === 'playing') {
+            setSelectedRoadIndex(index);
+            socket.emit('buildFreeRoad', {
+                userId,
+                roadIndex: index,
+                position: roadData[index]
+            });
+            setFreeRoadsRemaining(prev => {
+                const newCount = prev - 1;
+                if (newCount === 0) {
+                    setBuildingFreeRoads(false);
+                }
+                return newCount;
+            });
         }
     };
 
@@ -209,6 +229,49 @@ function Game() {
             )
             .map(([index, _]) => parseInt(index));
         return userSettlements;
+    };
+
+    const handlePlayYearOfPlenty = () => {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.yearOfPlenty > 0) {
+            setShowYearOfPlentyDialog(true);
+        }
+    };
+
+    const handleConfirmYearOfPlenty = (resources) => {
+        socket.emit('playYearOfPlenty', { userId, resources });
+        setShowYearOfPlentyDialog(false);
+    };
+
+    const handlePlayMonopoly = () => {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.monopoly > 0) {
+            setShowMonopolyDialog(true);
+        }
+    };
+
+    const handleConfirmMonopoly = (resource) => {
+        socket.emit('playMonopoly', { userId, resource });
+        setShowMonopolyDialog(false);
+    };
+
+    const handlePlayRoadBuilding = () => {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.roadBuilding > 0) {
+            setShowRoadBuildingDialog(true);
+        }
+    };
+
+    const handleConfirmRoadBuilding = () => {
+        socket.emit('playRoadBuilding', { userId });
+        setShowRoadBuildingDialog(false);
+        setBuildingFreeRoads(true);
+        setFreeRoadsRemaining(2);
+    };
+
+    const handlePlayVictoryPoint = () => {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.victoryPoint > 0) {
+            if (window.confirm('Reveal a Victory Point card? This will add 1 point to your score.')) {
+                socket.emit('playVictoryPoint', { userId });
+            }
+        }
     };
 
     const housesPlacedByCurrentUser = Object.values(placedHouses).filter(
@@ -359,6 +422,30 @@ function Game() {
                 </div>
             )}
 
+            {/* Year of Plenty Dialog */}
+            {showYearOfPlentyDialog && (
+                <YearOfPlentyDialog
+                    onConfirm={handleConfirmYearOfPlenty}
+                    onCancel={() => setShowYearOfPlentyDialog(false)}
+                />
+            )}
+
+            {/* Monopoly Dialog */}
+            {showMonopolyDialog && (
+                <MonopolyDialog
+                    onConfirm={handleConfirmMonopoly}
+                    onCancel={() => setShowMonopolyDialog(false)}
+                />
+            )}
+
+            {/* Road Building Dialog */}
+            {showRoadBuildingDialog && (
+                <RoadBuildingDialog
+                    onConfirm={handleConfirmRoadBuilding}
+                    onCancel={() => setShowRoadBuildingDialog(false)}
+                />
+            )}
+
             <GameBoard
                 resourceTiles={resourceTiles}
                 resourceTokens={resourceTokens}
@@ -421,8 +508,14 @@ function Game() {
                 roadPlacedThisTurn={roadPlacedThisTurn}
                 handlePlayKnight={handlePlayKnight}
                 movingRobber={movingRobber}
+                handlePlayYearOfPlenty={handlePlayYearOfPlenty}
+                handlePlayMonopoly={handlePlayMonopoly}
+                handlePlayRoadBuilding={handlePlayRoadBuilding}
+                handlePlayVictoryPoint={handlePlayVictoryPoint}
+                buildingFreeRoads={buildingFreeRoads}
             />
         </div>
+        
     );
 }
 

@@ -1,4 +1,4 @@
-// server/developmentCards.js
+// server/DevelopmentCards.js
 // All development card and robber-related functions
 
 const playerData = require('./playerData');
@@ -223,12 +223,135 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
   return { success: true, largestArmyPlayer: newLargestArmyPlayer };
 }
 
-// Handle playing a victory point card
-function handlePlayVictoryPoint(data, io) {
+// Handle playing a Year of Plenty card
+function handlePlayYearOfPlenty(data, getCurrentPlayerUserId, io, socket) {
+  const { userId, resources } = data;
+  const player = playerData.findPlayer(userId);
+
+  if (!player || userId !== getCurrentPlayerUserId()) {
+    return { success: false, error: 'Not authorized' };
+  }
+
+  if (player.developmentCards.yearOfPlenty < 1) {
+    socket.emit('playCardFailed', { reason: 'No Year of Plenty cards' });
+    return { success: false, error: 'No Year of Plenty cards' };
+  }
+
+  if (!resources || resources.length !== 2) {
+    return { success: false, error: 'Must select exactly 2 resources' };
+  }
+
+  // Deduct the card
+  player.developmentCards.yearOfPlenty -= 1;
+
+  // Give the resources
+  resources.forEach(resource => {
+    player.resources[resource] = (player.resources[resource] || 0) + 1;
+  });
+
+  playerData.updatePlayer(userId, {
+    developmentCards: player.developmentCards,
+    resources: player.resources
+  });
+
+  console.log(`🎁 ${player.name} played Year of Plenty and received ${resources.join(' and ')}`);
+  
+  io.emit('playersUpdated', playerData.getPlayers());
+  socket.emit('yearOfPlentyPlayed', { userId, resources });
+
+  return { success: true };
+}
+
+// Handle playing a Monopoly card
+function handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket) {
+  const { userId, resource } = data;
+  const player = playerData.findPlayer(userId);
+
+  if (!player || userId !== getCurrentPlayerUserId()) {
+    return { success: false, error: 'Not authorized' };
+  }
+
+  if (player.developmentCards.monopoly < 1) {
+    socket.emit('playCardFailed', { reason: 'No Monopoly cards' });
+    return { success: false, error: 'No Monopoly cards' };
+  }
+
+  if (!resource) {
+    return { success: false, error: 'Must select a resource' };
+  }
+
+  // Deduct the card
+  player.developmentCards.monopoly -= 1;
+
+  // Steal the resource from all other players
+  const allPlayers = playerData.getPlayers();
+  let totalStolen = 0;
+
+  allPlayers.forEach(otherPlayer => {
+    if (otherPlayer.userId !== userId && otherPlayer.resources[resource] > 0) {
+      const amount = otherPlayer.resources[resource];
+      totalStolen += amount;
+      otherPlayer.resources[resource] = 0;
+      playerData.updatePlayer(otherPlayer.userId, { resources: otherPlayer.resources });
+      console.log(`💰 ${player.name} stole ${amount} ${resource} from ${otherPlayer.name}`);
+    }
+  });
+
+  // Give all stolen resources to the player
+  player.resources[resource] = (player.resources[resource] || 0) + totalStolen;
+
+  playerData.updatePlayer(userId, {
+    developmentCards: player.developmentCards,
+    resources: player.resources
+  });
+
+  console.log(`💰 ${player.name} played Monopoly on ${resource} and received ${totalStolen} total`);
+  
+  io.emit('playersUpdated', playerData.getPlayers());
+  socket.emit('monopolyPlayed', { userId, resource, totalStolen });
+
+  return { success: true };
+}
+
+// Handle playing a Road Building card
+function handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket) {
   const { userId } = data;
   const player = playerData.findPlayer(userId);
 
-  if (!player || player.developmentCards.victoryPoint < 1) {
+  if (!player || userId !== getCurrentPlayerUserId()) {
+    return { success: false, error: 'Not authorized' };
+  }
+
+  if (player.developmentCards.roadBuilding < 1) {
+    socket.emit('playCardFailed', { reason: 'No Road Building cards' });
+    return { success: false, error: 'No Road Building cards' };
+  }
+
+  // Deduct the card
+  player.developmentCards.roadBuilding -= 1;
+
+  playerData.updatePlayer(userId, {
+    developmentCards: player.developmentCards
+  });
+
+  console.log(`🛣️ ${player.name} played Road Building card`);
+  
+  io.emit('playersUpdated', playerData.getPlayers());
+  socket.emit('roadBuildingPlayed', { userId });
+
+  return { success: true };
+}
+
+// Handle playing a victory point card
+function handlePlayVictoryPoint(data, getCurrentPlayerUserId, io) {
+  const { userId } = data;
+  const player = playerData.findPlayer(userId);
+
+  if (!player || userId !== getCurrentPlayerUserId()) {
+    return { success: false, error: 'Not authorized' };
+  }
+
+  if (player.developmentCards.victoryPoint < 1) {
     return { success: false, error: 'No victory point cards' };
   }
 
@@ -253,5 +376,8 @@ module.exports = {
   handleStealResource,
   handleBuyDevelopmentCard,
   handlePlayKnight,
+  handlePlayYearOfPlenty,
+  handlePlayMonopoly,
+  handlePlayRoadBuilding,
   handlePlayVictoryPoint
 };
