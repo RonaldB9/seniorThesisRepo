@@ -351,20 +351,42 @@ function handlePlayVictoryPoint(data, getCurrentPlayerUserId, io) {
     return { success: false, error: 'Not authorized' };
   }
 
-  if (player.developmentCards.victoryPoint < 1) {
+  if (!player.developmentCards.victoryPoint || player.developmentCards.victoryPoint < 1) {
     return { success: false, error: 'No victory point cards' };
   }
 
   player.developmentCards.victoryPoint -= 1;
+  
+  if (!player.revealedVictoryPoints) {
+    player.revealedVictoryPoints = 0;
+  }
+  player.revealedVictoryPoints += 1;
   player.score += 1;
 
   playerData.updatePlayer(userId, { 
     developmentCards: player.developmentCards,
+    revealedVictoryPoints: player.revealedVictoryPoints,
     score: player.score
   });
 
-  console.log(`🏆 ${player.name} revealed a Victory Point card!`);
+  console.log(`🏆 ${player.name} revealed a Victory Point card! (Score: ${player.score})`);
+  
   io.emit('playersUpdated', playerData.getPlayers());
+  io.emit('victoryPointRevealed', { 
+    userId, 
+    playerName: player.name,
+    newScore: player.score,
+    totalRevealed: player.revealedVictoryPoints
+  });
+
+  if (player.score >= 10) {
+    console.log(`🎉 ${player.name} has won the game!`);
+    io.emit('gameWon', {
+      winnerId: userId,
+      winnerName: player.name,
+      finalScore: player.score
+    });
+  }
 
   return { success: true };
 }

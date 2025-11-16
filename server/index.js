@@ -112,6 +112,7 @@ app.post('/api/register', (req, res) => {
         monopoly: 0
       },
       playedKnights: 0,
+      revealedVictoryPoints: 0,
       houses: [],
       cities: [],
       roads: []
@@ -686,7 +687,7 @@ io.on('connection', (socket) => {
 
   // Play victory point card handler
   socket.on('playVictoryPoint', (data) => {
-    handlePlayVictoryPoint(data, io);
+    handlePlayVictoryPoint(data, getCurrentPlayerUserId, io);
   });
 });
 

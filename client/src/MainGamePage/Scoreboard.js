@@ -30,7 +30,14 @@ function Scoreboard({ allPlayers, userId, currentTurnUserId }) {
                     {player.userId === userId && player.developmentCards && (
                         <div className="player-dev-cards">
                             <div className="dev-card-item">🗡️ Knights: {player.developmentCards.knight || 0}</div>
-                            <div className="dev-card-item">🏆 VP: {player.developmentCards.victoryPoint || 0}</div>
+                            <div className="dev-card-item" title="Victory Point cards are hidden until revealed">
+                            🏆 VP (Hidden): {player.developmentCards.victoryPoint || 0}
+                            </div>
+                            {player.revealedVictoryPoints > 0 && (
+                            <div className="dev-card-item" style={{ backgroundColor: '#FFD700' }}>
+                                ⭐ Revealed VP: {player.revealedVictoryPoints}
+                            </div>
+                            )}
                             <div className="dev-card-item">🛣️ Road Building: {player.developmentCards.roadBuilding || 0}</div>
                             <div className="dev-card-item">🎁 Year of Plenty: {player.developmentCards.yearOfPlenty || 0}</div>
                             <div className="dev-card-item">💰 Monopoly: {player.developmentCards.monopoly || 0}</div>

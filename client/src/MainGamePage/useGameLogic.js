@@ -82,6 +82,22 @@ export function useGameLogic() {
         setUnavailableRoads(unavailable);
     };
 
+    const handleVictoryPointRevealed = (data) => {
+        console.log(`🏆 ${data.playerName} revealed a victory point! New score: ${data.newScore}`);
+    };
+
+    const handleGameWon = (data) => {
+        alert(`🎉 ${data.winnerName} has won the game with ${data.finalScore} points!`);
+        console.log(`🎉 Game won by ${data.winnerName}!`);
+    };
+
+    socket.on('victoryPointRevealed', handleVictoryPointRevealed);
+    socket.on('gameWon', handleGameWon);
+
+    // In cleanup:
+    socket.off('victoryPointRevealed', handleVictoryPointRevealed);
+    socket.off('gameWon', handleGameWon);
+
     // Get userId on mount
     useEffect(() => {
         const id = localStorage.getItem('userId');
