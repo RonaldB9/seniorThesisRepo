@@ -73,20 +73,3 @@
 .startText {
   text-align: center;
 }
-
-.sheep {
-  width: 50px;
-  height: 50px;
-  bottom: 10%;
-  position: absolute;
-  animation: moveSideToSide 3s ease-in-out infinite alternate;
-}
-
-@keyframes moveSideToSide {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100px); /* move 100px right */
-  }
-}
