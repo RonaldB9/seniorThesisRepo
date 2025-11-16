@@ -59,7 +59,9 @@ function GameBoard({
     buildingRoad,
     robberTileIndex,
     movingRobber,
-    handleTileClick
+    handleTileClick,
+    buildingFreeRoads,
+    freeRoadsRemaining
 }) {
     return (
         <div className="tiles-container">
@@ -308,8 +310,8 @@ function GameBoard({
                     ))
                 }
 
-                {/* Road Building Circles - Playing Phase */}
-                {gamePhase === 'playing' && buildingRoad && userId === currentTurnUserId && 
+                {/* Road Building Circles - Playing Phase (PAID ROADS) */}
+                {gamePhase === 'playing' && buildingRoad && !buildingFreeRoads && userId === currentTurnUserId && 
                     Array.isArray(roadData) && roadData.map((road, index) => (
                         !placedRoads[index] && !unavailableRoads.has(index) && availableRoadIndices.includes(index) && (
                             <img 
@@ -317,6 +319,31 @@ function GameBoard({
                                 src={chooseCircle} 
                                 className="road_marker fade-loop"
                                 alt={`Build Road ${index}`}
+                                onClick={() => handleRoadClick(index)}
+                                style={{
+                                    position: 'absolute',
+                                    top: `calc(50% + ${road.y}px)`,
+                                    left: `calc(50% + ${road.x}px)`,
+                                    transform: 'translate(-50%, -50%)',
+                                    cursor: 'pointer',
+                                    opacity: 0.7,
+                                    filter: 'drop-shadow(0 0 8px rgba(255, 152, 0, 0.8))',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            />
+                        )
+                    ))
+                }
+
+                {/* FREE Road Building - From Road Building Card */}
+                {gamePhase === 'playing' && buildingFreeRoads && userId === currentTurnUserId && 
+                    Array.isArray(roadData) && roadData.map((road, index) => (
+                        !placedRoads[index] && !unavailableRoads.has(index) && availableRoadIndices.includes(index) && (
+                            <img 
+                                key={`free-road-${index}`} 
+                                src={chooseCircle} 
+                                className="road_marker fade-loop"
+                                alt={`Free Road ${index} (${freeRoadsRemaining} remaining)`}
                                 onClick={() => handleRoadClick(index)}
                                 style={{
                                     position: 'absolute',

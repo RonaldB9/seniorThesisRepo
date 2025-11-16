@@ -349,6 +349,7 @@ function Game() {
                     {gamePhase === 'playing' && diceRoll && ` Rolled: ${diceRoll.total}`}
                     {buildingHouse && ' - Select a spot for your house'}
                     {buildingRoad && ' - Select a spot for your road'}
+                    {buildingFreeRoads && ` - Place ${freeRoadsRemaining} free road(s)`}
                     {buildingCity && ' - Select a settlement to upgrade'}
                     {movingRobber && ' - Select a tile to move the robber'}
                     </>
@@ -476,6 +477,8 @@ function Game() {
                 robberTileIndex={robberTileIndex}
                 movingRobber={movingRobber}
                 handleTileClick={handleTileClick}
+                buildingFreeRoads={buildingFreeRoads}
+                freeRoadsRemaining={freeRoadsRemaining}
             />
 
             <ActionButtons
