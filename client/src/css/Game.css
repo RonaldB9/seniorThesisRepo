@@ -21,8 +21,6 @@
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  border: 1px solid black;
-  box-sizing: border-box;
 }
 
 .tile {
