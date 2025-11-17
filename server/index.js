@@ -85,7 +85,7 @@ app.get('/api/robber', (req, res) => {
 //Register new player
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
-  const colors = ['red', 'green', 'blue', 'yellow', 'orange'];
+  const colors = ['red', 'green', 'blue', 'orange', 'purple'];
   const playerNumber = playerData.getPlayers().length;
   const assignedColor = colors[playerNumber % colors.length];
 
