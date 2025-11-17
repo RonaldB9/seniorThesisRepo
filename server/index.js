@@ -98,11 +98,11 @@ app.post('/api/register', (req, res) => {
       score: 0,
       color: assignedColor,
       resources: {
-        wood: 10,
-        brick: 10,
-        sheep: 10,
-        wheat: 10,
-        ore: 10
+        wood: 100,
+        brick: 100,
+        sheep: 100,
+        wheat: 100,
+        ore: 100
       },
       developmentCards: {
         knight: 0,
@@ -125,6 +125,38 @@ app.post('/api/register', (req, res) => {
   io.emit('playersUpdated', playerData.getPlayers());
   res.json(existing);
 });
+
+// Helper function to reset all player stats to default
+function resetAllPlayerStats() {
+  const players = playerData.getPlayers();
+  
+  players.forEach(player => {
+    playerData.updatePlayer(player.userId, {
+      score: 0,
+      resources: {
+        wood: 100,
+        brick: 100,
+        sheep: 100,
+        wheat: 100,
+        ore: 100
+      },
+      developmentCards: {
+        knight: 0,
+        victoryPoint: 0,
+        roadBuilding: 0,
+        yearOfPlenty: 0,
+        monopoly: 0
+      },
+      playedKnights: 0,
+      revealedVictoryPoints: 0,
+      houses: [],
+      cities: [],
+      roads: []
+    });
+  });
+  
+  console.log('♻️ All player stats reset to default');
+}
 
 // Toggle ready status
 app.post('/api/players/:userId/ready', (req, res) => {
@@ -484,6 +516,7 @@ io.on('connection', (socket) => {
     const players = playerData.getPlayers();
     if (players.length === 0) return;
 
+    // Reset game state
     currentTurnIndex = 0;
     setupPhase = 'forward';
     placedHouses = {};
@@ -497,9 +530,14 @@ io.on('connection', (socket) => {
       robberTileIndex = gameBoard.resourceTiles.findIndex(tile => tile === 'Desert');
     }
 
+    // RESET ALL PLAYER STATS
+    resetAllPlayerStats();
+
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
+    
     io.emit('startGame');
+    io.emit('playersUpdated', playerData.getPlayers()); // Send updated stats to clients
     broadcastCurrentTurn();
   });
 

@@ -1,9 +1,9 @@
-// server/buildingFunctions.js
-// All house and city building functions
+//All house and city building functions
 
 const playerData = require('./playerData');
+const { checkForWin } = require('./DevelopmentCards');
 
-// Helper function to deduct resources when building a house
+//Deduct resources when building a house
 function deductHouseResources(userId) {
   const player = playerData.findPlayer(userId);
   
@@ -29,7 +29,7 @@ function deductHouseResources(userId) {
   return true;
 }
 
-// Helper function to deduct resources when building a city
+//Deduct resources when building a city
 function deductCityResources(userId) {
   const player = playerData.findPlayer(userId);
   
@@ -52,7 +52,7 @@ function deductCityResources(userId) {
   return true;
 }
 
-// Helper function to give resources for a house placement (used for second setup house)
+//Give resources for a house placement (used for second setup house)
 function giveResourcesForHouse(houseIndex, userId, gameBoard, io) {
   if (!gameBoard) return;
 
@@ -63,26 +63,26 @@ function giveResourcesForHouse(houseIndex, userId, gameBoard, io) {
 
   console.log(`🏠 Giving initial resources for house ${houseIndex} to ${player.name}`);
 
-  // For each tile adjacent to this house
+  //For each tile adjacent to this house
   houseTileData.tiles.forEach(tileIndex => {
     const resourceType = gameBoard.resourceTiles[tileIndex];
     
-    // Skip desert tiles
+    //Skip desert tiles
     if (resourceType === 'Desert') return;
 
-    // Give the player one of this resource
+    //Give the player one of this resource
     const resourceKey = resourceType.toLowerCase();
     player.resources[resourceKey] = (player.resources[resourceKey] || 0) + 1;
     
     console.log(`  ✅ ${player.name} received 1 ${resourceType} from tile ${tileIndex}`);
   });
 
-  // Update player data
+  //Update player data
   playerData.updatePlayer(userId, { resources: player.resources });
   io.emit('playersUpdated', playerData.getPlayers());
 }
 
-// Handle house selection (setup phase)
+//Handle house selection (setup phase)
 function handleHouseSelected(data, placedHouses, setupPhase, gameBoard, io) {
   const { userId, houseIndex, position } = data;
   const player = playerData.findPlayer(userId);
@@ -112,9 +112,15 @@ function handleHouseSelected(data, placedHouses, setupPhase, gameBoard, io) {
     placedAt: new Date()
   });
 
-  playerData.updatePlayer(userId, { houses: player.houses });
+  //Add 1 point for settlement (setup phase)
+  player.score += 1;
 
-  console.log(`🏠 ${player.name} placed a house at index ${houseIndex}`);
+  playerData.updatePlayer(userId, { 
+    houses: player.houses,
+    score: player.score
+  });
+
+  console.log(`🏠 ${player.name} placed a house at index ${houseIndex} (Score: ${player.score})`);
 
   const playerHouseCount = player.houses.length;
   if (playerHouseCount === 2 && setupPhase === 'backward') {
@@ -130,10 +136,12 @@ function handleHouseSelected(data, placedHouses, setupPhase, gameBoard, io) {
     position
   });
 
+  io.emit('playersUpdated', playerData.getPlayers());
+
   return { success: true };
 }
 
-// Handle building a house (playing phase)
+//Handle building a house (playing phase)
 function handleBuildHouse(data, placedHouses, getCurrentPlayerUserId, io) {
   const { userId, houseIndex, position } = data;
   const player = playerData.findPlayer(userId);
@@ -174,7 +182,7 @@ function handleBuildHouse(data, placedHouses, getCurrentPlayerUserId, io) {
 
   playerData.updatePlayer(userId, { houses: player.houses });
 
-  console.log(`🏗️ ${player.name} built a house at index ${houseIndex}`);
+  console.log(`🏗️ ${player.name} built a house at index ${houseIndex} (Score: ${player.score})`);
 
   io.emit('housePlaced', {
     userId,
@@ -186,10 +194,14 @@ function handleBuildHouse(data, placedHouses, getCurrentPlayerUserId, io) {
 
   io.emit('playersUpdated', playerData.getPlayers());
 
+  //Check for win after building house
+  const updatedPlayer = playerData.findPlayer(userId);
+  checkForWin(updatedPlayer, io);
+
   return { success: true };
 }
 
-// Handle building a city (playing phase)
+//Handle building a city (playing phase)
 function handleBuildCity(data, placedHouses, placedCities, getCurrentPlayerUserId, io) {
   const { userId, houseIndex, position } = data;
   const player = playerData.findPlayer(userId);
@@ -236,7 +248,7 @@ function handleBuildCity(data, placedHouses, placedCities, getCurrentPlayerUserI
 
   playerData.updatePlayer(userId, { cities: player.cities });
 
-  console.log(`🏛️ ${player.name} upgraded house ${houseIndex} to a city`);
+  console.log(`🏛️ ${player.name} upgraded house ${houseIndex} to a city (Score: ${player.score})`);
 
   io.emit('cityPlaced', {
     userId,
@@ -247,6 +259,10 @@ function handleBuildCity(data, placedHouses, placedCities, getCurrentPlayerUserI
   });
 
   io.emit('playersUpdated', playerData.getPlayers());
+
+  //Check for win after building city
+  const updatedPlayer = playerData.findPlayer(userId);
+  checkForWin(updatedPlayer, io);
 
   return { success: true };
 }

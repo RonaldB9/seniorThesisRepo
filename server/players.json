@@ -3,134 +3,14 @@
     "userId": "73b9025b-c5ef-41ac-802b-254cf09500f5",
     "name": "Player 1",
     "ready": true,
-    "score": 2,
+    "score": 0,
     "color": "red",
     "resources": {
-      "wood": 0,
-      "brick": 14,
-      "sheep": 3,
-      "wheat": 0,
-      "ore": 1
-    },
-    "developmentCards": {
-      "knight": 3,
-      "victoryPoint": 1,
-      "roadBuilding": 0,
-      "yearOfPlenty": 1,
-      "monopoly": 0
-    },
-    "playedKnights": 2,
-    "revealedVictoryPoints": 1,
-    "houses": [
-      {
-        "houseIndex": 23,
-        "position": {
-          "x": -65,
-          "y": -32,
-          "tiles": [
-            12,
-            17,
-            18
-          ]
-        },
-        "placedAt": "2025-11-16T00:34:59.142Z"
-      },
-      {
-        "houseIndex": 34,
-        "position": {
-          "x": -125,
-          "y": 58,
-          "tiles": [
-            9,
-            16,
-            17
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:06.733Z"
-      },
-      {
-        "houseIndex": 43,
-        "position": {
-          "x": -185,
-          "y": 158,
-          "tiles": [
-            8,
-            9
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:11.325Z"
-      }
-    ],
-    "cities": [],
-    "roads": [
-      {
-        "roadIndex": 27,
-        "position": {
-          "x": -35,
-          "y": -45,
-          "connectedHouses": [
-            18,
-            23
-          ],
-          "connectedRoads": [
-            26,
-            28,
-            35,
-            20
-          ]
-        },
-        "placedAt": "2025-11-16T00:34:59.379Z"
-      },
-      {
-        "roadIndex": 50,
-        "position": {
-          "x": -125,
-          "y": 95,
-          "connectedHouses": [
-            34,
-            39
-          ],
-          "connectedRoads": [
-            41,
-            42,
-            55,
-            56
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:07.077Z"
-      },
-      {
-        "roadIndex": 55,
-        "position": {
-          "x": -160,
-          "y": 140,
-          "connectedHouses": [
-            39,
-            43
-          ],
-          "connectedRoads": [
-            54,
-            56,
-            50,
-            62
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:09.716Z"
-      }
-    ]
-  },
-  {
-    "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
-    "name": "Player 2",
-    "ready": true,
-    "score": 0,
-    "color": "green",
-    "resources": {
-      "wood": 9,
-      "brick": 0,
-      "sheep": 0,
-      "wheat": 0,
-      "ore": 10
+      "wood": 100,
+      "brick": 100,
+      "sheep": 100,
+      "wheat": 100,
+      "ore": 100
     },
     "developmentCards": {
       "knight": 0,
@@ -141,72 +21,34 @@
     },
     "playedKnights": 0,
     "revealedVictoryPoints": 0,
-    "houses": [
-      {
-        "houseIndex": 24,
-        "position": {
-          "x": 65,
-          "y": -32,
-          "tiles": [
-            13,
-            14,
-            18
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:01.819Z"
-      },
-      {
-        "houseIndex": 35,
-        "position": {
-          "x": 0,
-          "y": 58,
-          "tiles": [
-            15,
-            16,
-            18
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:03.906Z"
-      }
-    ],
+    "houses": [],
     "cities": [],
-    "roads": [
-      {
-        "roadIndex": 36,
-        "position": {
-          "x": 60,
-          "y": 0,
-          "connectedHouses": [
-            24,
-            30
-          ],
-          "connectedRoads": [
-            28,
-            29,
-            44,
-            45
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:02.063Z"
-      },
-      {
-        "roadIndex": 51,
-        "position": {
-          "x": 0,
-          "y": 95,
-          "connectedHouses": [
-            35,
-            40
-          ],
-          "connectedRoads": [
-            43,
-            44,
-            57,
-            58
-          ]
-        },
-        "placedAt": "2025-11-16T00:35:04.121Z"
-      }
-    ]
+    "roads": []
+  },
+  {
+    "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
+    "name": "Player 2",
+    "ready": true,
+    "score": 0,
+    "color": "green",
+    "resources": {
+      "wood": 100,
+      "brick": 100,
+      "sheep": 100,
+      "wheat": 100,
+      "ore": 100
+    },
+    "developmentCards": {
+      "knight": 0,
+      "victoryPoint": 0,
+      "roadBuilding": 0,
+      "yearOfPlenty": 0,
+      "monopoly": 0
+    },
+    "playedKnights": 0,
+    "revealedVictoryPoints": 0,
+    "houses": [],
+    "cities": [],
+    "roads": []
   }
 ]

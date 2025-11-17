@@ -1,9 +1,22 @@
-// server/DevelopmentCards.js
-// All development card and robber-related functions
-
+//All development card and robber-related functions
 const playerData = require('./playerData');
 
-// Helper function to get players with settlements adjacent to a tile
+//Check if a player has won
+function checkForWin(player, io) {
+  if (player.score >= 10) {
+    console.log(`🎉 ${player.name} has won the game with ${player.score} points!`);
+    io.emit('gameWon', {
+      winnerId: player.userId,
+      winnerName: player.name,
+      winnerColor: player.color,
+      finalScore: player.score
+    });
+    return true;
+  }
+  return false;
+}
+
+//Get players with settlements adjacent to a tile
 function getPlayersAdjacentToTile(tileIndex, placedHouses, gameBoard) {
   if (!gameBoard) return [];
   
@@ -13,7 +26,7 @@ function getPlayersAdjacentToTile(tileIndex, placedHouses, gameBoard) {
   Object.entries(placedHouses).forEach(([houseIndex, house]) => {
     const houseTileData = gameBoard.houseData[parseInt(houseIndex)];
     
-    // If this house is adjacent to the tile
+    //If this house is adjacent to the tile
     if (houseTileData.tiles.includes(tileIndex)) {
       const player = playerData.findPlayer(house.userId);
       if (player) {
@@ -33,7 +46,7 @@ function getPlayersAdjacentToTile(tileIndex, placedHouses, gameBoard) {
   return Array.from(adjacentPlayers).map(p => JSON.parse(p));
 }
 
-// Helper function to steal a random resource from a player
+//Steal a random resource from a player
 function stealRandomResource(thiefUserId, victimUserId) {
   const victim = playerData.findPlayer(victimUserId);
   const thief = playerData.findPlayer(thiefUserId);
@@ -202,6 +215,10 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
         score: player.score + 2
       });
       console.log(`🗡️ ${player.name} now has Largest Army!`);
+      
+      // Check for win after gaining largest army
+      const updatedPlayer = playerData.findPlayer(userId);
+      checkForWin(updatedPlayer, io);
     } else {
       playerData.updatePlayer(userId, { 
         developmentCards: player.developmentCards,
@@ -379,14 +396,8 @@ function handlePlayVictoryPoint(data, getCurrentPlayerUserId, io) {
     totalRevealed: player.revealedVictoryPoints
   });
 
-  if (player.score >= 10) {
-    console.log(`🎉 ${player.name} has won the game!`);
-    io.emit('gameWon', {
-      winnerId: userId,
-      winnerName: player.name,
-      finalScore: player.score
-    });
-  }
+  // Check for win
+  checkForWin(player, io);
 
   return { success: true };
 }
@@ -401,5 +412,6 @@ module.exports = {
   handlePlayYearOfPlenty,
   handlePlayMonopoly,
   handlePlayRoadBuilding,
-  handlePlayVictoryPoint
+  handlePlayVictoryPoint,
+  checkForWin
 };

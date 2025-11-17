@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/App.css';
 import '../css/Game.css'; 
 import '../css/Robber.css';
 import '../css/DevelopmentCards.css'; 
 import '../css/ActionButtons.css'; 
+import '../css/VictoryPopup.css';
 import socket from '../socket';
 import { useGameLogic } from './useGameLogic';
 import GameBoard from './GameBoard';
 import Scoreboard from './Scoreboard';
 import ActionButtons from './ActionButtons';
 import DiscardDialog from './DiscardDialog';
+import VictoryPopup from './VictoryPopup';
 import { YearOfPlentyDialog, MonopolyDialog, RoadBuildingDialog } from './DevelopmentCardDialogs';
 
 function Game() {
+    const navigate = useNavigate();
     const gameState = useGameLogic();
+    
+    const [showVictoryPopup, setShowVictoryPopup] = useState(false);
+    const [victoryData, setVictoryData] = useState(null);
     
     const {
         resourceTiles, resourceTokens, houseData, roadData, currentTurnUserId, userId,
@@ -28,6 +35,30 @@ function Game() {
         showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
         buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining
     } = gameState;
+
+    // Listen for game won event
+    useEffect(() => {
+        const handleGameWon = (data) => {
+            console.log(`🎉 Game won by ${data.winnerName}!`);
+            setVictoryData({
+                winnerName: data.winnerName,
+                winnerColor: data.winnerColor,
+                finalScore: data.finalScore
+            });
+            setShowVictoryPopup(true);
+        };
+
+        socket.on('gameWon', handleGameWon);
+
+        return () => {
+            socket.off('gameWon', handleGameWon);
+        };
+    }, [navigate]);
+
+    const handleReturnToLobby = () => {
+        setShowVictoryPopup(false);
+        navigate('/');
+    };
 
     const handleHouseClick = (index) => {
         // Setup phase logic
@@ -335,6 +366,16 @@ function Game() {
     return (
         <div className="backgroundGame">
             
+            {/* Victory Popup */}
+            {showVictoryPopup && victoryData && (
+                <VictoryPopup
+                    winnerName={victoryData.winnerName}
+                    winnerColor={victoryData.winnerColor}
+                    finalScore={victoryData.finalScore}
+                    onClose={handleReturnToLobby}
+                />
+            )}
+
             <div
                 className={`your-turn-banner ${
                     userId === currentTurnUserId ? 'your-turn' : 'not-your-turn'

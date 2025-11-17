@@ -1,0 +1,123 @@
+/* Victory Popup Styles */
+.victory-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.5s ease;
+}
+
+.victory-popup {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    animation: slideDown 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.victory-confetti {
+    position: absolute;
+    top: 20px;
+    font-size: 60px;
+    animation: spin 2s linear infinite;
+}
+
+.victory-confetti:nth-child(1) { 
+    left: 10%; 
+}
+
+.victory-confetti:nth-child(2) { 
+    right: 10%; 
+    animation-delay: 0.5s; 
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.victory-title {
+    margin: 0 0 30px 0;
+    font-size: 48px;
+    color: white;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.victory-content h2 {
+    font-size: 36px;
+    margin: 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.victory-score {
+    color: white;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.victory-score strong {
+    color: #FFD700;
+}
+
+.victory-trophy {
+    font-size: 80px;
+    margin: 30px 0;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.victory-button {
+    background-color: #FFD700;
+    color: #333;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.victory-button:hover {
+    background-color: #FFC700;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
