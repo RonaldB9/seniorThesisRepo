@@ -70,38 +70,35 @@
     width: 100%;
 }
 
+/* Updated compact scoreboard CSS - Add to Game.css */
+
 .scoreboard {
     background-color: white;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 10px;
     position: fixed;
-    left: 5%;
+    left: 2%;
     top: 50%;
     transform: translateY(-50%);
-    width: 200px;
+    width: 180px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 100;
-}
-
-@media screen and (max-width: 1300px) {
-    .scoreboard {
-        padding: 5px;
-        left: 0%;
-        width: 150px;
-    }
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .scoreboard h3 {
-    margin: 0 0 15px 0;
+    margin: 0 0 10px 0;
     text-align: center;
     color: #333;
+    font-size: 16px;
 }
 
 .score-item {
     display: flex;
     flex-direction: column;
-    padding: 8px 12px;
-    margin-bottom: 8px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
     background-color: #f5f5f5;
     border-radius: 5px;
     transition: all 0.3s ease;
@@ -110,18 +107,89 @@
 .score-item.current-user {
     background-color: #e3f2fd;
     border: 2px solid #2196F3;
-    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
 }
 
 .score-points {
     font-weight: bold;
     color: #555;
+    font-size: 0.85em;
 }
 
 .turn-indicator {
     color: #FF6B6B;
-    font-size: 0.9em;
+    font-size: 0.75em;
+    margin-bottom: 4px;
     animation: pulse 1.5s ease-in-out infinite;
+}
+
+.player-resources {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #ccc;
+}
+
+.resource-item {
+    font-size: 0.7em;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.player-dev-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #ccc;
+}
+
+.dev-card-item {
+    font-size: 0.7em;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.dev-card-item.revealed-vp {
+    background-color: #FFD700;
+    grid-column: span 2;
+}
+
+@media screen and (max-width: 1300px) {
+    .scoreboard {
+        padding: 8px;
+        left: 1%;
+        width: 140px;
+    }
+    
+    .scoreboard h3 {
+        font-size: 14px;
+    }
+    
+    .player-header span {
+        font-size: 0.8em !important;
+    }
+    
+    .resource-item,
+    .dev-card-item {
+        font-size: 0.65em;
+        padding: 1px 3px;
+    }
 }
 
 .your-turn-banner.not-your-turn {
