@@ -10,7 +10,7 @@ const {
     handleMoveRobber, handleStealResource, handleBuyDevelopmentCard, handlePlayKnight, 
     handlePlayYearOfPlenty, handlePlayMonopoly, handlePlayRoadBuilding, handlePlayVictoryPoint} = require('./DevelopmentCards');
 
-// Clear all players on server startup
+//Clear all players on server startup
 const { writePlayers } = require('./playerData');
 writePlayers([]);
 
@@ -28,18 +28,18 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-// In-memory
+//In-memory
 let currentTurnIndex = 0;
-let setupPhase = 'forward'; // 'forward' or 'backward'
+let setupPhase = 'forward'; //'forward' or 'backward'
 let gameBoard = null;
-let placedHouses = {}; // Track which house indices are already occupied with house data
-let placedRoads = {}; // Track which road indices are already occupied with road data
-let placedCities = {}; // Track which houses have been upgraded to cities
+let placedHouses = {}; //Track which house indices are already occupied with house data
+let placedRoads = {}; //Track which road indices are already occupied with road data
+let placedCities = {}; //Track which houses have been upgraded to cities
 let developmentCardDeck = [];
-let largestArmyPlayer = null; // Track who has largest army
-let robberTileIndex = null; // Track robber position
+let largestArmyPlayer = null; //Track who has largest army
+let robberTileIndex = null; //Track robber position
 
-// Generate board data
+//Generate board data
 app.get('/api/board', (req, res) => {
   if (!gameBoard) {
     const boardData = generateCatanBoard();
@@ -62,27 +62,27 @@ app.get('/api/board', (req, res) => {
   res.json(gameBoard);
 });
 
-// Get all placed houses
+//Get all placed houses
 app.get('/api/houses', (req, res) => {
   res.json(placedHouses);
 });
 
-// Get all placed roads
+//Get all placed roads
 app.get('/api/roads', (req, res) => {
   res.json(placedRoads);
 });
 
-// Get all placed cities
+//Get all placed cities
 app.get('/api/cities', (req, res) => {
   res.json(placedCities);
 });
 
-// Get robber position
+//Get robber position
 app.get('/api/robber', (req, res) => {
   res.json({ tileIndex: robberTileIndex });
 });
 
-// Register new player
+//Register new player
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
   const colors = ['red', 'green', 'blue', 'yellow', 'orange'];
@@ -263,14 +263,14 @@ io.on('connection', (socket) => {
 
   socket.emit('playersUpdated', playerData.getPlayers());
 
-  // Handle request for current turn
+  //Handle request for current turn
   socket.on('requestCurrentTurn', (callback) => {
     const currentUserId = getCurrentPlayerUserId();
     socket.emit('currentTurn', currentUserId);
     if (callback) callback({ currentUserId });
   });
 
-  // Handle house selection (setup phase)
+  //Handle house selection (setup phase)
   socket.on('houseSelected', (data) => {
     const result = handleHouseSelected(data, placedHouses, setupPhase, gameBoard, io);
     if (!result.success) {
@@ -278,7 +278,7 @@ io.on('connection', (socket) => {
     }
   });
   
-  // Handle building a house (playing phase)
+  //Handle building a house (playing phase)
   socket.on('buildHouse', (data) => {
     const result = handleBuildHouse(data, placedHouses, getCurrentPlayerUserId, io);
     if (!result.success) {
@@ -286,22 +286,22 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Play Year of Plenty card handler
+  //Play Year of Plenty card handler
   socket.on('playYearOfPlenty', (data) => {
       handlePlayYearOfPlenty(data, getCurrentPlayerUserId, io, socket);
   });
 
-  // Play Monopoly card handler
+  //Play Monopoly card handler
   socket.on('playMonopoly', (data) => {
       handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket);
   });
 
-  // Play Road Building card handler
+  //Play Road Building card handler
   socket.on('playRoadBuilding', (data) => {
       handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket);
   });
 
-  // Build free road (from Road Building card)
+  //Build free road (from Road Building card)
   socket.on('buildFreeRoad', (data) => {
       const { userId, roadIndex, position } = data;
       const player = playerData.findPlayer(userId);
@@ -321,7 +321,7 @@ io.on('connection', (socket) => {
           return;
       }
 
-      // No resource deduction for free roads
+      //No resource deduction for free roads
       placedRoads[roadIndex] = {
           userId,
           playerName: player.name,
@@ -352,7 +352,7 @@ io.on('connection', (socket) => {
       io.emit('playersUpdated', playerData.getPlayers());
   });
 
-  // Handle discard cards
+  //Handle discard cards
   socket.on('discardCards', (data) => {
     const { userId, cards } = data;
     const player = playerData.findPlayer(userId);
@@ -362,7 +362,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Validate the discard
+    //Validate the discard
     const totalDiscarding = Object.values(cards).reduce((sum, count) => sum + count, 0);
     const totalCards = Object.values(player.resources).reduce((sum, count) => sum + count, 0);
     const shouldDiscard = Math.floor(totalCards / 2);
@@ -373,7 +373,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Validate player has the cards
+    //Validate player has the cards
     for (const [resource, count] of Object.entries(cards)) {
       if (player.resources[resource] < count) {
         console.log(`❌ ${player.name} doesn't have enough ${resource} to discard`);
@@ -382,7 +382,7 @@ io.on('connection', (socket) => {
       }
     }
 
-    // Deduct the cards
+    //Deduct the cards
     for (const [resource, count] of Object.entries(cards)) {
       player.resources[resource] -= count;
     }
@@ -391,14 +391,14 @@ io.on('connection', (socket) => {
 
     console.log(`✅ ${player.name} discarded ${totalDiscarding} cards`);
 
-    // Notify player that discard is complete
+    //Notify player that discard is complete
     socket.emit('discardComplete', { userId });
     
-    // Update all players
+    //Update all players
     io.emit('playersUpdated', playerData.getPlayers());
   });
 
-  // Handle building a city (playing phase)
+  //Handle building a city (playing phase)
   socket.on('buildCity', (data) => {
     const result = handleBuildCity(data, placedHouses, placedCities, getCurrentPlayerUserId, io);
     if (!result.success) {
@@ -406,7 +406,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle building a road (playing phase)
+  //Handle building a road (playing phase)
   socket.on('buildRoad', (data) => {
     const result = handleBuildRoad(data, placedRoads, getCurrentPlayerUserId, io);
     if (!result.success) {
@@ -414,7 +414,7 @@ io.on('connection', (socket) => {
     }
   });
   
-  // Handle road selection (setup phase)
+  //Handle road selection (setup phase)
   socket.on('roadSelected', (data) => {
     const result = handleRoadSelected(data, placedRoads, io);
     if (!result.success) {
@@ -422,7 +422,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle dice roll
+  //Handle dice roll
   socket.on('rollDice', (data) => {
     const { userId } = data;
     const player = playerData.findPlayer(userId);
@@ -444,7 +444,7 @@ io.on('connection', (socket) => {
     console.log(`🎲 ${player.name} rolled: ${die1} + ${die2} = ${total}`);
 
     if (total === 7) {
-      // Check if players need to discard (more than 7 cards)
+      //Check if players need to discard (more than 7 cards)
       const players = playerData.getPlayers();
       players.forEach(p => {
         const totalCards = Object.values(p.resources).reduce((sum, count) => sum + count, 0);
