@@ -20,8 +20,6 @@
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  border: 1px solid black;
-  box-sizing: border-box;
 }
 
 .tile {
@@ -173,7 +171,7 @@
 @media screen and (max-width: 1300px) {
     .scoreboard {
         padding: 8px;
-        left: 1%;
+        left: 0%;
         width: 140px;
     }
     
