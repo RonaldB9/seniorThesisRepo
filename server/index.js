@@ -132,6 +132,7 @@ function resetAllPlayerStats() {
   
   players.forEach(player => {
     playerData.updatePlayer(player.userId, {
+      ready: false,
       score: 0,
       resources: {
         wood: 100,
@@ -265,7 +266,6 @@ io.on('connection', (socket) => {
   // Handle request for current turn
   socket.on('requestCurrentTurn', (callback) => {
     const currentUserId = getCurrentPlayerUserId();
-    console.log(`📬 Client ${socket.id} requested current turn: ${currentUserId}`);
     socket.emit('currentTurn', currentUserId);
     if (callback) callback({ currentUserId });
   });

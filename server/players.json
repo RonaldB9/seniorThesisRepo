@@ -2,8 +2,8 @@
   {
     "userId": "73b9025b-c5ef-41ac-802b-254cf09500f5",
     "name": "Player 1",
-    "ready": true,
-    "score": 0,
+    "ready": false,
+    "score": 1,
     "color": "red",
     "resources": {
       "wood": 100,
@@ -21,14 +21,47 @@
     },
     "playedKnights": 0,
     "revealedVictoryPoints": 0,
-    "houses": [],
+    "houses": [
+      {
+        "houseIndex": 35,
+        "position": {
+          "x": 0,
+          "y": 58,
+          "tiles": [
+            15,
+            16,
+            18
+          ]
+        },
+        "placedAt": "2025-11-17T04:38:18.219Z"
+      }
+    ],
     "cities": [],
-    "roads": []
+    "roads": [
+      {
+        "roadIndex": 43,
+        "position": {
+          "x": -35,
+          "y": 45,
+          "connectedHouses": [
+            29,
+            35
+          ],
+          "connectedRoads": [
+            35,
+            42,
+            44,
+            51
+          ]
+        },
+        "placedAt": "2025-11-17T04:38:18.478Z"
+      }
+    ]
   },
   {
     "userId": "1b9ee20e-1a41-49ab-a51b-7442e6d66b60",
     "name": "Player 2",
-    "ready": true,
+    "ready": false,
     "score": 0,
     "color": "green",
     "resources": {
