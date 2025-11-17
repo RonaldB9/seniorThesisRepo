@@ -37,6 +37,7 @@
   display: flex;
   justify-content: center;
   height: 200px;
+  margin-bottom: 20px;
 }
 
 .playerStartUp {
@@ -66,8 +67,9 @@
 .startGame {
   background-color: white;
   border-radius: 10px;
-  margin-left: 50%;
+  margin-left: 1%;
   width: 10%;
+  min-width: 120px;
 }
 
 .startText {

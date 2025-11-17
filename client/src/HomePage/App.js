@@ -46,7 +46,7 @@ function Home() {
       .catch(err => console.error('Registration failed:', err));
   }, []);
 
-  // Socket listener for player list updates
+  //Socket listener for player list updates
   useEffect(() => {
     socket.on('playersUpdated', updatedPlayers => {
       setPlayers(updatedPlayers);

@@ -14,13 +14,14 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0px;
-  margin-top: 20px;
   padding-top: 50px;
   padding-bottom: 70px;
   width: 60%;
   margin-left: auto;
   margin-right: auto;
   position: relative;
+  border: 1px solid black;
+  box-sizing: border-box;
 }
 
 .tile {
@@ -75,10 +76,19 @@
     padding: 15px;
     position: fixed;
     left: 5%;
-    top: 150px;
-    width: 250px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 100;
+}
+
+@media screen and (max-width: 1300px) {
+    .scoreboard {
+        padding: 5px;
+        left: 0%;
+        width: 150px;
+    }
 }
 
 .scoreboard h3 {

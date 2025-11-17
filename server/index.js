@@ -159,7 +159,7 @@ function resetAllPlayerStats() {
   console.log('♻️ All player stats reset to default');
 }
 
-// Toggle ready status
+//Toggle ready status
 app.post('/api/players/:userId/ready', (req, res) => {
   const { userId } = req.params;
   const player = playerData.findPlayer(userId);
@@ -173,14 +173,14 @@ app.post('/api/players/:userId/ready', (req, res) => {
   res.json(updatedPlayer);
 });
 
-// Helper function to get current player userId
+//Get current player userId
 function getCurrentPlayerUserId() {
   const players = playerData.getPlayers();
   if (players.length === 0) return null;
   return players[currentTurnIndex]?.userId || null;
 }
 
-// Broadcast current turn to all connected clients
+//Broadcast current turn to all connected clients
 function broadcastCurrentTurn() {
   const currentUserId = getCurrentPlayerUserId();
   if (currentUserId) {
@@ -189,15 +189,15 @@ function broadcastCurrentTurn() {
   }
 }
 
-// Helper function to distribute resources based on dice roll
+//Distribute resources based on dice roll
 function distributeResources(diceTotal) {
   if (!gameBoard) return;
 
   const { resourceTiles, resourceTokens } = gameBoard;
   
-  // Find all tiles that match the dice roll
+  //Find all tiles that match the dice roll
   resourceTokens.forEach((token, tileIndex) => {
-    // Skip if robber is on this tile
+    //Skip if robber is on this tile
     if (tileIndex === robberTileIndex) {
       console.log(`⛔ Robber blocking tile ${tileIndex}`);
       return;
@@ -206,21 +206,21 @@ function distributeResources(diceTotal) {
     if (token === diceTotal) {
       const resourceType = resourceTiles[tileIndex];
       
-      // Skip desert tiles
+      //Skip desert tiles
       if (resourceType === 'Desert') return;
 
       console.log(`🎲 Tile ${tileIndex} (${resourceType}) matches roll ${diceTotal}`);
 
-      // Find all houses adjacent to this tile
+      //Find all houses adjacent to this tile
       Object.entries(placedHouses).forEach(([houseIndex, houseData]) => {
         const house = houseData;
         const houseTileData = gameBoard.houseData[parseInt(houseIndex)];
         
-        // Check if this house is adjacent to the matching tile
+        //Check if this house is adjacent to the matching tile
         if (houseTileData.tiles.includes(tileIndex)) {
           const player = playerData.findPlayer(house.userId);
           if (player) {
-            // Check if this house is a city (produces 2 resources) or settlement (1 resource)
+            //Check if this house is a city (produces 2 resources) or settlement (1 resource)
             const isCity = placedCities[houseIndex];
             const resourceAmount = isCity ? 2 : 1;
             
@@ -469,7 +469,7 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle moving the robber
+  //Handle moving the robber
   socket.on('moveRobber', (data) => {
     const result = handleMoveRobber(data, getCurrentPlayerUserId, placedHouses, gameBoard, io);
     if (result.success) {
@@ -477,12 +477,12 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle stealing a resource
+  //Handle stealing a resource
   socket.on('stealResource', (data) => {
     handleStealResource(data, io);
   });
 
-  // On endTurn from client
+  //On endTurn from client
   socket.on('endTurn', () => {
     const players = playerData.getPlayers();
     if (players.length === 0) return;
