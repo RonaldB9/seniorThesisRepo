@@ -16,9 +16,6 @@ function VictoryPopup({ winnerName, winnerColor, finalScore, onClose }) {
                     </p>
                     <div className="victory-trophy">🏆</div>
                 </div>
-                <p className="victory-redirect">
-                    Returning to lobby in 5 seconds...
-                </p>
                 <button onClick={onClose} className="victory-button">
                     Return to Lobby Now
                 </button>
