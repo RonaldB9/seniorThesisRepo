@@ -1,3 +1,4 @@
+// server/index.js - Updated for 6 players
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -85,8 +86,15 @@ app.get('/api/robber', (req, res) => {
 //Register new player
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
-  const colors = ['red', 'green', 'blue', 'orange', 'purple'];
+  // Updated to support 6 players with pink as 6th color
+  const colors = ['red', 'green', 'blue', 'orange', 'purple', 'pink'];
   const playerNumber = playerData.getPlayers().length;
+  
+  // Limit to 6 players maximum
+  if (playerNumber >= 6) {
+    return res.status(400).json({ error: 'Maximum 6 players allowed' });
+  }
+  
   const assignedColor = colors[playerNumber % colors.length];
 
   let existing = playerData.findPlayer(userId);
@@ -119,7 +127,7 @@ app.post('/api/register', (req, res) => {
     };
     playerData.addPlayer(newPlayer);
     existing = newPlayer;
-    console.log(`Registered new player: ${newPlayer.name}`);
+    console.log(`Registered new player: ${newPlayer.name} (${newPlayer.color})`);
   }
 
   io.emit('playersUpdated', playerData.getPlayers());

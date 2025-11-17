@@ -6,11 +6,21 @@ import sheepTile from '../Images/Tiles/sheepTile.png';
 import wheatTile from '../Images/Tiles/wheatTile.png';
 import desertTile from '../Images/Tiles/desertTile.png';
 import chooseCircle from '../Images/chooseCircle.png';
+// House images for all 6 players
 import redHouse from '../Images/Houses/redHouse.png';
 import greenHouse from '../Images/Houses/greenHouse.png';
-import greenRoad from '../Images/greenRoad.png';
+import blueHouse from '../Images/Houses/blueHouse.png';
+import orangeHouse from '../Images/Houses/orangeHouse.png';
+import purpleHouse from '../Images/Houses/purpleHouse.png';
+import pinkHouse from '../Images/Houses/pinkHouse.png';
+// Road images for all 6 players
 import redRoad from '../Images/redRoad.png';
+import greenRoad from '../Images/greenRoad.png';
 import blueRoad from '../Images/blueRoad.png';
+import orangeRoad from '../Images/orangeRoad.png';
+import purpleRoad from '../Images/purpleRoad.png';
+import pinkRoad from '../Images/pinkRoad.png';
+// Port and other images
 import portRoad from '../Images/Ports/portRoad.png';
 import robber from '../Images/robber.jpg';
 import ThreetoOnePort from '../Images/Ports/3to1Port.jpg';
@@ -27,6 +37,26 @@ const resourceImages = {
     Sheep: sheepTile,
     Wheat: wheatTile,
     Desert: desertTile
+};
+
+// Map player colors to house images
+const houseImages = {
+    red: redHouse,
+    green: greenHouse,
+    blue: blueHouse,
+    orange: orangeHouse,
+    purple: purpleHouse,
+    pink: pinkHouse
+};
+
+// Map player colors to road images
+const roadImages = {
+    red: redRoad,
+    green: greenRoad,
+    blue: blueRoad,
+    orange: orangeRoad,
+    purple: purpleRoad,
+    pink: pinkRoad
 };
 
 function GameBoard({ 
@@ -363,10 +393,13 @@ function GameBoard({
                 {/* Placed Houses */}
                 {Array.isArray(houseData) && Object.entries(placedHouses).map(([index, house]) => {
                     const isCity = placedCities[index];
+                    // Get the appropriate house image based on player color
+                    const houseImage = houseImages[house.playerColor] || redHouse;
+                    
                     return (
                         <img 
                             key={`placed-house-${index}`} 
-                            src={house.playerName === 'Player 1' ? redHouse : greenHouse}
+                            src={houseImage}
                             alt={isCity ? `City by ${house.playerName}` : `House by ${house.playerName}`}
                             style={{
                                 position: 'absolute',
@@ -388,12 +421,8 @@ function GameBoard({
 
                 {/* Placed Roads */}
                 {Array.isArray(roadData) && Object.entries(placedRoads).map(([index, road]) => {
-                    let roadImage = greenRoad;
-                    if (road.playerColor === 'red') {
-                        roadImage = redRoad;
-                    } else if (road.playerColor === 'blue') {
-                        roadImage = blueRoad;
-                    }
+                    // Get the appropriate road image based on player color
+                    const roadImage = roadImages[road.playerColor] || greenRoad;
                     
                     const roadIdx = parseInt(index);
                     const roadInfo = roadData[roadIdx];
