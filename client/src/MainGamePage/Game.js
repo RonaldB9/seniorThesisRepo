@@ -33,7 +33,7 @@ function Game() {
         playersToStealFrom, setPlayersToStealFrom, showStealDialog, setShowStealDialog,
         needsToDiscard, setNeedsToDiscard, cardsToDiscard, showYearOfPlentyDialog, setShowYearOfPlentyDialog,
         showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
-        buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining
+        buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining, largestArmyPlayer
     } = gameState;
 
     // Listen for game won event
@@ -403,6 +403,7 @@ function Game() {
                 allPlayers={allPlayers} 
                 userId={userId} 
                 currentTurnUserId={currentTurnUserId} 
+                largestArmyPlayer={largestArmyPlayer}
             />
 
             {gamePhase === 'playing' && diceRoll && (

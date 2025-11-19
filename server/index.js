@@ -83,6 +83,11 @@ app.get('/api/robber', (req, res) => {
   res.json({ tileIndex: robberTileIndex });
 });
 
+//Get largest army holder
+app.get('/api/largest-army', (req, res) => {
+  res.json({ currentHolder: largestArmyPlayer });
+});
+
 //Register new player
 app.post('/api/register', (req, res) => {
   const { userId } = req.body;
@@ -531,7 +536,7 @@ io.on('connection', (socket) => {
     placedRoads = {};
     placedCities = {};
     developmentCardDeck = createDevelopmentCardDeck();
-    largestArmyPlayer = null;
+    largestArmyPlayer = null; // ← Make sure this is here
     
     // Reset robber to desert
     if (gameBoard) {
@@ -545,7 +550,8 @@ io.on('connection', (socket) => {
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
     
     io.emit('startGame');
-    io.emit('playersUpdated', playerData.getPlayers()); // Send updated stats to clients
+    io.emit('playersUpdated', playerData.getPlayers());
+    io.emit('largestArmyUpdate', { currentHolder: null, holderName: null }); // ← Add this line
     broadcastCurrentTurn();
   });
 

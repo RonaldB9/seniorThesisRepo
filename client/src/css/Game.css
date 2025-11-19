@@ -68,7 +68,7 @@
     width: 100%;
 }
 
-/* Updated compact scoreboard CSS - Add to Game.css */
+/* Updated compact scoreboard CSS */
 
 .scoreboard {
     background-color: white;
@@ -125,6 +125,29 @@
     font-size: 0.75em;
     margin-bottom: 4px;
     animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Largest Army Badge */
+.largest-army-badge {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #333;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 4px 6px;
+    border-radius: 5px;
+    margin: 4px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
 }
 
 .player-resources {
@@ -187,6 +210,11 @@
     .dev-card-item {
         font-size: 0.65em;
         padding: 1px 3px;
+    }
+
+    .largest-army-badge {
+        font-size: 0.65em;
+        padding: 3px 5px;
     }
 }
 

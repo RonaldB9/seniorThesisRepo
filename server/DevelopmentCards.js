@@ -191,51 +191,101 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
     return { success: false, error: 'No knight cards', largestArmyPlayer };
   }
 
+  // Deduct knight card and increment played knights
   player.developmentCards.knight -= 1;
   player.playedKnights = (player.playedKnights || 0) + 1;
 
+  console.log(`🗡️ ${player.name} played a Knight card! (Total: ${player.playedKnights})`);
+
+  // Get all players and find who has the most knights
   const allPlayers = playerData.getPlayers();
   const maxKnights = Math.max(...allPlayers.map(p => p.playedKnights || 0));
   
   let newLargestArmyPlayer = largestArmyPlayer;
+  let largestArmyChanged = false;
 
-  if (player.playedKnights >= 3 && player.playedKnights === maxKnights) {
+  // Check if this player now qualifies for Largest Army
+  if (player.playedKnights >= 3) {
+    // Check if there's a current holder
     if (largestArmyPlayer && largestArmyPlayer !== userId) {
       const prevPlayer = playerData.findPlayer(largestArmyPlayer);
-      if (prevPlayer) {
-        playerData.updatePlayer(largestArmyPlayer, { score: prevPlayer.score - 2 });
+      
+      // Only take Largest Army if this player has MORE knights
+      if (player.playedKnights > (prevPlayer?.playedKnights || 0)) {
+        // Remove 2 points from previous holder
+        if (prevPlayer) {
+          playerData.updatePlayer(largestArmyPlayer, { score: prevPlayer.score - 2 });
+          console.log(`🗡️ ${prevPlayer.name} lost Largest Army (-2 points)`);
+        }
+        
+        // Give 2 points to new holder
+        newLargestArmyPlayer = userId;
+        playerData.updatePlayer(userId, { 
+          developmentCards: player.developmentCards,
+          playedKnights: player.playedKnights,
+          score: player.score + 2
+        });
+        console.log(`🗡️ ${player.name} now has Largest Army! (+2 points, Score: ${player.score + 2})`);
+        largestArmyChanged = true;
+        
+        // Broadcast the change
+        io.emit('largestArmyChanged', {
+          previousHolder: largestArmyPlayer,
+          newHolder: userId,
+          playerName: player.name,
+          knightsPlayed: player.playedKnights
+        });
+      } else {
+        // Same number of knights - no change in holder
+        playerData.updatePlayer(userId, { 
+          developmentCards: player.developmentCards,
+          playedKnights: player.playedKnights
+        });
       }
-    }
-    
-    if (largestArmyPlayer !== userId) {
+    } else if (!largestArmyPlayer) {
+      // No one has it yet, give it to this player
       newLargestArmyPlayer = userId;
       playerData.updatePlayer(userId, { 
         developmentCards: player.developmentCards,
         playedKnights: player.playedKnights,
         score: player.score + 2
       });
-      console.log(`🗡️ ${player.name} now has Largest Army!`);
+      console.log(`🗡️ ${player.name} now has Largest Army! (+2 points, Score: ${player.score + 2})`);
+      largestArmyChanged = true;
       
-      // Check for win after gaining largest army
-      const updatedPlayer = playerData.findPlayer(userId);
-      checkForWin(updatedPlayer, io);
+      io.emit('largestArmyChanged', {
+        previousHolder: null,
+        newHolder: userId,
+        playerName: player.name,
+        knightsPlayed: player.playedKnights
+      });
     } else {
+      // This player already has largest army
       playerData.updatePlayer(userId, { 
         developmentCards: player.developmentCards,
         playedKnights: player.playedKnights
       });
     }
   } else {
+    // Less than 3 knights - just update without army check
     playerData.updatePlayer(userId, { 
       developmentCards: player.developmentCards,
       playedKnights: player.playedKnights
     });
   }
 
-  console.log(`🗡️ ${player.name} played a Knight card! (Total: ${player.playedKnights})`);
-  
   io.emit('playersUpdated', playerData.getPlayers());
+  io.emit('largestArmyUpdate', { 
+    currentHolder: newLargestArmyPlayer,
+    holderName: newLargestArmyPlayer ? playerData.findPlayer(newLargestArmyPlayer)?.name : null
+  });
   socket.emit('knightPlayed', { userId, totalKnights: player.playedKnights });
+
+  // Check for win after potentially gaining largest army
+  if (largestArmyChanged) {
+    const updatedPlayer = playerData.findPlayer(userId);
+    checkForWin(updatedPlayer, io);
+  }
 
   return { success: true, largestArmyPlayer: newLargestArmyPlayer };
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Scoreboard({ allPlayers, userId, currentTurnUserId }) {
+function Scoreboard({ allPlayers, userId, currentTurnUserId, largestArmyPlayer }) {
     return (
         <div className="scoreboard">
             <h3>Players</h3>
@@ -19,6 +19,13 @@ function Scoreboard({ allPlayers, userId, currentTurnUserId }) {
                     {player.userId === currentTurnUserId && (
                         <span className="turn-indicator">← Turn</span>
                     )}
+
+                    {/* Show Largest Army indicator */}
+                    {largestArmyPlayer === player.userId && (
+                        <div className="largest-army-badge">
+                            🗡️ Largest Army ({player.playedKnights || 0} knights)
+                        </div>
+                    )}
                     
                     {player.userId === userId && player.resources && (
                         <div className="player-resources">
@@ -33,6 +40,9 @@ function Scoreboard({ allPlayers, userId, currentTurnUserId }) {
                     {player.userId === userId && player.developmentCards && (
                         <div className="player-dev-cards">
                             <div className="dev-card-item" title="Knight">🗡️ Knights: {player.developmentCards.knight || 0}</div>
+                            <div className="dev-card-item" title="Knights played">
+                                ⚔️ Played: {player.playedKnights || 0}
+                            </div>
                             <div className="dev-card-item" title="Victory Point cards are hidden until revealed">
                                 🏆 VP (Hidden): {player.developmentCards.victoryPoint || 0}
                             </div>
