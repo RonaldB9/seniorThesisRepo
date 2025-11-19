@@ -55,8 +55,9 @@ export function useGameLogic() {
     const [showRoadBuildingDialog, setShowRoadBuildingDialog] = useState(false);
     const [buildingFreeRoads, setBuildingFreeRoads] = useState(false);
     const [freeRoadsRemaining, setFreeRoadsRemaining] = useState(0);
+    const [largestArmyPlayer, setLargestArmyPlayer] = useState(null);
     
-    // NEW: Discard state
+    // Discard state
     const [needsToDiscard, setNeedsToDiscard] = useState(false);
     const [cardsToDiscard, setCardsToDiscard] = useState(0);
 
@@ -87,16 +88,8 @@ export function useGameLogic() {
     };
 
     const handleGameWon = (data) => {
-        alert(`🎉 ${data.winnerName} has won the game with ${data.finalScore} points!`);
         console.log(`🎉 Game won by ${data.winnerName}!`);
     };
-
-    socket.on('victoryPointRevealed', handleVictoryPointRevealed);
-    socket.on('gameWon', handleGameWon);
-
-    // In cleanup:
-    socket.off('victoryPointRevealed', handleVictoryPointRevealed);
-    socket.off('gameWon', handleGameWon);
 
     // Get userId on mount
     useEffect(() => {
@@ -156,6 +149,13 @@ export function useGameLogic() {
                 setRobberTileIndex(data.tileIndex);
             })
             .catch(err => console.error('Failed to fetch robber:', err));
+
+        fetch('http://localhost:3001/api/largest-army')
+            .then((res) => res.json())
+            .then((data) => {
+                setLargestArmyPlayer(data.currentHolder);
+            })
+            .catch(err => console.error('Failed to fetch largest army:', err));
     }, []);
 
     // Socket listeners for deck updates
@@ -170,10 +170,14 @@ export function useGameLogic() {
 
         socket.on('deckUpdate', handleDeckUpdate);
         socket.on('cardBought', handleCardBought);
+        socket.on('victoryPointRevealed', handleVictoryPointRevealed);
+        socket.on('gameWon', handleGameWon);
         
         return () => {
             socket.off('deckUpdate', handleDeckUpdate);
             socket.off('cardBought', handleCardBought);
+            socket.off('victoryPointRevealed', handleVictoryPointRevealed);
+            socket.off('gameWon', handleGameWon);
         };
     }, []);
 
@@ -279,7 +283,6 @@ export function useGameLogic() {
             }
         };
 
-        // NEW: Handle discard requirement
         const handleDiscardRequired = (data) => {
             if (data.userId === userId) {
                 setNeedsToDiscard(true);
@@ -288,12 +291,16 @@ export function useGameLogic() {
             }
         };
 
-        // NEW: Handle discard completion
         const handleDiscardComplete = (data) => {
             if (data.userId === userId) {
                 setNeedsToDiscard(false);
                 setCardsToDiscard(0);
             }
+        };
+
+        const handleLargestArmyUpdate = (data) => {
+            setLargestArmyPlayer(data.currentHolder);
+            console.log(`🗡️ Largest Army holder: ${data.holderName || 'None'}`);
         };
 
         socket.on('currentTurn', handleCurrentTurn);
@@ -306,6 +313,7 @@ export function useGameLogic() {
         socket.on('resourceStolen', handleResourceStolen);
         socket.on('discardRequired', handleDiscardRequired);
         socket.on('discardComplete', handleDiscardComplete);
+        socket.on('largestArmyUpdate', handleLargestArmyUpdate);
         
         if (socket.connected) {
             socket.emit('requestCurrentTurn');
@@ -322,6 +330,7 @@ export function useGameLogic() {
             socket.off('resourceStolen', handleResourceStolen);
             socket.off('discardRequired', handleDiscardRequired);
             socket.off('discardComplete', handleDiscardComplete);
+            socket.off('largestArmyUpdate', handleLargestArmyUpdate);
         };
     }, [userId]);
 
@@ -378,6 +387,7 @@ export function useGameLogic() {
         buildingFreeRoads,
         setBuildingFreeRoads,
         freeRoadsRemaining,
-        setFreeRoadsRemaining
+        setFreeRoadsRemaining,
+        largestArmyPlayer
     };
 }
