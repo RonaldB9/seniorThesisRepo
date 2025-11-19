@@ -34,7 +34,7 @@ function Game() {
         needsToDiscard, setNeedsToDiscard, cardsToDiscard, showYearOfPlentyDialog, setShowYearOfPlentyDialog,
         showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
         buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining, largestArmyPlayer,
-        devCardPlayedThisTurn, setDevCardPlayedThisTurn
+        devCardPlayedThisTurn, setDevCardPlayedThisTurn, newlyPurchasedCards
     } = gameState;
 
     // Listen for game won event
@@ -564,6 +564,7 @@ function Game() {
                 handlePlayVictoryPoint={handlePlayVictoryPoint}
                 buildingFreeRoads={buildingFreeRoads}
                 devCardPlayedThisTurn={devCardPlayedThisTurn}
+                newlyPurchasedCards={newlyPurchasedCards}
             />
         </div>
         

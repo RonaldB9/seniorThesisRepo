@@ -56,13 +56,12 @@ export function useGameLogic() {
     const [buildingFreeRoads, setBuildingFreeRoads] = useState(false);
     const [freeRoadsRemaining, setFreeRoadsRemaining] = useState(0);
     const [largestArmyPlayer, setLargestArmyPlayer] = useState(null);
-    
-    // NEW: Track if a dev card has been played this turn
+    //Track if a dev card has been played this turn
     const [devCardPlayedThisTurn, setDevCardPlayedThisTurn] = useState(false);
-    
     // Discard state
     const [needsToDiscard, setNeedsToDiscard] = useState(false);
     const [cardsToDiscard, setCardsToDiscard] = useState(0);
+    const [newlyPurchasedCards, setNewlyPurchasedCards] = useState({knight: false, yearOfPlenty: false, monopoly: false, roadBuilding: false, victoryPoint: false});
 
     // Update unavailable houses based on placed houses
     const updateUnavailableHouses = (placedHousesObj) => {
@@ -201,6 +200,8 @@ export function useGameLogic() {
         setNeedsToDiscard(false);
         setCardsToDiscard(0);
         setDevCardPlayedThisTurn(false); // Reset dev card flag on turn change
+        setNewlyPurchasedCards({knight: false,yearOfPlenty: false,monopoly: false,roadBuilding: false,victoryPoint: false
+    });
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -307,6 +308,15 @@ export function useGameLogic() {
             console.log(`🗡️ Largest Army holder: ${data.holderName || 'None'}`);
         };
 
+        const handleCardBought = (data) => {
+            alert(`You received a ${data.cardType} card!`);
+            // Mark this card type as newly purchased
+            setNewlyPurchasedCards(prev => ({
+                ...prev,
+                [data.cardType]: true
+            }));
+        };
+
         socket.on('currentTurn', handleCurrentTurn);
         socket.on('housePlaced', handleHousePlaced);
         socket.on('roadPlaced', handleRoadPlaced);
@@ -318,6 +328,7 @@ export function useGameLogic() {
         socket.on('discardRequired', handleDiscardRequired);
         socket.on('discardComplete', handleDiscardComplete);
         socket.on('largestArmyUpdate', handleLargestArmyUpdate);
+        socket.on('cardBought', handleCardBought);
         
         if (socket.connected) {
             socket.emit('requestCurrentTurn');
@@ -335,6 +346,7 @@ export function useGameLogic() {
             socket.off('discardRequired', handleDiscardRequired);
             socket.off('discardComplete', handleDiscardComplete);
             socket.off('largestArmyUpdate', handleLargestArmyUpdate);
+            socket.off('cardBought', handleCardBought);
         };
     }, [userId]);
 
@@ -394,6 +406,8 @@ export function useGameLogic() {
         setFreeRoadsRemaining,
         largestArmyPlayer,
         devCardPlayedThisTurn,
-        setDevCardPlayedThisTurn
+        setDevCardPlayedThisTurn,
+        newlyPurchasedCards,
+        setNewlyPurchasedCards
     };
 }
