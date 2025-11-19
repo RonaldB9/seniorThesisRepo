@@ -20,6 +20,14 @@ function Scoreboard({ allPlayers, userId, currentTurnUserId, largestArmyPlayer }
                         <span className="turn-indicator">← Turn</span>
                     )}
 
+                    {/* Total Cards Count */}
+                    <div className="total-cards-badge">
+                        <span className="cards-label">Cards:</span>
+                        <span className="cards-count">
+                            {player.resources ? Object.values(player.resources).reduce((sum, count) => sum + count, 0) : 0}
+                        </span>
+                    </div>
+
                     {/* Show Largest Army indicator */}
                     {largestArmyPlayer === player.userId && (
                         <div className="largest-army-badge">

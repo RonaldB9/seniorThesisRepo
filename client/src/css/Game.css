@@ -340,3 +340,43 @@
   position: absolute;
   width: 50px;
 }
+
+/* Total Cards Badge */
+.total-cards-badge {
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    border-left: 3px solid #2196F3;
+    color: #1565C0;
+    font-size: 0.75em;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.cards-label {
+    opacity: 0.8;
+}
+
+.cards-count {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 1px 6px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Adjust for smaller screens */
+@media screen and (max-width: 1300px) {
+    .total-cards-badge {
+        font-size: 0.65em;
+        padding: 3px 6px;
+    }
+    
+    .cards-count {
+        min-width: 18px;
+    }
+}
