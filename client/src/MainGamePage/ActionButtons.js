@@ -33,7 +33,8 @@ function ActionButtons({
     handlePlayRoadBuilding,
     handlePlayVictoryPoint,
     movingRobber,
-    buildingFreeRoads
+    buildingFreeRoads,
+    devCardPlayedThisTurn
 }) {
     return (
         <div className="action-buttons">
@@ -128,9 +129,9 @@ function ActionButtons({
                     {/* Play Knight Card Button */}
                     <button 
                         onClick={handlePlayKnight}
-                        disabled={!currentPlayer?.developmentCards?.knight || currentPlayer.developmentCards.knight < 1}
+                        disabled={!currentPlayer?.developmentCards?.knight || currentPlayer.developmentCards.knight < 1 || devCardPlayedThisTurn}
                         className="play-knight-button"
-                        title="Play a Knight card to move the robber"
+                        title={devCardPlayedThisTurn ? "Only 1 dev card per turn" : "Play a Knight card to move the robber"}
                     >
                         🗡️ Knight ({currentPlayer?.developmentCards?.knight || 0})
                     </button>
@@ -138,9 +139,9 @@ function ActionButtons({
                     {/* Play Year of Plenty Button */}
                     <button 
                         onClick={handlePlayYearOfPlenty}
-                        disabled={!currentPlayer?.developmentCards?.yearOfPlenty || currentPlayer.developmentCards.yearOfPlenty < 1}
+                        disabled={!currentPlayer?.developmentCards?.yearOfPlenty || currentPlayer.developmentCards.yearOfPlenty < 1 || devCardPlayedThisTurn}
                         className="play-year-button"
-                        title="Take 2 resources from the bank"
+                        title={devCardPlayedThisTurn ? "Only 1 dev card per turn" : "Take 2 resources from the bank"}
                     >
                         🎁 Year of Plenty ({currentPlayer?.developmentCards?.yearOfPlenty || 0})
                     </button>
@@ -148,9 +149,9 @@ function ActionButtons({
                     {/* Play Monopoly Button */}
                     <button 
                         onClick={handlePlayMonopoly}
-                        disabled={!currentPlayer?.developmentCards?.monopoly || currentPlayer.developmentCards.monopoly < 1}
+                        disabled={!currentPlayer?.developmentCards?.monopoly || currentPlayer.developmentCards.monopoly < 1 || devCardPlayedThisTurn}
                         className="play-monopoly-button"
-                        title="Take all of one resource from other players"
+                        title={devCardPlayedThisTurn ? "Only 1 dev card per turn" : "Take all of one resource from other players"}
                     >
                         💰 Monopoly ({currentPlayer?.developmentCards?.monopoly || 0})
                     </button>
@@ -158,9 +159,9 @@ function ActionButtons({
                     {/* Play Road Building Button */}
                     <button 
                         onClick={handlePlayRoadBuilding}
-                        disabled={!currentPlayer?.developmentCards?.roadBuilding || currentPlayer.developmentCards.roadBuilding < 1}
+                        disabled={!currentPlayer?.developmentCards?.roadBuilding || currentPlayer.developmentCards.roadBuilding < 1 || devCardPlayedThisTurn}
                         className="play-road-building-button"
-                        title="Build 2 roads for free"
+                        title={devCardPlayedThisTurn ? "Only 1 dev card per turn" : "Build 2 roads for free"}
                     >
                         🛣️ Road Building ({currentPlayer?.developmentCards?.roadBuilding || 0})
                     </button>
@@ -168,9 +169,9 @@ function ActionButtons({
                     {/* Play Victory Point Button */}
                     <button 
                         onClick={handlePlayVictoryPoint}
-                        disabled={!currentPlayer?.developmentCards?.victoryPoint || currentPlayer.developmentCards.victoryPoint < 1}
+                        disabled={!currentPlayer?.developmentCards?.victoryPoint || currentPlayer.developmentCards.victoryPoint < 1 || devCardPlayedThisTurn}
                         className="play-victory-button"
-                        title="Reveal a victory point card"
+                        title={devCardPlayedThisTurn ? "Only 1 dev card per turn" : "Reveal a victory point card"}
                     >
                         🏆 Victory Point ({currentPlayer?.developmentCards?.victoryPoint || 0})
                     </button>

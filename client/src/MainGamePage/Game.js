@@ -33,7 +33,8 @@ function Game() {
         playersToStealFrom, setPlayersToStealFrom, showStealDialog, setShowStealDialog,
         needsToDiscard, setNeedsToDiscard, cardsToDiscard, showYearOfPlentyDialog, setShowYearOfPlentyDialog,
         showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
-        buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining, largestArmyPlayer
+        buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining, largestArmyPlayer,
+        devCardPlayedThisTurn, setDevCardPlayedThisTurn
     } = gameState;
 
     // Listen for game won event
@@ -216,9 +217,10 @@ function Game() {
     };
 
     const handlePlayKnight = () => {
-        if (userId === currentTurnUserId && gamePhase === 'playing' && currentPlayer?.developmentCards?.knight > 0) {
+        if (userId === currentTurnUserId && gamePhase === 'playing' && currentPlayer?.developmentCards?.knight > 0 && !devCardPlayedThisTurn) {
             socket.emit('playKnight', { userId });
             setMovingRobber(true);
+            setDevCardPlayedThisTurn(true);
         }
     };
 
@@ -262,7 +264,7 @@ function Game() {
     };
 
     const handlePlayYearOfPlenty = () => {
-        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.yearOfPlenty > 0) {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.yearOfPlenty > 0 && !devCardPlayedThisTurn) {
             setShowYearOfPlentyDialog(true);
         }
     };
@@ -270,10 +272,11 @@ function Game() {
     const handleConfirmYearOfPlenty = (resources) => {
         socket.emit('playYearOfPlenty', { userId, resources });
         setShowYearOfPlentyDialog(false);
+        setDevCardPlayedThisTurn(true);
     };
 
     const handlePlayMonopoly = () => {
-        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.monopoly > 0) {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.monopoly > 0 && !devCardPlayedThisTurn) {
             setShowMonopolyDialog(true);
         }
     };
@@ -281,10 +284,11 @@ function Game() {
     const handleConfirmMonopoly = (resource) => {
         socket.emit('playMonopoly', { userId, resource });
         setShowMonopolyDialog(false);
+        setDevCardPlayedThisTurn(true);
     };
 
     const handlePlayRoadBuilding = () => {
-        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.roadBuilding > 0) {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.roadBuilding > 0 && !devCardPlayedThisTurn) {
             setShowRoadBuildingDialog(true);
         }
     };
@@ -294,12 +298,14 @@ function Game() {
         setShowRoadBuildingDialog(false);
         setBuildingFreeRoads(true);
         setFreeRoadsRemaining(2);
+        setDevCardPlayedThisTurn(true);
     };
 
     const handlePlayVictoryPoint = () => {
-        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.victoryPoint > 0) {
+        if (userId === currentTurnUserId && currentPlayer?.developmentCards?.victoryPoint > 0 && !devCardPlayedThisTurn) {
             if (window.confirm('Reveal a Victory Point card? This will add 1 point to your score.')) {
                 socket.emit('playVictoryPoint', { userId });
+                setDevCardPlayedThisTurn(true);
             }
         }
     };
@@ -557,6 +563,7 @@ function Game() {
                 handlePlayRoadBuilding={handlePlayRoadBuilding}
                 handlePlayVictoryPoint={handlePlayVictoryPoint}
                 buildingFreeRoads={buildingFreeRoads}
+                devCardPlayedThisTurn={devCardPlayedThisTurn}
             />
         </div>
         

@@ -57,6 +57,9 @@ export function useGameLogic() {
     const [freeRoadsRemaining, setFreeRoadsRemaining] = useState(0);
     const [largestArmyPlayer, setLargestArmyPlayer] = useState(null);
     
+    // NEW: Track if a dev card has been played this turn
+    const [devCardPlayedThisTurn, setDevCardPlayedThisTurn] = useState(false);
+    
     // Discard state
     const [needsToDiscard, setNeedsToDiscard] = useState(false);
     const [cardsToDiscard, setCardsToDiscard] = useState(0);
@@ -197,6 +200,7 @@ export function useGameLogic() {
         setPlayersToStealFrom([]);
         setNeedsToDiscard(false);
         setCardsToDiscard(0);
+        setDevCardPlayedThisTurn(false); // Reset dev card flag on turn change
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -388,6 +392,8 @@ export function useGameLogic() {
         setBuildingFreeRoads,
         freeRoadsRemaining,
         setFreeRoadsRemaining,
-        largestArmyPlayer
+        largestArmyPlayer,
+        devCardPlayedThisTurn,
+        setDevCardPlayedThisTurn
     };
 }
