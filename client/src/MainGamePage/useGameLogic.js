@@ -166,18 +166,12 @@ export function useGameLogic() {
             setDevCardDeckCount(data.cardsRemaining);
         };
 
-        const handleCardBought = (data) => {
-            alert(`You received a ${data.cardType} card!`);
-        };
-
         socket.on('deckUpdate', handleDeckUpdate);
-        socket.on('cardBought', handleCardBought);
         socket.on('victoryPointRevealed', handleVictoryPointRevealed);
         socket.on('gameWon', handleGameWon);
         
         return () => {
             socket.off('deckUpdate', handleDeckUpdate);
-            socket.off('cardBought', handleCardBought);
             socket.off('victoryPointRevealed', handleVictoryPointRevealed);
             socket.off('gameWon', handleGameWon);
         };
