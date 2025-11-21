@@ -35,7 +35,11 @@ function ActionButtons({
     movingRobber,
     buildingFreeRoads,
     devCardPlayedThisTurn,
-    newlyPurchasedCards
+    newlyPurchasedCards,
+    showPlayerTradeDialog,
+    setShowPlayerTradeDialog,
+    showPortTradeDialog,
+    setShowPortTradeDialog
 }) {
     return (
         <div className="action-buttons">

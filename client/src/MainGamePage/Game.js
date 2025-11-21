@@ -41,6 +41,53 @@ function Game() {
         devCardPlayedThisTurn, setDevCardPlayedThisTurn, newlyPurchasedCards
     } = gameState;
 
+    //SOCKET LISTENERS FOR TRADE SYSTEM
+    useEffect(() => {
+        socket.on('tradeProposal', (proposal) => {
+            console.log('📋 New trade proposal received:', proposal);
+            setPendingTrades(prev => [...prev, proposal]);
+        });
+
+        socket.on('tradeAccepted', (data) => {
+            console.log('✅ Trade accepted!', data);
+            setPendingTrades(prev => prev.filter(t => t.id !== data.proposalId));
+        });
+
+        socket.on('tradeDeclined', (data) => {
+            console.log('❌ Trade declined', data);
+            setPendingTrades(prev => prev.filter(t => t.id !== data.proposalId));
+        });
+
+        socket.on('tradeCompleted', (data) => {
+            console.log(`✅ Trade completed between ${data.initiatorName} and ${data.responderName}`);
+        });
+
+        socket.on('portTradeCompleted', (data) => {
+            console.log(`🏦 Port trade completed for ${data.playerName}`);
+            setShowPortTradeDialog(false);
+        });
+
+        socket.on('portTradeFailed', (data) => {
+            console.log('❌ Port trade failed:', data.reason);
+            alert(`Port trade failed: ${data.reason}`);
+        });
+
+        socket.on('playerPorts', (data) => {
+            console.log('🚪 Player ports:', data.ports);
+            setPlayerPorts(data.ports);
+        });
+
+        return () => {
+            socket.off('tradeProposal');
+            socket.off('tradeAccepted');
+            socket.off('tradeDeclined');
+            socket.off('tradeCompleted');
+            socket.off('portTradeCompleted');
+            socket.off('portTradeFailed');
+            socket.off('playerPorts');
+        };
+    }, []);
+
     // Listen for game won event
     useEffect(() => {
         const handleGameWon = (data) => {
@@ -639,6 +686,10 @@ function Game() {
                 buildingFreeRoads={buildingFreeRoads}
                 devCardPlayedThisTurn={devCardPlayedThisTurn}
                 newlyPurchasedCards={newlyPurchasedCards}
+                showPlayerTradeDialog={showPlayerTradeDialog}
+                setShowPlayerTradeDialog={setShowPlayerTradeDialog}
+                showPortTradeDialog={showPortTradeDialog}
+                setShowPortTradeDialog={setShowPortTradeDialog}
             />
         </div>
         
