@@ -380,3 +380,28 @@
         min-width: 18px;
     }
 }
+
+/* Longest Road Badge */
+.longest-road-badge {
+    background: linear-gradient(135deg, #FF8C00 0%, #FF6347 100%);
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 4px 6px;
+    border-radius: 5px;
+    margin: 4px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: shimmerRoad 2s ease-in-out infinite;
+}
+
+@keyframes shimmerRoad {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        opacity: 0.8;
+        box-shadow: 0 0 12px rgba(255, 140, 0, 0.6);
+    }
+}

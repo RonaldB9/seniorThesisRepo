@@ -13,6 +13,7 @@ const {
 const { getPlayerPorts, executeTrade, executePortTrade, createTradeProposal } = require('./tradingFunctions');
 //Clear all players on server startup
 const { writePlayers } = require('./playerData');
+const { updateLongestRoad } = require('./longestRoad');
 writePlayers([]);
 const userSocketMap = new Map();
 
@@ -31,6 +32,7 @@ app.use(cors());
 app.use(express.json());
 
 //In-memory
+let longestRoadPlayer = null;
 let currentTurnIndex = 0;
 let setupPhase = 'forward'; //'forward' or 'backward'
 let gameBoard = null;
@@ -72,6 +74,10 @@ app.get('/api/houses', (req, res) => {
 //Get all placed roads
 app.get('/api/roads', (req, res) => {
   res.json(placedRoads);
+});
+
+app.get('/api/longest-road', (req, res) => {
+  res.json({ currentHolder: longestRoadPlayer });
 });
 
 //Get all placed cities
@@ -481,6 +487,16 @@ io.on('connection', (socket) => {
           position
       });
 
+      const players = playerData.getPlayers();
+      longestRoadPlayer = updateLongestRoad(
+        players,
+        placedRoads,
+        placedHouses,
+        gameBoard.roadData,
+        longestRoadPlayer,
+        io
+      );
+
       io.emit('playersUpdated', playerData.getPlayers());
   });
 
@@ -543,6 +559,19 @@ io.on('connection', (socket) => {
     const result = handleBuildRoad(data, placedRoads, getCurrentPlayerUserId, io);
     if (!result.success) {
       socket.emit('roadSelectionFailed', { reason: result.error });
+    } 
+    else {
+      //Update longest road after road is built
+      const players = playerData.getPlayers();
+      longestRoadPlayer = updateLongestRoad(
+        players,
+        placedRoads,
+        placedHouses,
+        gameBoard.roadData,
+        longestRoadPlayer,
+        io
+      );
+      io.emit('playersUpdated', playerData.getPlayers());
     }
   });
   
@@ -551,6 +580,18 @@ io.on('connection', (socket) => {
     const result = handleRoadSelected(data, placedRoads, io);
     if (!result.success) {
       socket.emit('roadSelectionFailed', { reason: result.error });
+    }
+    else {
+      //Update longest road after setup road is placed
+      const players = playerData.getPlayers();
+      longestRoadPlayer = updateLongestRoad(
+        players,
+        placedRoads,
+        placedHouses,
+        gameBoard.roadData,
+        longestRoadPlayer,
+        io
+      );
     }
   });
 
@@ -648,16 +689,17 @@ io.on('connection', (socket) => {
     const players = playerData.getPlayers();
     if (players.length === 0) return;
 
-    // Reset game state
+    //Reset game state
     currentTurnIndex = 0;
     setupPhase = 'forward';
     placedHouses = {};
     placedRoads = {};
     placedCities = {};
     developmentCardDeck = createDevelopmentCardDeck();
-    largestArmyPlayer = null; // ← Make sure this is here
+    largestArmyPlayer = null;
+    longestRoadPlayer = null;
     
-    // Reset robber to desert
+    //Reset robber to desert
     if (gameBoard) {
       robberTileIndex = gameBoard.resourceTiles.findIndex(tile => tile === 'Desert');
     }
@@ -670,7 +712,12 @@ io.on('connection', (socket) => {
     
     io.emit('startGame');
     io.emit('playersUpdated', playerData.getPlayers());
-    io.emit('largestArmyUpdate', { currentHolder: null, holderName: null }); // ← Add this line
+    io.emit('largestArmyUpdate', { currentHolder: null, holderName: null });
+    io.emit('longestRoadUpdate', { 
+      currentHolder: null, 
+      holderName: null,
+      roadLengths: {}
+    });
     broadcastCurrentTurn();
   });
 

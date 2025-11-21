@@ -38,7 +38,7 @@ function Game() {
         needsToDiscard, setNeedsToDiscard, cardsToDiscard, showYearOfPlentyDialog, setShowYearOfPlentyDialog,
         showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
         buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining, largestArmyPlayer,
-        devCardPlayedThisTurn, setDevCardPlayedThisTurn, newlyPurchasedCards
+        devCardPlayedThisTurn, setDevCardPlayedThisTurn, newlyPurchasedCards, longestRoadPlayer
     } = gameState;
 
     //SOCKET LISTENERS FOR TRADE SYSTEM
@@ -508,6 +508,7 @@ function Game() {
                 userId={userId} 
                 currentTurnUserId={currentTurnUserId} 
                 largestArmyPlayer={largestArmyPlayer}
+                longestRoadPlayer={longestRoadPlayer}
             />
 
             {gamePhase === 'playing' && diceRoll && (

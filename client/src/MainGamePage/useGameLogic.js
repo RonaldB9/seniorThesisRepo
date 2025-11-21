@@ -56,6 +56,7 @@ export function useGameLogic() {
     const [buildingFreeRoads, setBuildingFreeRoads] = useState(false);
     const [freeRoadsRemaining, setFreeRoadsRemaining] = useState(0);
     const [largestArmyPlayer, setLargestArmyPlayer] = useState(null);
+    const [longestRoadPlayer, setLongestRoadPlayer] = useState(null);
     //Track if a dev card has been played this turn
     const [devCardPlayedThisTurn, setDevCardPlayedThisTurn] = useState(false);
     // Discard state
@@ -158,6 +159,13 @@ export function useGameLogic() {
                 setLargestArmyPlayer(data.currentHolder);
             })
             .catch(err => console.error('Failed to fetch largest army:', err));
+
+        fetch('http://localhost:3001/api/longest-road')
+            .then((res) => res.json())
+            .then((data) => {
+                setLongestRoadPlayer(data.currentHolder);
+            })
+            .catch(err => console.error('Failed to fetch longest road:', err));
     }, []);
 
     // Socket listeners for deck updates
@@ -169,11 +177,21 @@ export function useGameLogic() {
         socket.on('deckUpdate', handleDeckUpdate);
         socket.on('victoryPointRevealed', handleVictoryPointRevealed);
         socket.on('gameWon', handleGameWon);
+        socket.on('longestRoadUpdate', (data) => {
+            setLongestRoadPlayer(data.currentHolder);
+            console.log(`🛣️ Longest Road Update:`, data.roadLengths);
+        });
+        socket.on('longestRoadChanged', (data) => {
+            setLongestRoadPlayer(data.newHolder);
+            console.log(`🛣️ ${data.playerName} now has Longest Road with ${data.roadLength} roads!`);
+        });
         
         return () => {
             socket.off('deckUpdate', handleDeckUpdate);
             socket.off('victoryPointRevealed', handleVictoryPointRevealed);
             socket.off('gameWon', handleGameWon);
+            socket.off('longestRoadUpdate');
+            socket.off('longestRoadChanged');
         };
     }, []);
 
@@ -193,9 +211,8 @@ export function useGameLogic() {
         setPlayersToStealFrom([]);
         setNeedsToDiscard(false);
         setCardsToDiscard(0);
-        setDevCardPlayedThisTurn(false); // Reset dev card flag on turn change
-        setNewlyPurchasedCards({knight: false,yearOfPlenty: false,monopoly: false,roadBuilding: false,victoryPoint: false
-    });
+        setDevCardPlayedThisTurn(false);
+        setNewlyPurchasedCards({knight: false, yearOfPlenty: false, monopoly: false, roadBuilding: false, victoryPoint: false});
     }, [currentTurnUserId]);
 
     // Check if setup phase is complete
@@ -399,6 +416,7 @@ export function useGameLogic() {
         freeRoadsRemaining,
         setFreeRoadsRemaining,
         largestArmyPlayer,
+        longestRoadPlayer,
         devCardPlayedThisTurn,
         setDevCardPlayedThisTurn,
         newlyPurchasedCards,
