@@ -10,7 +10,7 @@ const { handleHouseSelected, handleBuildHouse, handleBuildCity } = require('./bu
 const { 
     handleMoveRobber, handleStealResource, handleBuyDevelopmentCard, handlePlayKnight, 
     handlePlayYearOfPlenty, handlePlayMonopoly, handlePlayRoadBuilding, handlePlayVictoryPoint} = require('./DevelopmentCards');
-
+const { getPlayerPorts, executeTrade, executePortTrade, createTradeProposal } = require('./tradingFunctions');
 //Clear all players on server startup
 const { writePlayers } = require('./playerData');
 writePlayers([]);
@@ -281,6 +281,72 @@ io.on('connection', (socket) => {
     const currentUserId = getCurrentPlayerUserId();
     socket.emit('currentTurn', currentUserId);
     if (callback) callback({ currentUserId });
+  });
+
+  // Handle player trade proposal
+  socket.on('proposeTrade', (data) => {
+    const { userId, responderId, offering, requesting } = data;
+    const proposal = createTradeProposal({
+      initiatorId: userId,
+      initiatorName: playerData.findPlayer(userId)?.name,
+      responderId,
+      offering,
+      requesting
+    });
+    
+    // Send notification to responder
+    io.to(responderId).emit('tradeProposal', proposal);
+    console.log(`💱 Trade proposal sent from ${proposal.initiatorName} to responder`);
+  });
+
+  // Handle accepting a trade
+  socket.on('acceptTrade', (data) => {
+    const { proposalId, initiatorId, responderId, offering, requesting } = data;
+    
+    const result = executeTrade({
+      initiatorId,
+      responderId,
+      offering,
+      requesting
+    }, io);
+    
+    if (result.success) {
+      socket.emit('tradeAccepted', { proposalId });
+    } else {
+      socket.emit('tradeFailed', { reason: result.error });
+    }
+  });
+
+  // Handle declining a trade
+  socket.on('declineTrade', (data) => {
+    const { proposalId, initiatorId } = data;
+    io.to(initiatorId).emit('tradeDeclined', { proposalId });
+    console.log(`❌ Trade proposal declined`);
+  });
+
+  // Handle port trade
+  socket.on('executePortTrade', (data) => {
+    const { userId } = data;
+    const player = playerData.findPlayer(userId);
+    
+    if (player && userId === getCurrentPlayerUserId()) {
+      // Get player's ports
+      const playerPorts = getPlayerPorts(userId, gameBoard, placedHouses, placedCities);
+      const result = executePortTrade(data, playerPorts, io);
+      
+      if (result.success) {
+        socket.emit('portTradeSuccess', {});
+      } else {
+        socket.emit('portTradeFailed', { reason: result.error });
+      }
+    }
+  });
+
+  // Get player ports info (for UI)
+  socket.on('getPlayerPorts', (data) => {
+    const { userId } = data;
+    const ports = getPlayerPorts(userId, gameBoard, placedHouses, placedCities);
+    socket.emit('playerPorts', { ports });
   });
 
   //Handle house selection (setup phase)

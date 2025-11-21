@@ -14,6 +14,7 @@ import ActionButtons from './ActionButtons';
 import DiscardDialog from './DiscardDialog';
 import VictoryPopup from './VictoryPopup';
 import { YearOfPlentyDialog, MonopolyDialog, RoadBuildingDialog } from './DevelopmentCardDialogs';
+import { PlayerTradeDialog, PortTradeDialog, TradeNotification } from './TradeDialog';
 
 function Game() {
     const navigate = useNavigate();
@@ -21,7 +22,10 @@ function Game() {
     
     const [showVictoryPopup, setShowVictoryPopup] = useState(false);
     const [victoryData, setVictoryData] = useState(null);
-    
+    const [showPlayerTradeDialog, setShowPlayerTradeDialog] = useState(false);
+    const [showPortTradeDialog, setShowPortTradeDialog] = useState(false);
+    const [playerPorts, setPlayerPorts] = useState([]);
+    const [pendingTrades, setPendingTrades] = useState([]);
     const {
         resourceTiles, resourceTokens, houseData, roadData, currentTurnUserId, userId,
         selectedHouseIndex, setSelectedHouseIndex, selectedRoadIndex, setSelectedRoadIndex,
@@ -94,6 +98,45 @@ function Game() {
             setBuildingCity(false);
         }
     };
+
+    const handleProposeTrade = (tradeData) => {
+        socket.emit('proposeTrade', {
+            userId,
+            ...tradeData
+        });
+        setShowPlayerTradeDialog(false);
+        };
+
+        const handleExecutePortTrade = (tradeData) => {
+        socket.emit('executePortTrade', {
+            userId,
+            ...tradeData
+        });
+        };
+
+        const handleAcceptTrade = (proposal) => {
+        socket.emit('acceptTrade', {
+            proposalId: proposal.id,
+            initiatorId: proposal.initiatorId,
+            responderId: userId,
+            offering: proposal.offering,
+            requesting: proposal.requesting
+        });
+        };
+
+        const handleDeclineTrade = (proposal) => {
+        socket.emit('declineTrade', {
+            proposalId: proposal.id,
+            initiatorId: proposal.initiatorId
+        });
+        };
+
+        // Fetch ports when user role changes
+        useEffect(() => {
+        if (userId && gamePhase === 'playing') {
+            socket.emit('getPlayerPorts', { userId });
+        }
+        }, [userId, gamePhase]);
 
     const handleRoadClick = (index) => {
         // Setup phase logic
@@ -434,6 +477,37 @@ function Game() {
                     onCancel={() => setNeedsToDiscard(false)}
                 />
             )}
+
+            {/* Player Trade Dialog */}
+            {showPlayerTradeDialog && (
+            <PlayerTradeDialog
+                currentPlayer={currentPlayer}
+                allPlayers={allPlayers}
+                userId={userId}
+                onProposeTrade={handleProposeTrade}
+                onCancel={() => setShowPlayerTradeDialog(false)}
+            />
+            )}
+
+            {/* Port Trade Dialog */}
+            {showPortTradeDialog && (
+            <PortTradeDialog
+                currentPlayer={currentPlayer}
+                playerPorts={playerPorts}
+                onExecuteTrade={handleExecutePortTrade}
+                onCancel={() => setShowPortTradeDialog(false)}
+            />
+            )}
+
+            {/* Trade Notifications */}
+            {pendingTrades.map((trade, idx) => (
+            <TradeNotification
+                key={trade.id}
+                trade={trade}
+                onAccept={() => handleAcceptTrade(trade)}
+                onDecline={() => handleDeclineTrade(trade)}
+            />
+            ))}
 
             {/* Steal Dialog */}
             {showStealDialog && playersToStealFrom.length > 0 && (

@@ -233,6 +233,27 @@ function ActionButtons({
                     </button>
                 </>
             )}
+
+            {/* Trade Buttons - Only available during playing phase */}
+            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
+            <>
+                <button 
+                onClick={() => setShowPlayerTradeDialog(true)}
+                className="trade-button trade-player-button"
+                title="Propose a trade with another player"
+                >
+                💱 Player Trade
+                </button>
+                
+                <button 
+                onClick={() => setShowPortTradeDialog(true)}
+                className="trade-button trade-port-button"
+                title="Trade with the bank using ports"
+                >
+                🏦 Port Trade
+                </button>
+            </>
+            )}
             
             {/* Cancel Build Button */}
             {gamePhase === 'playing' && (buildingHouse || buildingRoad || buildingCity) && (

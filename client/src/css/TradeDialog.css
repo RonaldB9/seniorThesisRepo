@@ -1,0 +1,368 @@
+/* client/src/css/TradeDialog.css */
+
+/* Trade Dialog Overlay */
+.trade-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.trade-dialog {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    width: 90%;
+    animation: slideUp 0.3s ease;
+    color: white;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.trade-dialog h3 {
+    margin: 0 0 20px 0;
+    text-align: center;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Trade Sections */
+.trade-section {
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.trade-section label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+/* Player Selection */
+.player-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #FFD700;
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.player-select:hover,
+.player-select:focus {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    border-color: #FFC700;
+}
+
+/* Trade Resources */
+.trade-resources {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.trade-resource-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.resource-emoji {
+    font-size: 24px;
+}
+
+.resource-name {
+    min-width: 70px;
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.trade-input {
+    width: 60px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 2px solid #FFD700;
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.trade-input:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.available {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-left: auto;
+}
+
+/* Exchange Arrow */
+.trade-exchange {
+    text-align: center;
+    font-size: 32px;
+    margin: 15px 0;
+    opacity: 0.8;
+}
+
+/* Port Info */
+.port-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.port-info p {
+    margin: 0 0 10px 0;
+    font-weight: bold;
+}
+
+.no-ports {
+    color: #FFD700;
+    font-size: 14px;
+    margin: 5px 0 !important;
+}
+
+.port-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.port-badge {
+    background-color: #FFD700;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Port Trade Row */
+.port-trade-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.resource-select,
+.amount-select {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #FFD700;
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.resource-select:focus,
+.amount-select:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.receiving-amount {
+    background-color: #FFD700;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Trade Rate Info */
+.trade-rate-info {
+    background-color: rgba(255, 215, 0, 0.2);
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Trade Actions */
+.trade-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.trade-propose-button,
+.trade-cancel-button {
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trade-propose-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.trade-propose-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.trade-cancel-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+}
+
+.trade-cancel-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Trade Notification */
+.trade-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 1500;
+    animation: slideInRight 0.4s ease;
+    max-width: 400px;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(500px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-content {
+    padding: 20px;
+}
+
+.notification-content h4 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.notification-content p {
+    margin: 8px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.trade-summary {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.trade-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.side-label {
+    font-weight: bold;
+    color: #333;
+    font-size: 12px;
+}
+
+.trade-summary span:not(.side-label) {
+    font-size: 13px;
+    color: #555;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.accept-btn,
+.decline-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.accept-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.accept-btn:hover {
+    background-color: #45a049;
+}
+
+.decline-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.decline-btn:hover {
+    background-color: #da190b;
+}
