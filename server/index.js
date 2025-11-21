@@ -14,6 +14,7 @@ const { getPlayerPorts, executeTrade, executePortTrade, createTradeProposal } = 
 //Clear all players on server startup
 const { writePlayers } = require('./playerData');
 writePlayers([]);
+const userSocketMap = new Map();
 
 const app = express();
 const server = http.createServer(app);
@@ -268,6 +269,30 @@ function isSetupPhaseComplete() {
 io.on('connection', (socket) => {
   console.log('🔌 New WebSocket connection:', socket.id);
 
+  // Store the socket connection for this user
+  socket.on('identify', (data) => {
+    const { userId } = data;
+    if (!userSocketMap.has(userId)) {
+      userSocketMap.set(userId, new Set());
+    }
+    userSocketMap.get(userId).add(socket.id);
+    console.log(`✅ User ${userId} connected with socket ${socket.id}`);
+  });
+
+  // Clean up when user disconnects
+  socket.on('disconnect', () => {
+    for (const [userId, sockets] of userSocketMap.entries()) {
+      if (sockets.has(socket.id)) {
+        sockets.delete(socket.id);
+        if (sockets.size === 0) {
+          userSocketMap.delete(userId);
+        }
+        console.log(`❌ User ${userId} disconnected`);
+        break;
+      }
+    }
+  });
+
   const currentUserId = getCurrentPlayerUserId();
   if (currentUserId) {
     console.log(`📤 Sending current turn to ${socket.id}: ${currentUserId}`);
@@ -293,6 +318,17 @@ io.on('connection', (socket) => {
       offering,
       requesting
     });
+    
+    // Get all socket IDs for the responder
+    const responderSockets = userSocketMap.get(responderId);
+    if (responderSockets) {
+      responderSockets.forEach(socketId => {
+        io.to(socketId).emit('tradeProposal', proposal);
+      });
+      console.log(`💱 Trade proposal sent from ${proposal.initiatorName} to ${responderId}`);
+    } else {
+      console.log(`⚠️ Responder ${responderId} not connected`);
+    }
     
     // Send notification to responder
     io.to(responderId).emit('tradeProposal', proposal);

@@ -6,11 +6,11 @@
     "score": 2,
     "color": "red",
     "resources": {
-      "wood": 101,
-      "brick": 101,
+      "wood": 102,
+      "brick": 100,
       "sheep": 100,
-      "wheat": 98,
-      "ore": 101
+      "wheat": 102,
+      "ore": 100
     },
     "developmentCards": {
       "knight": 0,
@@ -33,20 +33,20 @@
             18
           ]
         },
-        "placedAt": "2025-11-21T00:25:47.474Z"
+        "placedAt": "2025-11-21T02:39:54.221Z"
       },
       {
-        "houseIndex": 39,
+        "houseIndex": 34,
         "position": {
           "x": -125,
-          "y": 128,
+          "y": 58,
           "tiles": [
-            8,
             9,
-            16
+            16,
+            17
           ]
         },
-        "placedAt": "2025-11-21T00:25:55.293Z"
+        "placedAt": "2025-11-21T02:40:00.475Z"
       }
     ],
     "cities": [],
@@ -67,25 +67,25 @@
             20
           ]
         },
-        "placedAt": "2025-11-21T00:25:47.747Z"
+        "placedAt": "2025-11-21T02:39:54.682Z"
       },
       {
-        "roadIndex": 56,
+        "roadIndex": 50,
         "position": {
-          "x": -90,
-          "y": 140,
+          "x": -125,
+          "y": 95,
           "connectedHouses": [
-            39,
-            44
+            34,
+            39
           ],
           "connectedRoads": [
+            41,
+            42,
             55,
-            57,
-            50,
-            63
+            56
           ]
         },
-        "placedAt": "2025-11-21T00:25:55.535Z"
+        "placedAt": "2025-11-21T02:40:00.777Z"
       }
     ]
   },
@@ -96,11 +96,11 @@
     "score": 2,
     "color": "green",
     "resources": {
-      "wood": 100,
-      "brick": 101,
-      "sheep": 102,
-      "wheat": 100,
-      "ore": 100
+      "wood": 101,
+      "brick": 100,
+      "sheep": 100,
+      "wheat": 101,
+      "ore": 101
     },
     "developmentCards": {
       "knight": 0,
@@ -123,7 +123,7 @@
             18
           ]
         },
-        "placedAt": "2025-11-21T00:25:50.143Z"
+        "placedAt": "2025-11-21T02:39:56.740Z"
       },
       {
         "houseIndex": 19,
@@ -136,7 +136,7 @@
             14
           ]
         },
-        "placedAt": "2025-11-21T00:25:51.894Z"
+        "placedAt": "2025-11-21T02:39:58.121Z"
       }
     ],
     "cities": [],
@@ -157,7 +157,7 @@
             52
           ]
         },
-        "placedAt": "2025-11-21T00:25:50.439Z"
+        "placedAt": "2025-11-21T02:39:56.994Z"
       },
       {
         "roadIndex": 21,
@@ -175,7 +175,7 @@
             30
           ]
         },
-        "placedAt": "2025-11-21T00:25:52.181Z"
+        "placedAt": "2025-11-21T02:39:58.517Z"
       }
     ]
   }
