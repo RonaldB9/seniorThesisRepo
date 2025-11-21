@@ -311,28 +311,45 @@ io.on('connection', (socket) => {
   // Handle player trade proposal
   socket.on('proposeTrade', (data) => {
     const { userId, responderId, offering, requesting } = data;
-    const proposal = createTradeProposal({
-      initiatorId: userId,
-      initiatorName: playerData.findPlayer(userId)?.name,
-      responderId,
-      offering,
-      requesting
-    });
+    const initiator = playerData.findPlayer(userId);
+    const responder = playerData.findPlayer(responderId);
     
-    // Get all socket IDs for the responder
+    console.log(`💱 Trade proposal from ${initiator?.name} to ${responder?.name}`);
+    console.log(`   Offering: ${JSON.stringify(offering)}`);
+    console.log(`   Requesting: ${JSON.stringify(requesting)}`);
+
+    if (!initiator || !responder) {
+      console.log(`❌ Trade proposal failed: Player not found`);
+      socket.emit('tradeFailed', { reason: 'Player not found' });
+      return;
+    }
+
+    const proposal = {
+      id: Date.now().toString(),
+      initiatorId: userId,
+      initiatorName: initiator.name,
+      responderId: responderId,
+      offering: offering,
+      requesting: requesting,
+      status: 'pending',
+      createdAt: new Date()
+    };
+
+    console.log(`📤 Sending trade proposal to ${responder.name} (${responderId})`);
+    
+    // Get the responder's socket IDs
     const responderSockets = userSocketMap.get(responderId);
-    if (responderSockets) {
+    
+    if (responderSockets && responderSockets.size > 0) {
+      console.log(`✅ Found ${responderSockets.size} socket(s) for responder`);
       responderSockets.forEach(socketId => {
         io.to(socketId).emit('tradeProposal', proposal);
       });
-      console.log(`💱 Trade proposal sent from ${proposal.initiatorName} to ${responderId}`);
     } else {
-      console.log(`⚠️ Responder ${responderId} not connected`);
+      console.log(`⚠️ Responder not connected, broadcasting to all instead`);
+      // Fallback: broadcast to everyone
+      io.emit('tradeProposal', proposal);
     }
-    
-    // Send notification to responder
-    io.to(responderId).emit('tradeProposal', proposal);
-    console.log(`💱 Trade proposal sent from ${proposal.initiatorName} to responder`);
   });
 
   // Handle accepting a trade

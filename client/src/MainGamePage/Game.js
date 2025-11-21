@@ -88,6 +88,14 @@ function Game() {
         };
     }, []);
 
+    // Identify user to socket server on connection
+    useEffect(() => {
+        if (userId) {
+            console.log(`🔌 Identifying user ${userId} to socket server`);
+            socket.emit('identify', { userId });
+        }
+    }, [userId]);
+
     // Listen for game won event
     useEffect(() => {
         const handleGameWon = (data) => {

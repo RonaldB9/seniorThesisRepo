@@ -16,6 +16,7 @@ export function PlayerTradeDialog({
     const [requesting, setRequesting] = useState({
         wood: 0, brick: 0, sheep: 0, wheat: 0, ore: 0
     });
+    const [error, setError] = useState('');
 
     const resources = ['wood', 'brick', 'sheep', 'wheat', 'ore'];
     const resourceEmojis = {
@@ -28,26 +29,49 @@ export function PlayerTradeDialog({
         const maxAmount = currentPlayer?.resources?.[resource] || 0;
         const newAmount = Math.min(Math.max(0, amount), maxAmount);
         setOffering(prev => ({ ...prev, [resource]: newAmount }));
+        setError(''); // Clear error when user makes changes
     };
 
     const handleRequestingChange = (resource, amount) => {
         setRequesting(prev => ({ ...prev, [resource]: Math.max(0, amount) }));
+        setError(''); // Clear error when user makes changes
     };
 
     const handleProposeTrade = () => {
+        console.log('🔵 Propose Trade clicked');
+        console.log('Selected Player:', selectedPlayer);
+        console.log('Offering:', offering);
+        console.log('Requesting:', requesting);
+
+        // Validation 1: Player selected
         if (!selectedPlayer) {
-            alert('Please select a player to trade with');
+            const errorMsg = 'Please select a player to trade with';
+            console.warn('❌ ' + errorMsg);
+            setError(errorMsg);
             return;
         }
 
+        // Validation 2: Has offering
         const hasOffering = Object.values(offering).some(v => v > 0);
-        const hasRequesting = Object.values(requesting).some(v => v > 0);
-
-        if (!hasOffering || !hasRequesting) {
-            alert('Both sides of trade must have items');
+        if (!hasOffering) {
+            const errorMsg = 'You must offer at least one resource';
+            console.warn('❌ ' + errorMsg);
+            setError(errorMsg);
             return;
         }
 
+        // Validation 3: Has requesting
+        const hasRequesting = Object.values(requesting).some(v => v > 0);
+        if (!hasRequesting) {
+            const errorMsg = 'You must request at least one resource';
+            console.warn('❌ ' + errorMsg);
+            setError(errorMsg);
+            return;
+        }
+
+        console.log('✅ All validations passed, emitting trade proposal');
+        
+        // Call the callback
         onProposeTrade({
             responderId: selectedPlayer.userId,
             offering,
@@ -60,24 +84,44 @@ export function PlayerTradeDialog({
             <div className="trade-dialog">
                 <h3>💱 Player Trade</h3>
 
+                {/* Error Display */}
+                {error && (
+                    <div style={{
+                        backgroundColor: '#ffcdd2',
+                        color: '#c62828',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        marginBottom: '15px',
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }}>
+                        {error}
+                    </div>
+                )}
+
                 {/* Player Selection */}
                 <div className="trade-section">
                     <label>Trade With:</label>
-                    <select 
-                        value={selectedPlayer?.userId || ''} 
-                        onChange={(e) => {
-                            const player = otherPlayers.find(p => p.userId === e.target.value);
-                            setSelectedPlayer(player);
-                        }}
-                        className="player-select"
-                    >
-                        <option value="">-- Select Player --</option>
-                        {otherPlayers.map(player => (
-                            <option key={player.userId} value={player.userId}>
-                                {player.name} ({player.color})
-                            </option>
-                        ))}
-                    </select>
+                    {otherPlayers.length === 0 ? (
+                        <p style={{ color: '#666', fontStyle: 'italic' }}>No other players available</p>
+                    ) : (
+                        <select 
+                            value={selectedPlayer?.userId || ''} 
+                            onChange={(e) => {
+                                const player = otherPlayers.find(p => p.userId === e.target.value);
+                                setSelectedPlayer(player);
+                                console.log('Selected player:', player);
+                            }}
+                            className="player-select"
+                        >
+                            <option value="">-- Select Player --</option>
+                            {otherPlayers.map(player => (
+                                <option key={player.userId} value={player.userId}>
+                                    {player.name} ({player.color}) - {Object.values(player.resources || {}).reduce((sum, count) => sum + count, 0)} cards
+                                </option>
+                            ))}
+                        </select>
+                    )}
                 </div>
 
                 {/* Offering Section */}
