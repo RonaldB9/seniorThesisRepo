@@ -191,7 +191,7 @@ function Game() {
         if (userId && gamePhase === 'playing') {
             socket.emit('getPlayerPorts', { userId });
         }
-        }, [userId, gamePhase]);
+        }, [userId, gamePhase, placedHouses]);
 
     const handleRoadClick = (index) => {
         // Setup phase logic
