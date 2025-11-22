@@ -1,38 +1,60 @@
-// server/tradingFunctions.js
-const playerData = require('./playerData');
+// server/tradingFunctions.js - FIXED PORT MAPPING
+
+// Map which houses grant access to which ports
+const PORT_HOUSE_MAP = {
+  // 3:1 Ports - accessible from multiple house pairs
+  '3:1_1': [1, 5],        // Top middle 3:1 port
+  '3:1_2': [10, 15],        // Top right 3:1 port
+  '3:1_3': [49,52],      // Bottom middle 3:1 port
+  '3:1_4': [33,38],      // Left middle 3:1 port
+  
+  // 2:1 Ports - specific resources
+  'brick_2:1': [0, 3],    // Top left brick port
+  'sheep_2:1': [26, 32],  // Middle right sheep port
+  'ore_2:1': [11, 16],    // Left ore port
+  'wood_2:1': [47, 51],   // Bottom left wood port
+  'wheat_2:1': [42, 46]   // Bottom right wheat port
+};
 
 // Get available ports for a player based on their settlements
 function getPlayerPorts(userId, gameBoard, placedHouses, placedCities) {
   if (!gameBoard || !gameBoard.houseData) return [];
   
-  const playerPorts = new Set();
-  const portMapping = {
-    // 3:1 ports (general)
-    3: { type: '3:1', resources: ['any'] },
-    // 2:1 ports (specific)
-    1: { type: '2:1', resources: ['brick'] },
-    5: { type: '2:1', resources: ['sheep'] },
-    6: { type: '2:1', resources: ['ore'] },
-    7: { type: '2:1', resources: ['wood'] },
-    9: { type: '2:1', resources: ['wheat'] }
-  };
-
-  // Check each placed house/city for port access
+  const playerPorts = [];
+  const foundPorts = new Set(); // Avoid duplicates
+  
+  // Get all house indices where this player has settlements
+  const playerHouseIndices = new Set();
   Object.entries(placedHouses).forEach(([houseIndex, house]) => {
     if (house.userId === userId) {
-      const houseTileData = gameBoard.houseData[parseInt(houseIndex)];
-      if (houseTileData && houseTileData.tiles) {
-        // Check which port(s) this house connects to
-        houseTileData.tiles.forEach(tileIndex => {
-          if (portMapping[tileIndex]) {
-            playerPorts.add(tileIndex);
-          }
-        });
+      playerHouseIndices.add(parseInt(houseIndex));
+    }
+  });
+  
+  // Check each port to see if player owns a house at one of its locations
+  Object.entries(PORT_HOUSE_MAP).forEach(([portKey, houseIndices]) => {
+    // If player owns any house in this port's house list
+    const hasPort = houseIndices.some(houseIdx => 
+      playerHouseIndices.has(houseIdx)
+    );
+    
+    if (hasPort && !foundPorts.has(portKey)) {
+      foundPorts.add(portKey);
+      
+      // Parse port key to determine type and resource
+      if (portKey.includes('3:1')) {
+        playerPorts.push({ type: '3:1', resources: ['any'] });
+      } else {
+        const resourceMatch = portKey.match(/^(\w+)_2:1$/);
+        if (resourceMatch) {
+          const resource = resourceMatch[1];
+          playerPorts.push({ type: '2:1', resources: [resource] });
+        }
       }
     }
   });
-
-  return Array.from(playerPorts).map(portIndex => portMapping[portIndex]);
+  
+  return playerPorts;
 }
 
 // Validate a player can make a trade (has resources)
@@ -198,5 +220,6 @@ module.exports = {
   validateTradeResources,
   executeTrade,
   executePortTrade,
-  createTradeProposal
+  createTradeProposal,
+  PORT_HOUSE_MAP  // Export for reference/testing
 };
