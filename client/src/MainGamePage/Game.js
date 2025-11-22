@@ -38,7 +38,7 @@ function Game() {
         needsToDiscard, setNeedsToDiscard, cardsToDiscard, showYearOfPlentyDialog, setShowYearOfPlentyDialog,
         showMonopolyDialog, setShowMonopolyDialog, showRoadBuildingDialog, setShowRoadBuildingDialog,
         buildingFreeRoads, setBuildingFreeRoads, freeRoadsRemaining, setFreeRoadsRemaining, largestArmyPlayer,
-        devCardPlayedThisTurn, setDevCardPlayedThisTurn, newlyPurchasedCards, longestRoadPlayer
+        devCardPlayedThisTurn, setDevCardPlayedThisTurn, newlyPurchasedCards, longestRoadPlayer, highlightedTiles
     } = gameState;
 
     //SOCKET LISTENERS FOR TRADE SYSTEM
@@ -657,6 +657,7 @@ function Game() {
                 handleTileClick={handleTileClick}
                 buildingFreeRoads={buildingFreeRoads}
                 freeRoadsRemaining={freeRoadsRemaining}
+                highlightedTiles={highlightedTiles}
             />
 
             <ActionButtons

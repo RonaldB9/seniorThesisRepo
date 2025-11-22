@@ -91,7 +91,8 @@ function GameBoard({
     movingRobber,
     handleTileClick,
     buildingFreeRoads,
-    freeRoadsRemaining
+    freeRoadsRemaining,
+    highlightedTiles
 }) {
     return (
         <div className="tiles-container">
@@ -99,31 +100,31 @@ function GameBoard({
                 <>
                 {/* Resource Tiles - 5 Rows */}
                 <div className="tiles-row">
-                    {[0, 1, 2].map(i => (
-                        <span 
-                            key={i} 
-                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
-                            onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
-                            style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
-                        >
-                            <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
-                            {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
-                            {robberTileIndex === i && (
-                                <img 
-                                    src={robber} 
-                                    alt="Robber" 
-                                    className="robber-icon"
-                                />
-                            )}
-                        </span>
-                    ))}
-                </div>
+                {[0, 1, 2].map(i => (
+                    <span 
+                        key={i} 
+                        className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''} ${highlightedTiles.has(i) ? 'tile-highlighted' : ''}`}
+                        onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
+                        style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
+                    >
+                        <img className="tiles" src={resourceImages[resourceTiles[i]]} alt={resourceTiles[i]}/>
+                        {resourceTokens[i] && robberTileIndex !== i && <span className="token">{resourceTokens[i]}</span>}
+                        {robberTileIndex === i && (
+                            <img 
+                                src={robber} 
+                                alt="Robber" 
+                                className="robber-icon"
+                            />
+                        )}
+                    </span>
+                ))}
+            </div>
 
                 <div className="tiles-row">
                     {[11, 12, 13, 3].map(i => (
                         <span 
                             key={i} 
-                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''} ${highlightedTiles.has(i) ? 'tile-highlighted' : ''}`}
                             onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
                             style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
                         >
@@ -144,7 +145,7 @@ function GameBoard({
                     {[10, 17, 18, 14, 4].map(i => (
                         <span 
                             key={i} 
-                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''} ${highlightedTiles.has(i) ? 'tile-highlighted' : ''}`}
                             onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
                             style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
                         >
@@ -165,7 +166,7 @@ function GameBoard({
                     {[9, 16, 15, 5].map(i => (
                         <span 
                             key={i} 
-                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''} ${highlightedTiles.has(i) ? 'tile-highlighted' : ''}`}
                             onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
                             style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
                         >
@@ -186,7 +187,7 @@ function GameBoard({
                     {[8, 7, 6].map(i => (
                         <span 
                             key={i} 
-                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''}`}
+                            className={`tile ${movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'tile-selectable' : ''} ${highlightedTiles.has(i) ? 'tile-highlighted' : ''}`}
                             onClick={() => movingRobber && userId === currentTurnUserId && handleTileClick && handleTileClick(i)}
                             style={{ cursor: movingRobber && userId === currentTurnUserId && robberTileIndex !== i ? 'pointer' : 'default' }}
                         >

@@ -63,6 +63,7 @@ export function useGameLogic() {
     const [needsToDiscard, setNeedsToDiscard] = useState(false);
     const [cardsToDiscard, setCardsToDiscard] = useState(0);
     const [newlyPurchasedCards, setNewlyPurchasedCards] = useState({knight: false, yearOfPlenty: false, monopoly: false, roadBuilding: false, victoryPoint: false});
+    const [highlightedTiles, setHighlightedTiles] = useState(new Set());
 
     // Update unavailable houses based on placed houses
     const updateUnavailableHouses = (placedHousesObj) => {
@@ -277,8 +278,25 @@ export function useGameLogic() {
             // If rolled a 7, need to move robber
             if (data.total === 7) {
                 setMovingRobber(true);
+            } else {
+                // Highlight tiles that produce on this roll
+                if (resourceTokens && resourceTokens.length > 0) {
+                const producingTiles = new Set();
+                resourceTokens.forEach((token, tileIndex) => {
+                    // Skip robber tile and null tokens (desert)
+                    if (token === data.total && tileIndex !== robberTileIndex && token !== null) {
+                    producingTiles.add(tileIndex);
+                    }
+                });
+                setHighlightedTiles(producingTiles);
+                
+                // Clear highlight after 3 seconds
+                setTimeout(() => {
+                    setHighlightedTiles(new Set());
+                }, 3000);
+                }
             }
-        };
+            };
 
         const handleRobberMoved = (data) => {
             setRobberTileIndex(data.tileIndex);
@@ -420,6 +438,8 @@ export function useGameLogic() {
         devCardPlayedThisTurn,
         setDevCardPlayedThisTurn,
         newlyPurchasedCards,
-        setNewlyPurchasedCards
+        setNewlyPurchasedCards,
+        highlightedTiles,
+        setHighlightedTiles
     };
 }
