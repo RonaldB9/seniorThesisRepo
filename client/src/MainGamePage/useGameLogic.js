@@ -272,31 +272,43 @@ export function useGameLogic() {
         };
 
         const handleDiceRolled = (data) => {
+            console.log('🎲 Dice rolled:', data);
             setDiceRoll(data);
             setIsRolling(false);
             
-            // If rolled a 7, need to move robber
+            // If rolled a 7, need to move robber (don't highlight tiles)
             if (data.total === 7) {
+                console.log('🎲 Rolled 7 - moving robber');
                 setMovingRobber(true);
+                setHighlightedTiles(new Set());
             } else {
+                console.log('🎲 Highlighting tiles that produce', data.total);
                 // Highlight tiles that produce on this roll
                 if (resourceTokens && resourceTokens.length > 0) {
-                const producingTiles = new Set();
-                resourceTokens.forEach((token, tileIndex) => {
-                    // Skip robber tile and null tokens (desert)
-                    if (token === data.total && tileIndex !== robberTileIndex && token !== null) {
-                    producingTiles.add(tileIndex);
-                    }
-                });
-                setHighlightedTiles(producingTiles);
-                
-                // Clear highlight after 3 seconds
-                setTimeout(() => {
-                    setHighlightedTiles(new Set());
-                }, 3000);
+                    const producingTiles = new Set();
+                    resourceTokens.forEach((token, tileIndex) => {
+                        // Skip robber tile and desert tiles (null tokens)
+                        if (token === data.total && tileIndex !== robberTileIndex) {
+                            console.log(`   ✅ Tile ${tileIndex} has token ${token}`);
+                            producingTiles.add(tileIndex);
+                        } else if (token === data.total) {
+                            console.log(`   ⛔ Tile ${tileIndex} has robber`);
+                        }
+                    });
+                    
+                    console.log('📊 Producing tiles set:', producingTiles);
+                    setHighlightedTiles(producingTiles);
+                    
+                    // Clear highlight after 3 seconds
+                    setTimeout(() => {
+                        console.log('⏱️ Clearing highlights after 3 seconds');
+                        setHighlightedTiles(new Set());
+                    }, 3000);
+                } else {
+                    console.log('❌ No resourceTokens available');
                 }
             }
-            };
+        };
 
         const handleRobberMoved = (data) => {
             setRobberTileIndex(data.tileIndex);
@@ -377,7 +389,7 @@ export function useGameLogic() {
             socket.off('largestArmyUpdate', handleLargestArmyUpdate);
             socket.off('cardBought', handleCardBought);
         };
-    }, [userId]);
+    }, [userId, resourceTokens, robberTileIndex]);
 
     return {
         resourceTiles,

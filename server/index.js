@@ -118,11 +118,11 @@ app.post('/api/register', (req, res) => {
       score: 0,
       color: assignedColor,
       resources: {
-        wood: 100,
-        brick: 100,
-        sheep: 100,
-        wheat: 100,
-        ore: 100
+        wood: 10,
+        brick: 10,
+        sheep: 10,
+        wheat: 10,
+        ore: 10
       },
       developmentCards: {
         knight: 0,
@@ -155,11 +155,11 @@ function resetAllPlayerStats() {
       ready: false,
       score: 0,
       resources: {
-        wood: 100,
-        brick: 100,
-        sheep: 100,
-        wheat: 100,
-        ore: 100
+        wood: 10,
+        brick: 10,
+        sheep: 10,
+        wheat: 10,
+        ore: 10
       },
       developmentCards: {
         knight: 0,
