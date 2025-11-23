@@ -6,7 +6,7 @@ import catanTitle from '../Images/catanTitle.gif';
 import sheep from '../Images/sheepFrolick.png';
 import Game from '../MainGamePage/Game';
 import socket from '../socket';
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://catan-game-server.onrender.com';
 
 function App() {
   return (

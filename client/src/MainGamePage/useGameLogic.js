@@ -98,10 +98,11 @@ export function useGameLogic() {
     // Get userId on mount
     useEffect(() => {
         const id = localStorage.getItem('userId');
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://catan-game-server.onrender.com';
         setUserId(id);
 
         if (id) {
-            fetch(`http://localhost:3001/api/players`)
+            fetch(`${API_BASE_URL}/api/players`)
                 .then((res) => res.json())
                 .then((players) => {
                     const player = players.find(p => p.userId === id);
@@ -114,7 +115,8 @@ export function useGameLogic() {
 
     // Fetch board data
     useEffect(() => {
-        fetch('http://localhost:3001/api/board')
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://catan-game-server.onrender.com';
+        fetch(`${API_BASE_URL}/api/board`)
             .then((res) => res.json())
             .then((data) => {
                 setResourceTiles(data.resourceTiles);
@@ -124,7 +126,7 @@ export function useGameLogic() {
                 setPortRoadData(data.portRoadData);
             });
 
-        fetch('http://localhost:3001/api/houses')
+        fetch(`${API_BASE_URL}/api/houses`)
             .then((res) => res.json())
             .then((data) => {
                 setPlacedHouses(data);
@@ -132,7 +134,7 @@ export function useGameLogic() {
             })
             .catch(err => console.error('Failed to fetch houses:', err));
 
-        fetch('http://localhost:3001/api/roads')
+        fetch(`${API_BASE_URL}/api/roads`)
             .then((res) => res.json())
             .then((data) => {
                 setPlacedRoads(data);
@@ -140,28 +142,28 @@ export function useGameLogic() {
             })
             .catch(err => console.error('Failed to fetch roads:', err));
 
-        fetch('http://localhost:3001/api/cities')
+        fetch(`${API_BASE_URL}/api/cities`)
             .then((res) => res.json())
             .then((data) => {
                 setPlacedCities(data);
             })
             .catch(err => console.error('Failed to fetch cities:', err));
 
-        fetch('http://localhost:3001/api/robber')
+        fetch(`${API_BASE_URL}/api/robber`)
             .then((res) => res.json())
             .then((data) => {
                 setRobberTileIndex(data.tileIndex);
             })
             .catch(err => console.error('Failed to fetch robber:', err));
 
-        fetch('http://localhost:3001/api/largest-army')
+        fetch(`${API_BASE_URL}/api/largest-army`)
             .then((res) => res.json())
             .then((data) => {
                 setLargestArmyPlayer(data.currentHolder);
             })
             .catch(err => console.error('Failed to fetch largest army:', err));
 
-        fetch('http://localhost:3001/api/longest-road')
+        fetch(`${API_BASE_URL}/api/longest-road`)
             .then((res) => res.json())
             .then((data) => {
                 setLongestRoadPlayer(data.currentHolder);
