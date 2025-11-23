@@ -25,9 +25,9 @@
 .discard-dialog {
     background-color: white;
     border-radius: 15px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-    max-width: 500px;
+    max-width: 400px;
     width: 90%;
     animation: slideUp 0.3s ease;
 }
@@ -44,21 +44,21 @@
 }
 
 .discard-dialog h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 0 0;
     text-align: center;
     color: #d32f2f;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .discard-instruction {
     text-align: center;
     color: #666;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-size: 14px;
 }
 
 .discard-progress {
-    margin-bottom: 25px;
+    margin-bottom: 10px;
 }
 
 .progress-bar {
@@ -67,7 +67,7 @@
     background-color: #e0e0e0;
     border-radius: 15px;
     overflow: hidden;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .progress-fill {
@@ -86,8 +86,8 @@
 .discard-resources {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 10px;
+    margin-bottom: 10px;
     max-height: 400px;
     overflow-y: auto;
 }
@@ -95,7 +95,7 @@
 .discard-resource-item {
     background-color: #f5f5f5;
     border-radius: 10px;
-    padding: 15px;
+    padding: 10px;
     border: 2px solid #e0e0e0;
     transition: all 0.2s ease;
 }
@@ -113,7 +113,7 @@
 }
 
 .resource-emoji {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .resource-name {
@@ -163,7 +163,7 @@
 }
 
 .resource-count {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #333;
     min-width: 40px;
@@ -176,7 +176,7 @@
 }
 
 .discard-submit-button {
-    padding: 15px 40px;
+    padding: 10px 30px;
     font-size: 18px;
     font-weight: bold;
     border: none;
