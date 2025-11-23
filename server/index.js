@@ -19,14 +19,13 @@ const userSocketMap = new Map();
 
 const app = express();
 const server = http.createServer(app);
+const PORT = process.env.PORT || 3001;
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: process.env.CLIENT_URL || '*',
     methods: ['GET', 'POST']
   }
 });
-
-const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -749,6 +748,6 @@ app.get('/api/players', (req, res) => {
 });
 
 // Start server
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });

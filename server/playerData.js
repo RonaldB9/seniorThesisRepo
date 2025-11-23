@@ -1,7 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataFile = path.join(__dirname, 'players.json');
+const dataDir = process.env.DATA_DIR || '/tmp';
+const dataFile = path.join(dataDir, 'players.json');
+
+// Ensure directory exists
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
 // Helper: read player data from file
 function readPlayers() {

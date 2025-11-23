@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: catan-game-server
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        fromService:
+          type: web
+          name: catan-game-client
+          property: url
+
+  - type: web
+    name: catan-game-client
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/build
+    routes:
+      - path: /*
+        destination: /index.html
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: catan-game-server
+          property: url
+      - key: REACT_APP_SOCKET_URL
+        fromService:
+          type: web
+          name: catan-game-server
+          property: url

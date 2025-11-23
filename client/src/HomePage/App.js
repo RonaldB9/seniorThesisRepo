@@ -6,7 +6,7 @@ import catanTitle from '../Images/catanTitle.gif';
 import sheep from '../Images/sheepFrolick.png';
 import Game from '../MainGamePage/Game';
 import socket from '../socket';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function App() {
   return (
@@ -36,7 +36,7 @@ function Home() {
     setUserId(id);
 
     // Register user with backend
-    fetch('http://localhost:3001/api/register', {
+    fetch(`${API_BASE_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: id })
@@ -71,7 +71,7 @@ function Home() {
 
   const readyUp = () => {
     if (!userId) return;
-    fetch(`http://localhost:3001/api/players/${userId}/ready`, {
+    fetch(`${API_BASE_URL}/api/players/${userId}/ready`, {
       method: 'POST'
     }).catch(err => console.error('Failed to toggle ready:', err));
   };
