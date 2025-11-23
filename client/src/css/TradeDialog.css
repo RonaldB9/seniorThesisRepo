@@ -23,9 +23,9 @@
 .trade-dialog {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 20px;
-    padding: 30px;
+    padding: 10px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    max-width: 600px;
+    max-width: 400px;
     width: 90%;
     animation: slideUp 0.3s ease;
     color: white;
@@ -45,24 +45,24 @@
 }
 
 .trade-dialog h3 {
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
     text-align: center;
-    font-size: 28px;
+    font-size: 20px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Trade Sections */
 .trade-section {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     background-color: rgba(255, 255, 255, 0.1);
-    padding: 15px;
+    padding: 10px;
     border-radius: 10px;
 }
 
 .trade-section label {
     display: block;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-size: 16px;
 }
 
@@ -90,20 +90,20 @@
 .trade-resources {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
 .trade-resource-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     background-color: rgba(255, 255, 255, 0.05);
     padding: 10px;
     border-radius: 8px;
 }
 
 .resource-emoji {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .resource-name {
@@ -138,8 +138,8 @@
 /* Exchange Arrow */
 .trade-exchange {
     text-align: center;
-    font-size: 32px;
-    margin: 15px 0;
+    font-size: 20px;
+    margin: 10px 0;
     opacity: 0.8;
 }
 
