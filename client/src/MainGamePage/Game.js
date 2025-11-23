@@ -511,19 +511,6 @@ function Game() {
                 longestRoadPlayer={longestRoadPlayer}
             />
 
-            {gamePhase === 'playing' && diceRoll && (
-                <div className="dice-display">
-                    <div className="dice-container">
-                        <div className="die">{diceRoll.die1}</div>
-                        <div className="die">{diceRoll.die2}</div>
-                    </div>
-                    <div className="dice-total">Total: {diceRoll.total}</div>
-                    {diceRoll.total === 7 && (
-                        <div className="robber-message">Move the Robber! 🦹</div>
-                    )}
-                </div>
-            )}
-
             {/* Discard Dialog */}
             {needsToDiscard && currentPlayer && (
                 <DiscardDialog
