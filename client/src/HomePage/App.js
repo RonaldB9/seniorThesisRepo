@@ -27,6 +27,7 @@ function Home() {
   const [currentPlayer, setCurrentPlayer] = useState(null);
 
 //Get or generate persistent user ID
+//Get or generate persistent user ID
 useEffect(() => {
     let id = localStorage.getItem('userId');
     if (!id) {
@@ -34,6 +35,10 @@ useEffect(() => {
       localStorage.setItem('userId', id);
     }
     setUserId(id);
+
+    // Identify user to socket server
+    socket.emit('identify', { userId: id });
+    console.log(`🔌 Identifying user ${id} to socket server from Home`);
 
     // Register user with backend
     fetch(`${API_BASE_URL}/api/register`, {
