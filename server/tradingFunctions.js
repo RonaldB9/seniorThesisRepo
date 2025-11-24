@@ -1,5 +1,7 @@
 // server/tradingFunctions.js - FIXED PORT MAPPING
 
+const playerData = require('./playerData');
+
 // Map which houses grant access to which ports
 const PORT_HOUSE_MAP = {
   // 3:1 Ports - accessible from multiple house pairs
