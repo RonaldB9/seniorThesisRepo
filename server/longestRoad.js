@@ -2,6 +2,7 @@
 // Longest Road calculation and management
 
 const playerData = require('./playerData');
+const { checkForWin } = require('./DevelopmentCards');
 
 /**
  * Calculate the longest continuous road for a player
@@ -189,6 +190,10 @@ function updateLongestRoad(
           playerName: newHolder.name,
           roadLength: maxLength
         });
+
+        // ✅ CHECK FOR WIN after awarding Longest Road points
+        const updatedPlayer = playerData.findPlayer(maxLengthPlayerId);
+        checkForWin(updatedPlayer, io);
       }
     } else {
       newLongestRoadPlayer = null;
