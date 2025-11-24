@@ -41,10 +41,21 @@ function ActionButtons({
     showPortTradeDialog,
     setShowPortTradeDialog
 }) {
+    // Check if it's the current player's turn
+    const isMyTurn = userId === currentTurnUserId;
+    
+    // Check if dice have been rolled (only relevant in playing phase)
+    const hasDiceRoll = gamePhase === 'playing' ? diceRoll !== null : true;
+
+    // Don't show action buttons container at all if not your turn
+    if (!isMyTurn) {
+        return null;
+    }
+
     return (
         <div className="action-buttons">
             {/* Roll Dice Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
+            {gamePhase === 'playing' && isMyTurn && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleRollDice} 
                     disabled={diceRoll !== null || isRolling}
@@ -54,18 +65,20 @@ function ActionButtons({
                 </button>
             )}
             
-            {/* Build House Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
+            {/* Build House Button - Only in playing phase, disabled until dice rolled */}
+            {gamePhase === 'playing' && isMyTurn && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuildHouse} 
-                    disabled={!canBuildHouse()}
+                    disabled={!hasDiceRoll || !canBuildHouse()}
                     className="build-house-button"
                     title={
-                        !currentPlayer?.resources || 
-                        currentPlayer.resources.wood < 1 || 
-                        currentPlayer.resources.wheat < 1 || 
-                        currentPlayer.resources.brick < 1 || 
-                        currentPlayer.resources.sheep < 1
+                        !hasDiceRoll
+                            ? 'Roll dice first'
+                            : !currentPlayer?.resources || 
+                              currentPlayer.resources.wood < 1 || 
+                              currentPlayer.resources.wheat < 1 || 
+                              currentPlayer.resources.brick < 1 || 
+                              currentPlayer.resources.sheep < 1
                             ? 'Need: 1 Wood, 1 Wheat, 1 Brick, 1 Sheep'
                             : availableHouseIndicesForBuilding.length === 0
                             ? 'No available spots to build'
@@ -76,16 +89,18 @@ function ActionButtons({
                 </button>
             )}
             
-            {/* Build Road Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
+            {/* Build Road Button - Only in playing phase, disabled until dice rolled */}
+            {gamePhase === 'playing' && isMyTurn && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuildRoad} 
-                    disabled={!canBuildRoad()}
+                    disabled={!hasDiceRoll || !canBuildRoad()}
                     className="build-road-button"
                     title={
-                        !currentPlayer?.resources || 
-                        currentPlayer.resources.wood < 1 || 
-                        currentPlayer.resources.brick < 1
+                        !hasDiceRoll
+                            ? 'Roll dice first'
+                            : !currentPlayer?.resources || 
+                              currentPlayer.resources.wood < 1 || 
+                              currentPlayer.resources.brick < 1
                             ? 'Need: 1 Wood, 1 Brick'
                             : availableRoadIndices.length === 0
                             ? 'No available spots to build'
@@ -96,16 +111,18 @@ function ActionButtons({
                 </button>
             )}
 
-            {/* Build City Button - Only in playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
+            {/* Build City Button - Only in playing phase, disabled until dice rolled */}
+            {gamePhase === 'playing' && isMyTurn && !buildingHouse && !buildingRoad && !buildingCity && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuildCity} 
-                    disabled={!canBuildCity()}
+                    disabled={!hasDiceRoll || !canBuildCity()}
                     className="build-city-button"
                     title={
-                        !currentPlayer?.resources || 
-                        currentPlayer.resources.ore < 3 || 
-                        currentPlayer.resources.wheat < 2
+                        !hasDiceRoll
+                            ? 'Roll dice first'
+                            : !currentPlayer?.resources || 
+                              currentPlayer.resources.ore < 3 || 
+                              currentPlayer.resources.wheat < 2
                             ? 'Need: 3 Ore, 2 Wheat'
                             : upgradeableSettlements.length === 0
                             ? 'No settlements to upgrade'
@@ -116,33 +133,40 @@ function ActionButtons({
                 </button>
             )}
 
-            {/* Development Card Button */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
+            {/* Development Card Button - disabled until dice rolled */}
+            {gamePhase === 'playing' && isMyTurn && !movingRobber && !buildingFreeRoads && (
                 <button 
                     onClick={handleBuyDevelopmentCard}
-                    disabled={!canBuyDevCard()}
+                    disabled={!hasDiceRoll || !canBuyDevCard()}
                     className="buy-dev-card-button"
-                    title={`Need: 1 Ore, 1 Sheep, 1 Wheat (${devCardDeckCount} cards left)`}
+                    title={
+                        !hasDiceRoll
+                            ? 'Roll dice first'
+                            : `Need: 1 Ore, 1 Sheep, 1 Wheat (${devCardDeckCount} cards left)`
+                    }
                 >
                     🃏 Buy Dev Card ({devCardDeckCount})
                 </button>
             )}
 
-            {/* Development Card Play Buttons */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
+            {/* Development Card Play Buttons - disabled until dice rolled */}
+            {gamePhase === 'playing' && isMyTurn && !movingRobber && !buildingFreeRoads && (
                 <>
                     {/* Play Knight Card Button */}
                     <button 
                         onClick={handlePlayKnight}
                         disabled={
+                            !hasDiceRoll ||
                             !currentPlayer?.developmentCards?.knight || 
                             currentPlayer.developmentCards.knight < 1 || 
                             devCardPlayedThisTurn ||
-                            newlyPurchasedCards.knight  // ← ADD THIS
+                            newlyPurchasedCards.knight
                         }
                         className="play-knight-button"
                         title={
-                            newlyPurchasedCards.knight 
+                            !hasDiceRoll
+                                ? 'Roll dice first'
+                                : newlyPurchasedCards.knight 
                                 ? "Dev cards can't be played the turn they're purchased" 
                                 : devCardPlayedThisTurn 
                                 ? "Only 1 dev card per turn" 
@@ -156,14 +180,17 @@ function ActionButtons({
                     <button 
                         onClick={handlePlayYearOfPlenty}
                         disabled={
+                            !hasDiceRoll ||
                             !currentPlayer?.developmentCards?.yearOfPlenty || 
                             currentPlayer.developmentCards.yearOfPlenty < 1 || 
                             devCardPlayedThisTurn ||
-                            newlyPurchasedCards.yearOfPlenty  // ← ADD THIS
+                            newlyPurchasedCards.yearOfPlenty
                         }
                         className="play-year-button"
                         title={
-                            newlyPurchasedCards.yearOfPlenty 
+                            !hasDiceRoll
+                                ? 'Roll dice first'
+                                : newlyPurchasedCards.yearOfPlenty 
                                 ? "Dev cards can't be played the turn they're purchased" 
                                 : devCardPlayedThisTurn 
                                 ? "Only 1 dev card per turn" 
@@ -177,14 +204,17 @@ function ActionButtons({
                     <button 
                         onClick={handlePlayMonopoly}
                         disabled={
+                            !hasDiceRoll ||
                             !currentPlayer?.developmentCards?.monopoly || 
                             currentPlayer.developmentCards.monopoly < 1 || 
                             devCardPlayedThisTurn ||
-                            newlyPurchasedCards.monopoly  // ← ADD THIS
+                            newlyPurchasedCards.monopoly
                         }
                         className="play-monopoly-button"
                         title={
-                            newlyPurchasedCards.monopoly 
+                            !hasDiceRoll
+                                ? 'Roll dice first'
+                                : newlyPurchasedCards.monopoly 
                                 ? "Dev cards can't be played the turn they're purchased" 
                                 : devCardPlayedThisTurn 
                                 ? "Only 1 dev card per turn" 
@@ -198,14 +228,17 @@ function ActionButtons({
                     <button 
                         onClick={handlePlayRoadBuilding}
                         disabled={
+                            !hasDiceRoll ||
                             !currentPlayer?.developmentCards?.roadBuilding || 
                             currentPlayer.developmentCards.roadBuilding < 1 || 
                             devCardPlayedThisTurn ||
-                            newlyPurchasedCards.roadBuilding  // ← ADD THIS
+                            newlyPurchasedCards.roadBuilding
                         }
                         className="play-road-building-button"
                         title={
-                            newlyPurchasedCards.roadBuilding 
+                            !hasDiceRoll
+                                ? 'Roll dice first'
+                                : newlyPurchasedCards.roadBuilding 
                                 ? "Dev cards can't be played the turn they're purchased" 
                                 : devCardPlayedThisTurn 
                                 ? "Only 1 dev card per turn" 
@@ -219,14 +252,17 @@ function ActionButtons({
                     <button 
                         onClick={handlePlayVictoryPoint}
                         disabled={
+                            !hasDiceRoll ||
                             !currentPlayer?.developmentCards?.victoryPoint || 
                             currentPlayer.developmentCards.victoryPoint < 1 || 
                             devCardPlayedThisTurn ||
-                            newlyPurchasedCards.victoryPoint  // ← ADD THIS
+                            newlyPurchasedCards.victoryPoint
                         }
                         className="play-victory-button"
                         title={
-                            newlyPurchasedCards.victoryPoint 
+                            !hasDiceRoll
+                                ? 'Roll dice first'
+                                : newlyPurchasedCards.victoryPoint 
                                 ? "Dev cards can't be played the turn they're purchased" 
                                 : devCardPlayedThisTurn 
                                 ? "Only 1 dev card per turn" 
@@ -238,21 +274,23 @@ function ActionButtons({
                 </>
             )}
 
-            {/* Trade Buttons - Only available during playing phase */}
-            {gamePhase === 'playing' && userId === currentTurnUserId && !movingRobber && !buildingFreeRoads && (
+            {/* Trade Buttons - Only available during playing phase, disabled until dice rolled */}
+            {gamePhase === 'playing' && isMyTurn && !movingRobber && !buildingFreeRoads && (
             <>
                 <button 
                 onClick={() => setShowPlayerTradeDialog(true)}
+                disabled={!hasDiceRoll}
                 className="trade-button trade-player-button"
-                title="Propose a trade with another player"
+                title={!hasDiceRoll ? 'Roll dice first' : 'Propose a trade with another player'}
                 >
                 💱 Player Trade
                 </button>
                 
                 <button 
                 onClick={() => setShowPortTradeDialog(true)}
+                disabled={!hasDiceRoll}
                 className="trade-button trade-port-button"
-                title="Trade with the bank using ports"
+                title={!hasDiceRoll ? 'Roll dice first' : 'Trade with the bank using ports'}
                 >
                 🏦 Port Trade
                 </button>
@@ -269,19 +307,21 @@ function ActionButtons({
                 </button>
             )}
             
-            {/* End Turn Button */}
-            <button 
-                onClick={handleEndTurn} 
-                disabled={
-                    (gamePhase === 'setup' && (!housePlacedThisTurn && !roadPlacedThisTurn)) || 
-                    (gamePhase === 'playing' && !diceRoll) ||
-                    movingRobber ||
-                    buildingFreeRoads
-                }
-                className="end-turn-button"
-            >
-                End Turn
-            </button>
+            {/* End Turn Button - only show for current player */}
+            {isMyTurn && (
+                <button 
+                    onClick={handleEndTurn} 
+                    disabled={
+                        (gamePhase === 'setup' && (!housePlacedThisTurn && !roadPlacedThisTurn)) || 
+                        (gamePhase === 'playing' && !diceRoll) ||
+                        movingRobber ||
+                        buildingFreeRoads
+                    }
+                    className="end-turn-button"
+                >
+                    End Turn
+                </button>
+            )}
         </div>
     );
 }
