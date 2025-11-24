@@ -26,8 +26,8 @@ function Home() {
   const [userId, setUserId] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState(null);
 
-  // Get or generate persistent user ID
-  useEffect(() => {
+//Get or generate persistent user ID
+useEffect(() => {
     let id = localStorage.getItem('userId');
     if (!id) {
       id = uuidv4();

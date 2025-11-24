@@ -22,7 +22,13 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: [
+      process.env.CLIENT_URL || 'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://localhost:3003',
+      'http://localhost:3004'
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type']
