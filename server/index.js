@@ -201,6 +201,40 @@ app.post('/api/players/:userId/ready', (req, res) => {
   res.json(updatedPlayer);
 });
 
+//Toggle ready status
+app.post('/api/players/:userId/ready', (req, res) => {
+  const { userId } = req.params;
+  const player = playerData.findPlayer(userId);
+
+  if (!player) {
+    return res.status(404).json({ error: 'Player not found' });
+  }
+
+  const updatedPlayer = playerData.updatePlayer(userId, { ready: !player.ready });
+  io.emit('playersUpdated', playerData.getPlayers());
+  res.json(updatedPlayer);
+});
+
+//Update player name
+app.post('/api/players/:userId/name', (req, res) => {
+  const { userId } = req.params;
+  const { name } = req.body;
+  const player = playerData.findPlayer(userId);
+
+  if (!player) {
+    return res.status(404).json({ error: 'Player not found' });
+  }
+
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name cannot be empty' });
+  }
+
+  const updatedPlayer = playerData.updatePlayer(userId, { name: name.trim() });
+  io.emit('playersUpdated', playerData.getPlayers());
+  console.log(`✏️ Player ${userId} changed name to: ${name.trim()}`);
+  res.json(updatedPlayer);
+});
+
 //Get current player userId
 function getCurrentPlayerUserId() {
   const players = playerData.getPlayers();
@@ -293,7 +327,6 @@ io.on('connection', (socket) => {
     console.log(`✅ User ${userId} connected with socket ${socket.id}`);
   });
 
-  // Clean up when user disconnects
   // Clean up when user disconnects
   socket.on('disconnect', () => {
     for (const [userId, sockets] of userSocketMap.entries()) {

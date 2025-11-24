@@ -25,8 +25,9 @@ function Home() {
   const [players, setPlayers] = useState([]);
   const [userId, setUserId] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [tempName, setTempName] = useState('');
 
-//Get or generate persistent user ID
 //Get or generate persistent user ID
 useEffect(() => {
     let id = localStorage.getItem('userId');
@@ -47,9 +48,33 @@ useEffect(() => {
       body: JSON.stringify({ userId: id })
     })
       .then(res => res.json())
-      .then(data => setCurrentPlayer(data))
+      .then(data => {
+        setCurrentPlayer(data);
+        // Show name dialog for new players
+        setTempName(data.name);
+        setShowNameDialog(true);
+      })
       .catch(err => console.error('Registration failed:', err));
   }, []);
+
+  const handleNameSubmit = () => {
+    if (!tempName.trim()) {
+      alert('Please enter a name');
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/api/players/${userId}/name`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: tempName.trim() })
+    })
+      .then(res => res.json())
+      .then(data => {
+        setCurrentPlayer(data);
+        setShowNameDialog(false);
+      })
+      .catch(err => console.error('Failed to update name:', err));
+  };
 
   //Socket listener for player list updates
   useEffect(() => {
@@ -150,6 +175,67 @@ useEffect(() => {
         <RandomSheep />
 
         {/*<h1 className="title">Trade Build Settle</h1>*/}
+
+        {/* Name Dialog */}
+        {showNameDialog && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              padding: '30px',
+              borderRadius: '15px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              maxWidth: '400px',
+              width: '90%'
+            }}>
+              <h2 style={{ marginTop: 0, color: '#333' }}>Welcome to Catan!</h2>
+              <p style={{ color: '#666' }}>Choose your player name:</p>
+              <input
+                type="text"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleNameSubmit()}
+                placeholder="Enter your name..."
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontSize: '16px',
+                  border: '2px solid #ddd',
+                  borderRadius: '8px',
+                  marginBottom: '15px',
+                  boxSizing: 'border-box'
+                }}
+                autoFocus
+              />
+              <button
+                onClick={handleNameSubmit}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                Join Game
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="contentHomePage">
           {/*Player list*/}
