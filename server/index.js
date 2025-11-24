@@ -447,6 +447,29 @@ io.on('connection', (socket) => {
       handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket);
   });
 
+  // Clean up when user disconnects
+  socket.on('disconnect', () => {
+    for (const [userId, sockets] of userSocketMap.entries()) {
+      if (sockets.has(socket.id)) {
+        sockets.delete(socket.id);
+        if (sockets.size === 0) {
+          userSocketMap.delete(userId);
+          
+          // Remove player from the player list
+          const players = playerData.getPlayers();
+          const updatedPlayers = players.filter(p => p.userId !== userId);
+          playerData.writePlayers(updatedPlayers);
+          
+          console.log(`❌ User ${userId} disconnected and removed from player list`);
+          
+          // Broadcast updated player list
+          io.emit('playersUpdated', playerData.getPlayers());
+        }
+        break;
+      }
+    }
+  });
+
   //Build free road (from Road Building card)
   socket.on('buildFreeRoad', (data) => {
       const { userId, roadIndex, position } = data;
