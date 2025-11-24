@@ -177,7 +177,29 @@ export function useGameLogic() {
             setDevCardDeckCount(data.cardsRemaining);
         };
 
+        // Listen for board updates (when new game starts)
+        const handleBoardUpdated = (newBoard) => {
+            console.log('🎲 Board updated! New tiles:', newBoard.resourceTiles);
+            setResourceTiles(newBoard.resourceTiles);
+            setResourceTokens(newBoard.resourceTokens);
+            setHouseData(newBoard.houseData);
+            setRoadData(newBoard.roadData);
+            setPortRoadData(newBoard.portRoadData);
+            
+            // Find and set new robber position
+            const desertIndex = newBoard.resourceTiles.findIndex(tile => tile === 'Desert');
+            setRobberTileIndex(desertIndex);
+            
+            // Reset all placed items
+            setPlacedHouses({});
+            setPlacedRoads({});
+            setPlacedCities({});
+            setUnavailableHouses(new Set());
+            setUnavailableRoads(new Set());
+        };
+
         socket.on('deckUpdate', handleDeckUpdate);
+        socket.on('boardUpdated', handleBoardUpdated);
         socket.on('victoryPointRevealed', handleVictoryPointRevealed);
         socket.on('gameWon', handleGameWon);
         socket.on('longestRoadUpdate', (data) => {
@@ -191,6 +213,7 @@ export function useGameLogic() {
         
         return () => {
             socket.off('deckUpdate', handleDeckUpdate);
+            socket.off('boardUpdated', handleBoardUpdated);
             socket.off('victoryPointRevealed', handleVictoryPointRevealed);
             socket.off('gameWon', handleGameWon);
             socket.off('longestRoadUpdate');

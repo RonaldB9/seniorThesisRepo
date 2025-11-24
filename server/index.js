@@ -1,4 +1,4 @@
-// server/index.js - Updated for 6 players
+// server/index.js - Updated for 6 players with board randomization
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -50,9 +50,10 @@ let developmentCardDeck = [];
 let largestArmyPlayer = null; //Track who has largest army
 let robberTileIndex = null; //Track robber position
 
-//Generate board data
+//Generate board data - now only returns if board exists, doesn't create it
 app.get('/api/board', (req, res) => {
   if (!gameBoard) {
+    // Generate initial board if it doesn't exist
     const boardData = generateCatanBoard();
     const houseData = getHouseTileData();
     const roadData = getRoadSpotData();
@@ -706,10 +707,26 @@ io.on('connection', (socket) => {
     largestArmyPlayer = null;
     longestRoadPlayer = null;
     
-    //Reset robber to desert
-    if (gameBoard) {
-      robberTileIndex = gameBoard.resourceTiles.findIndex(tile => tile === 'Desert');
-    }
+    // 🎲 GENERATE NEW BOARD - This is the key change!
+    const boardData = generateCatanBoard();
+    const houseData = getHouseTileData();
+    const roadData = getRoadSpotData();
+    const portRoadData = getPortRoadData();
+
+    // Initialize robber on desert tile
+    robberTileIndex = boardData.resourceTiles.findIndex(tile => tile === 'Desert');
+
+    gameBoard = {
+      resourceTiles: boardData.resourceTiles,
+      resourceTokens: boardData.resourceTokens,
+      houseData: houseData,
+      roadData: roadData,
+      portRoadData: portRoadData
+    };
+
+    console.log('🎲 New board generated!');
+    console.log('Resource Tiles:', boardData.resourceTiles);
+    console.log('Resource Tokens:', boardData.resourceTokens);
 
     // RESET ALL PLAYER STATS
     resetAllPlayerStats();
@@ -717,6 +734,8 @@ io.on('connection', (socket) => {
     const firstPlayer = players[0];
     console.log(`🚀 Game started, first turn: ${firstPlayer.name} (${firstPlayer.userId})`);
     
+    // Broadcast new board to all clients
+    io.emit('boardUpdated', gameBoard);
     io.emit('startGame');
     io.emit('playersUpdated', playerData.getPlayers());
     io.emit('largestArmyUpdate', { currentHolder: null, holderName: null });
