@@ -174,8 +174,6 @@ useEffect(() => {
         <RandomSheep />
         <RandomSheep />
 
-        {/*<h1 className="title">Trade Build Settle</h1>*/}
-
         {/* Name Dialog */}
         {showNameDialog && (
           <div style={{

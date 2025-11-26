@@ -1,15 +1,16 @@
+/* Only updating playerStartUp and startGame sections */
 .background {
   width: 90%;
   background-image: url('../Images/backgroundSunset.jpg');
-  background-size: cover;       /* fills the screen */
-  background-position: center;  /* centers the image */
-  background-repeat: no-repeat; /* no tiling */
-  height: 100vh;                /* full viewport height */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
   width: 100vw;
   margin-left: auto;
   margin-right: auto;
-  opacity: 0;                  /* start invisible */
-  animation: fadeIn 5s ease-in forwards;  /* fade-in effect */
+  opacity: 0;
+  animation: fadeIn 5s ease-in forwards;
 }
 
 .loadBackround {
@@ -25,14 +26,6 @@
   }
 }
 
-.title {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  margin-top: 0%;
-  margin-bottom: 0%;
-}
-
 .images {
   display: flex;
   justify-content: center;
@@ -40,38 +33,141 @@
   margin-bottom: 20px;
 }
 
-.playerStartUp {
- background-color: white;
- border-radius: 10px;
- width: 30%;
- margin-left: 5%;
- text-align: center;
- padding-bottom: 10px;
-}
-
-.player-block {
-  background-color: lightgray;
-}
-
-.players {
-  width: 70%;
-  border-radius: 10px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .contentHomePage {
   display: flex;
 }
 
-.startGame {
-  background-color: white;
+/* Player Startup Section - Enhanced */
+.playerStartUp {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 30%;
+  margin-left: 5%;
+  text-align: center;
+}
+
+.playerStartUp h2 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.player-block {
+  background: white;
+  border-radius: 12px;
+  padding: 5px;
+  margin-bottom: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.player-block:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border-color: #667eea;
+}
+
+.players {
+  margin: 0 0 0 0;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
   border-radius: 10px;
+}
+
+.player-block h4 {
+  margin: 8px 0 0 0;
+  text-align: center;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: bold;
+}
+
+/* Start Game Section - Enhanced */
+.startGame {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   margin-left: 1%;
-  width: 10%;
-  min-width: 120px;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .startText {
   text-align: center;
+  margin: 0 0 0 0;
+  font-size: 20px;
+  color: #333;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.startGame button {
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.startGame button:first-of-type {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.startGame button:first-of-type:hover {
+  background-color: #45a049;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.startGame button:last-of-type {
+  background-color: #FFD700;
+  color: #333;
+}
+
+.startGame button:last-of-type:hover {
+  background-color: #FFC700;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.startGame button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .playerStartUp {
+    width: 80%;
+    margin-left: 10%;
+  }
+
+  .startGame {
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 20px;
+  }
+
+  .contentHomePage {
+    flex-direction: column;
+    align-items: center;
+  }
 }
