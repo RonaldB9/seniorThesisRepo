@@ -674,10 +674,18 @@ io.on('connection', (socket) => {
         const totalCards = Object.values(p.resources).reduce((sum, count) => sum + count, 0);
         if (totalCards > 7) {
           const cardsToDiscard = Math.floor(totalCards / 2);
-          socket.emit('discardRequired', {
-            userId: p.userId,
-            cardsToDiscard
-          });
+          console.log(`⚠️ ${p.name} has ${totalCards} cards, must discard ${cardsToDiscard}`);
+          
+          // Send to all sockets for this user
+          const playerSockets = userSocketMap.get(p.userId);
+          if (playerSockets && playerSockets.size > 0) {
+            playerSockets.forEach(socketId => {
+              io.to(socketId).emit('discardRequired', {
+                userId: p.userId,
+                cardsToDiscard
+              });
+            });
+          }
         }
       });
     } else {
