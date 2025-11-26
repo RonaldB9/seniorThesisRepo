@@ -1,9 +1,7 @@
-// server/roadFunctions.js
-// All road-related functions
-
+//All road-related functions
 const playerData = require('./playerData');
 
-// Helper function to deduct resources when building a road
+//Helper function to deduct resources when building a road
 function deductRoadResources(userId) {
   const player = playerData.findPlayer(userId);
   
@@ -23,7 +21,7 @@ function deductRoadResources(userId) {
   return true;
 }
 
-// Handle road selection (setup phase)
+//Handle road selection (setup phase)
 function handleRoadSelected(data, placedRoads, io) {
   const { userId, roadIndex, position } = data;
   const player = playerData.findPlayer(userId);
@@ -68,7 +66,7 @@ function handleRoadSelected(data, placedRoads, io) {
   return { success: true };
 }
 
-// Handle building a road (playing phase)
+//Handle building a road (playing phase)
 function handleBuildRoad(data, placedRoads, getCurrentPlayerUserId, io) {
   const { userId, roadIndex, position } = data;
   const player = playerData.findPlayer(userId);

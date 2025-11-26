@@ -4,49 +4,49 @@ const path = require('path');
 const dataDir = process.env.DATA_DIR || '/tmp';
 const dataFile = path.join(dataDir, 'players.json');
 
-// Ensure directory exists
+//Ensure directory exists
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-// Helper: read player data from file
+//Read player data from file
 function readPlayers() {
   try {
     const data = fs.readFileSync(dataFile, 'utf-8');
     return JSON.parse(data);
   } catch (err) {
     if (err.code === 'ENOENT') {
-      // file doesn't exist, return empty list
+      //file doesn't exist, return empty list
       return [];
     }
     throw err;
   }
 }
 
-// Helper: write player data to file
+//Write player data to file
 function writePlayers(players) {
   fs.writeFileSync(dataFile, JSON.stringify(players, null, 2));
 }
 
-// Get all players
+//Get all players
 function getPlayers() {
   return readPlayers();
 }
 
-// Find player by userId
+//Find player by userId
 function findPlayer(userId) {
   const players = readPlayers();
   return players.find(p => p.userId === userId);
 }
 
-// Add new player
+//Add new player
 function addPlayer(player) {
   const players = readPlayers();
   players.push(player);
   writePlayers(players);
 }
 
-// Update player (by userId)
+//Update player (by userId)
 function updatePlayer(userId, updates) {
   const players = readPlayers();
   const index = players.findIndex(p => p.userId === userId);
