@@ -709,6 +709,24 @@ io.on('connection', (socket) => {
     }
   });
 
+  //Handle declining a trade
+  socket.on('declineTrade', (data) => {
+    const { proposalId, initiatorId } = data;
+    
+    // Send decline to initiator's sockets
+    const initiatorSockets = userSocketMap.get(initiatorId);
+    if (initiatorSockets && initiatorSockets.size > 0) {
+      initiatorSockets.forEach(socketId => {
+        io.to(socketId).emit('tradeDeclined', { proposalId });
+      });
+    }
+    
+    //Also send decline back to the responder to clear their notification
+    socket.emit('tradeDeclined', { proposalId });
+    
+    console.log(`❌ Trade proposal ${proposalId} declined`);
+  });
+
   //Handle stealing a resource
   socket.on('stealResource', (data) => {
     handleStealResource(data, io);

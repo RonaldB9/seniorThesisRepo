@@ -60,6 +60,8 @@ function Game() {
 
         socket.on('tradeCompleted', (data) => {
             console.log(`✅ Trade completed between ${data.initiatorName} and ${data.responderName}`);
+            // Remove any lingering trade notifications
+            setPendingTrades([]);
         });
 
         socket.on('portTradeCompleted', (data) => {
@@ -160,16 +162,16 @@ function Game() {
             ...tradeData
         });
         setShowPlayerTradeDialog(false);
-        };
+    };
 
-        const handleExecutePortTrade = (tradeData) => {
+    const handleExecutePortTrade = (tradeData) => {
         socket.emit('executePortTrade', {
             userId,
             ...tradeData
         });
-        };
+    };
 
-        const handleAcceptTrade = (proposal) => {
+    const handleAcceptTrade = (proposal) => {
         socket.emit('acceptTrade', {
             proposalId: proposal.id,
             initiatorId: proposal.initiatorId,
@@ -177,21 +179,21 @@ function Game() {
             offering: proposal.offering,
             requesting: proposal.requesting
         });
-        };
+    };
 
-        const handleDeclineTrade = (proposal) => {
+    const handleDeclineTrade = (proposal) => {
         socket.emit('declineTrade', {
             proposalId: proposal.id,
             initiatorId: proposal.initiatorId
         });
-        };
+    };
 
-        // Fetch ports when user role changes
-        useEffect(() => {
+    // Fetch ports when user role changes
+    useEffect(() => {
         if (userId && gamePhase === 'playing') {
             socket.emit('getPlayerPorts', { userId });
         }
-        }, [userId, gamePhase, placedHouses]);
+    }, [userId, gamePhase, placedHouses]);
 
     const handleRoadClick = (index) => {
         // Setup phase logic
