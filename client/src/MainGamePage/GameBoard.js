@@ -23,12 +23,12 @@ import pinkRoad from '../Images/pinkRoad.png';
 // Port and other images
 import portRoad from '../Images/Ports/portRoad.png';
 import robber from '../Images/robber.jpg';
-import ThreetoOnePort from '../Images/Ports/3to1Port.jpg';
-import TwotoOneBrick from '../Images/Ports/2To1Brick.jpg';
-import TwotoOneSheep from '../Images/Ports/2To1Sheep.jpg';
-import TwotoOneStone from '../Images/Ports/2To1Stone.jpg';
-import TwotoOneWood from '../Images/Ports/2To1Wood.jpg';
-import TwotoOneWheat from '../Images/Ports/2To1Wheat.jpg';
+import ThreetoOnePort from '../Images/Ports/3to1Port.png';
+import TwotoOneBrick from '../Images/Ports/2To1Brick.png';
+import TwotoOneSheep from '../Images/Ports/2To1Sheep.png';
+import TwotoOneStone from '../Images/Ports/2To1Stone.png';
+import TwotoOneWood from '../Images/Ports/2To1Wood.png';
+import TwotoOneWheat from '../Images/Ports/2To1Wheat.png';
 
 const resourceImages = {
     Brick: brickTile,
