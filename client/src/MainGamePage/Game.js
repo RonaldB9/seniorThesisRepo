@@ -60,7 +60,7 @@ function Game() {
 
         socket.on('tradeCompleted', (data) => {
             console.log(`✅ Trade completed between ${data.initiatorName} and ${data.responderName}`);
-            // Remove any lingering trade notifications
+            //Remove any lingering trade notifications
             setPendingTrades([]);
         });
 
@@ -90,7 +90,7 @@ function Game() {
         };
     }, []);
 
-    // Identify user to socket server on connection
+    //Identify user to socket server on connection
     useEffect(() => {
         if (userId) {
             console.log(`🔌 Identifying user ${userId} to socket server`);
@@ -98,7 +98,7 @@ function Game() {
         }
     }, [userId]);
 
-    // Listen for game won event
+    //Listen for game won event
     useEffect(() => {
         const handleGameWon = (data) => {
             console.log(`🎉 Game won by ${data.winnerName}!`);
@@ -123,7 +123,7 @@ function Game() {
     };
 
     const handleHouseClick = (index) => {
-        // Setup phase logic
+        //Setup phase logic
         if (userId === currentTurnUserId && selectedHouseIndex === null && !housePlacedThisTurn && gamePhase === 'setup') {
             setSelectedHouseIndex(index);
             setHousePlacedThisTurn(true);
@@ -134,7 +134,7 @@ function Game() {
             });
         }
         
-        // Playing phase logic - building house
+        //Playing phase logic - building house
         if (userId === currentTurnUserId && buildingHouse && gamePhase === 'playing') {
             setSelectedHouseIndex(index);
             socket.emit('buildHouse', {
@@ -145,7 +145,7 @@ function Game() {
             setBuildingHouse(false);
         }
 
-        // Playing phase logic - upgrading to city
+        //Playing phase logic - upgrading to city
         if (userId === currentTurnUserId && buildingCity && gamePhase === 'playing') {
             socket.emit('buildCity', {
                 userId,
@@ -188,7 +188,7 @@ function Game() {
         });
     };
 
-    // Fetch ports when user role changes
+    //Fetch ports when user role changes
     useEffect(() => {
         if (userId && gamePhase === 'playing') {
             socket.emit('getPlayerPorts', { userId });
@@ -196,7 +196,7 @@ function Game() {
     }, [userId, gamePhase, placedHouses]);
 
     const handleRoadClick = (index) => {
-        // Setup phase logic
+        //Setup phase logic
         if (userId === currentTurnUserId && selectedRoadIndex === null && !roadPlacedThisTurn && gamePhase === 'setup') {
             setSelectedRoadIndex(index);
             setRoadPlacedThisTurn(true);
@@ -207,7 +207,7 @@ function Game() {
             });
         }
         
-        // Playing phase logic - building road (paid)
+        //Playing phase logic - building road (paid)
         if (userId === currentTurnUserId && buildingRoad && !buildingFreeRoads && gamePhase === 'playing') {
             setSelectedRoadIndex(index);
             socket.emit('buildRoad', {
@@ -218,7 +218,7 @@ function Game() {
             setBuildingRoad(false);
         }
         
-        // Road Building card - free roads
+        //Road Building card - free roads
         if (userId === currentTurnUserId && buildingFreeRoads && freeRoadsRemaining > 0 && gamePhase === 'playing') {
             setSelectedRoadIndex(index);
             socket.emit('buildFreeRoad', {

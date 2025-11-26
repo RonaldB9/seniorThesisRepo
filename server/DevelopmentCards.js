@@ -22,7 +22,7 @@ function getPlayersAdjacentToTile(tileIndex, placedHouses, gameBoard) {
   
   const adjacentPlayers = new Set();
   
-  // Check all placed houses
+  //Check all placed houses
   Object.entries(placedHouses).forEach(([houseIndex, house]) => {
     const houseTileData = gameBoard.houseData[parseInt(houseIndex)];
     
@@ -53,7 +53,7 @@ function stealRandomResource(thiefUserId, victimUserId) {
   
   if (!victim || !thief) return null;
   
-  // Get all available resources from victim
+  //Get all available resources from victim
   const availableResources = [];
   Object.entries(victim.resources).forEach(([resource, count]) => {
     for (let i = 0; i < count; i++) {
@@ -63,11 +63,11 @@ function stealRandomResource(thiefUserId, victimUserId) {
   
   if (availableResources.length === 0) return null;
   
-  // Pick a random resource
+  //Pick a random resource
   const randomIndex = Math.floor(Math.random() * availableResources.length);
   const stolenResource = availableResources[randomIndex];
   
-  // Transfer the resource
+  //Transfer the resource
   victim.resources[stolenResource] -= 1;
   thief.resources[stolenResource] = (thief.resources[stolenResource] || 0) + 1;
   
@@ -83,7 +83,7 @@ function stealRandomResource(thiefUserId, victimUserId) {
   };
 }
 
-// Handle moving the robber
+//Handle moving the robber
 function handleMoveRobber(data, getCurrentPlayerUserId, placedHouses, gameBoard, io) {
   const { userId, tileIndex } = data;
   const player = playerData.findPlayer(userId);
@@ -100,7 +100,7 @@ function handleMoveRobber(data, getCurrentPlayerUserId, placedHouses, gameBoard,
 
   console.log(`🦹 ${player.name} moved robber to tile ${tileIndex}`);
 
-  // Find players adjacent to this tile who can be stolen from
+  //Find players adjacent to this tile who can be stolen from
   const playersToStealFrom = getPlayersAdjacentToTile(tileIndex, placedHouses, gameBoard).filter(p => p.userId !== userId);
 
   io.emit('robberMoved', {
@@ -112,7 +112,7 @@ function handleMoveRobber(data, getCurrentPlayerUserId, placedHouses, gameBoard,
   return { success: true, robberTileIndex: tileIndex };
 }
 
-// Handle stealing a resource
+//Handle stealing a resource
 function handleStealResource(data, io) {
   const { thiefUserId, victimUserId } = data;
   
@@ -134,7 +134,7 @@ function handleStealResource(data, io) {
   return { success: false };
 }
 
-// Handle buying a development card
+//Handle buying a development card
 function handleBuyDevelopmentCard(data, getCurrentPlayerUserId, developmentCardDeck, io, socket) {
   const { userId } = data;
   const player = playerData.findPlayer(userId);
@@ -177,7 +177,7 @@ function handleBuyDevelopmentCard(data, getCurrentPlayerUserId, developmentCardD
   return { success: true, deck: developmentCardDeck };
 }
 
-// Handle playing a knight card
+//Handle playing a knight card
 function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, socket) {
   const { userId } = data;
   const player = playerData.findPlayer(userId);
@@ -191,34 +191,34 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
     return { success: false, error: 'No knight cards', largestArmyPlayer };
   }
 
-  // Deduct knight card and increment played knights
+  //Deduct knight card and increment played knights
   player.developmentCards.knight -= 1;
   player.playedKnights = (player.playedKnights || 0) + 1;
 
   console.log(`🗡️ ${player.name} played a Knight card! (Total: ${player.playedKnights})`);
 
-  // Get all players and find who has the most knights
+  //Get all players and find who has the most knights
   const allPlayers = playerData.getPlayers();
   const maxKnights = Math.max(...allPlayers.map(p => p.playedKnights || 0));
   
   let newLargestArmyPlayer = largestArmyPlayer;
   let largestArmyChanged = false;
 
-  // Check if this player now qualifies for Largest Army
+  //Check if this player now qualifies for Largest Army
   if (player.playedKnights >= 3) {
-    // Check if there's a current holder
+    //Check if there's a current holder
     if (largestArmyPlayer && largestArmyPlayer !== userId) {
       const prevPlayer = playerData.findPlayer(largestArmyPlayer);
       
-      // Only take Largest Army if this player has MORE knights
+      //Only take Largest Army if this player has MORE knights
       if (player.playedKnights > (prevPlayer?.playedKnights || 0)) {
-        // Remove 2 points from previous holder
+        //Remove 2 points from previous holder
         if (prevPlayer) {
           playerData.updatePlayer(largestArmyPlayer, { score: prevPlayer.score - 2 });
           console.log(`🗡️ ${prevPlayer.name} lost Largest Army (-2 points)`);
         }
         
-        // Give 2 points to new holder
+        //Give 2 points to new holder
         newLargestArmyPlayer = userId;
         playerData.updatePlayer(userId, { 
           developmentCards: player.developmentCards,
@@ -228,7 +228,7 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
         console.log(`🗡️ ${player.name} now has Largest Army! (+2 points, Score: ${player.score + 2})`);
         largestArmyChanged = true;
         
-        // Broadcast the change
+        //Broadcast the change
         io.emit('largestArmyChanged', {
           previousHolder: largestArmyPlayer,
           newHolder: userId,
@@ -236,14 +236,14 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
           knightsPlayed: player.playedKnights
         });
       } else {
-        // Same number of knights - no change in holder
+        //Same number of knights - no change in holder
         playerData.updatePlayer(userId, { 
           developmentCards: player.developmentCards,
           playedKnights: player.playedKnights
         });
       }
     } else if (!largestArmyPlayer) {
-      // No one has it yet, give it to this player
+      //No one has it yet, give it to this player
       newLargestArmyPlayer = userId;
       playerData.updatePlayer(userId, { 
         developmentCards: player.developmentCards,
@@ -260,14 +260,14 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
         knightsPlayed: player.playedKnights
       });
     } else {
-      // This player already has largest army
+      //This player already has largest army
       playerData.updatePlayer(userId, { 
         developmentCards: player.developmentCards,
         playedKnights: player.playedKnights
       });
     }
   } else {
-    // Less than 3 knights - just update without army check
+    //Less than 3 knights - just update without army check
     playerData.updatePlayer(userId, { 
       developmentCards: player.developmentCards,
       playedKnights: player.playedKnights
@@ -281,7 +281,7 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
   });
   socket.emit('knightPlayed', { userId, totalKnights: player.playedKnights });
 
-  // Check for win after potentially gaining largest army
+  //Check for win after potentially gaining largest army
   if (largestArmyChanged) {
     const updatedPlayer = playerData.findPlayer(userId);
     checkForWin(updatedPlayer, io);
@@ -290,7 +290,7 @@ function handlePlayKnight(data, getCurrentPlayerUserId, largestArmyPlayer, io, s
   return { success: true, largestArmyPlayer: newLargestArmyPlayer };
 }
 
-// Handle playing a Year of Plenty card
+//Handle playing a Year of Plenty card
 function handlePlayYearOfPlenty(data, getCurrentPlayerUserId, io, socket) {
   const { userId, resources } = data;
   const player = playerData.findPlayer(userId);
@@ -308,10 +308,10 @@ function handlePlayYearOfPlenty(data, getCurrentPlayerUserId, io, socket) {
     return { success: false, error: 'Must select exactly 2 resources' };
   }
 
-  // Deduct the card
+  //Deduct the card
   player.developmentCards.yearOfPlenty -= 1;
 
-  // Give the resources
+  //Give the resources
   resources.forEach(resource => {
     player.resources[resource] = (player.resources[resource] || 0) + 1;
   });
@@ -329,7 +329,7 @@ function handlePlayYearOfPlenty(data, getCurrentPlayerUserId, io, socket) {
   return { success: true };
 }
 
-// Handle playing a Monopoly card
+//Handle playing a Monopoly card
 function handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket) {
   const { userId, resource } = data;
   const player = playerData.findPlayer(userId);
@@ -347,10 +347,10 @@ function handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket) {
     return { success: false, error: 'Must select a resource' };
   }
 
-  // Deduct the card
+  //Deduct the card
   player.developmentCards.monopoly -= 1;
 
-  // Steal the resource from all other players
+  //Steal the resource from all other players
   const allPlayers = playerData.getPlayers();
   let totalStolen = 0;
 
@@ -364,7 +364,7 @@ function handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket) {
     }
   });
 
-  // Give all stolen resources to the player
+  //Give all stolen resources to the player
   player.resources[resource] = (player.resources[resource] || 0) + totalStolen;
 
   playerData.updatePlayer(userId, {
@@ -380,7 +380,7 @@ function handlePlayMonopoly(data, getCurrentPlayerUserId, io, socket) {
   return { success: true };
 }
 
-// Handle playing a Road Building card
+//Handle playing a Road Building card
 function handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket) {
   const { userId } = data;
   const player = playerData.findPlayer(userId);
@@ -394,7 +394,7 @@ function handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket) {
     return { success: false, error: 'No Road Building cards' };
   }
 
-  // Deduct the card
+  //Deduct the card
   player.developmentCards.roadBuilding -= 1;
 
   playerData.updatePlayer(userId, {
@@ -409,7 +409,7 @@ function handlePlayRoadBuilding(data, getCurrentPlayerUserId, io, socket) {
   return { success: true };
 }
 
-// Handle playing a victory point card
+//Handle playing a victory point card
 function handlePlayVictoryPoint(data, getCurrentPlayerUserId, io) {
   const { userId } = data;
   const player = playerData.findPlayer(userId);
@@ -446,7 +446,7 @@ function handlePlayVictoryPoint(data, getCurrentPlayerUserId, io) {
     totalRevealed: player.revealedVictoryPoints
   });
 
-  // Check for win
+  //Check for win
   checkForWin(player, io);
 
   return { success: true };

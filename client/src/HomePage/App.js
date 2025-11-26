@@ -37,11 +37,11 @@ useEffect(() => {
     }
     setUserId(id);
 
-    // Identify user to socket server
+    //Identify user to socket server
     socket.emit('identify', { userId: id });
     console.log(`🔌 Identifying user ${id} to socket server from Home`);
 
-    // Register user with backend
+    //Register user with backend
     fetch(`${API_BASE_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -50,7 +50,7 @@ useEffect(() => {
       .then(res => res.json())
       .then(data => {
         setCurrentPlayer(data);
-        // Show name dialog for new players
+        //Show name dialog for new players
         setTempName(data.name);
         setShowNameDialog(true);
       })
@@ -107,27 +107,26 @@ useEffect(() => {
   };
 
   const startGame = () => {
-    const minPlayers = 2; // minimum players required
+    const minPlayers = 2; //minimum players required
     const allReady = players.length >= minPlayers && players.every(player => player.ready);
 
     if (allReady) {
-      socket.emit('startGameClicked');  // notify server someone clicked Start Game
+      socket.emit('startGameClicked');  //notify server someone clicked Start Game
     } else {
       alert(`You need at least ${minPlayers} players, and all must be ready!`);
     }
   };
 
   function RandomSheep() {
-    // Start somewhere near bottom of screen
     const startX = 200 + Math.random() * 200;
     const startY = window.innerHeight - 150 + Math.random() * 50;
 
     const [position, setPosition] = useState({ x: startX, y: startY });
     const [facingRight, setFacingRight] = useState(true);
 
-    const direction = useRef(Math.random() > 0.5 ? 1 : -1); // 1 = right, -1 = left
-    const speed = 0.5 + Math.random() * 0.3; // px per frame
-    const amplitude = 50 + Math.random() * 30; // how far from baseX
+    const direction = useRef(Math.random() > 0.5 ? 1 : -1); //1 = right, -1 = left
+    const speed = 0.5 + Math.random() * 0.3;
+    const amplitude = 50 + Math.random() * 30; 
 
     const baseX = useRef(startX);
 
@@ -135,13 +134,13 @@ useEffect(() => {
       const interval = setInterval(() => {
         let newX = position.x + speed * direction.current;
 
-        // Reverse direction if exceeding amplitude
+        //Reverse direction if exceeding amplitude
         if (newX > baseX.current + amplitude) direction.current = -1;
         if (newX < baseX.current - amplitude) direction.current = 1;
 
         setFacingRight(direction.current === -1);
         setPosition(prev => ({ ...prev, x: newX }));
-      }, 16); // ~60fps
+      }, 16);
 
       return () => clearInterval(interval);
     }, [position.x]);
@@ -157,7 +156,7 @@ useEffect(() => {
           width: '60px',
           height: '60px',
           transform: facingRight ? 'scaleX(1)' : 'scaleX(-1)',
-          transition: 'left 0.016s linear', // smooth movement
+          transition: 'left 0.016s linear',
           zIndex: 1
         }}
       />

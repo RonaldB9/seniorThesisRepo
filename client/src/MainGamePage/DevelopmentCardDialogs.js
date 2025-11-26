@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../css/DevelopmentCards.css';
 
-// Year of Plenty Dialog - Choose 2 resources
+//Year of Plenty Dialog - Choose 2 resources
 export function YearOfPlentyDialog({ onConfirm, onCancel }) {
     const [selectedResources, setSelectedResources] = useState([]);
 
@@ -58,12 +58,8 @@ export function YearOfPlentyDialog({ onConfirm, onCancel }) {
 
                 <div className="resource-grid">
                     {resources.map(resource => (
-                        <button
-                            key={resource.key}
-                            onClick={() => handleResourceClick(resource.key)}
-                            disabled={selectedResources.length >= 2}
-                            className="resource-choice-btn"
-                        >
+                        <button key={resource.key} onClick={() => handleResourceClick(resource.key)}
+                            disabled={selectedResources.length >= 2} className="resource-choice-btn">
                             <span className="resource-emoji">{resource.emoji}</span>
                             <span className="resource-name">{resource.name}</span>
                         </button>
@@ -71,26 +67,15 @@ export function YearOfPlentyDialog({ onConfirm, onCancel }) {
                 </div>
 
                 <div className="dev-card-actions">
-                    <button 
-                        onClick={handleConfirm}
-                        disabled={selectedResources.length !== 2}
-                        className="dev-card-confirm-button"
-                    >
-                        Confirm
-                    </button>
-                    <button 
-                        onClick={onCancel}
-                        className="dev-card-cancel-button"
-                    >
-                        Cancel
-                    </button>
+                    <button onClick={handleConfirm} disabled={selectedResources.length !== 2} className="dev-card-confirm-button">Confirm</button>
+                    <button onClick={onCancel} className="dev-card-cancel-button">Cancel</button>
                 </div>
             </div>
         </div>
     );
 }
 
-// Monopoly Dialog - Choose 1 resource type to steal from all players
+//Monopoly Dialog - Choose 1 resource type to steal from all players
 export function MonopolyDialog({ onConfirm, onCancel }) {
     const [selectedResource, setSelectedResource] = useState(null);
 
@@ -130,26 +115,15 @@ export function MonopolyDialog({ onConfirm, onCancel }) {
                 </div>
 
                 <div className="dev-card-actions">
-                    <button 
-                        onClick={handleConfirm}
-                        disabled={!selectedResource}
-                        className="dev-card-confirm-button"
-                    >
-                        Confirm
-                    </button>
-                    <button 
-                        onClick={onCancel}
-                        className="dev-card-cancel-button"
-                    >
-                        Cancel
-                    </button>
+                    <button onClick={handleConfirm} disabled={!selectedResource} className="dev-card-confirm-button">Confirm</button>
+                    <button onClick={onCancel} className="dev-card-cancel-button">Cancel</button>
                 </div>
             </div>
         </div>
     );
 }
 
-// Road Building Dialog - Informational
+//Road Building Dialog
 export function RoadBuildingDialog({ onConfirm, onCancel }) {
     return (
         <div className="dev-card-dialog-overlay">
@@ -166,12 +140,7 @@ export function RoadBuildingDialog({ onConfirm, onCancel }) {
                     >
                         Start Building
                     </button>
-                    <button 
-                        onClick={onCancel}
-                        className="dev-card-cancel-button"
-                    >
-                        Cancel
-                    </button>
+                    <button onClick={onCancel} className="dev-card-cancel-button">Cancel</button>
                 </div>
             </div>
         </div>

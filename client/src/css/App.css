@@ -1,11 +1,10 @@
-/* Only updating playerStartUp and startGame sections */
 .background {
   width: 90%;
   background-image: url('../Images/backgroundSunset.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 100vh;
+  height: 100vh;/*full screen height*/
   width: 100vw;
   margin-left: auto;
   margin-right: auto;
@@ -37,7 +36,7 @@
   display: flex;
 }
 
-/* Player Startup Section - Enhanced */
+/* Player Startup Section */
 .playerStartUp {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 15px;
@@ -90,7 +89,7 @@
   font-weight: bold;
 }
 
-/* Start Game Section - Enhanced */
+/* Start Game Section */
 .startGame {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 15px;

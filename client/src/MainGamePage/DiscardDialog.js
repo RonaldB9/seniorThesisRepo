@@ -38,7 +38,6 @@ function DiscardDialog({
 
     const handleSubmit = () => {
         const totalSelected = Object.values(selectedCards).reduce((sum, count) => sum + count, 0);
-        
         if (totalSelected === cardsToDiscard) {
             onDiscard(selectedCards);
         }
@@ -48,19 +47,11 @@ function DiscardDialog({
     const isValid = totalSelected === cardsToDiscard;
 
     const resourceEmojis = {
-        wood: '🪵',
-        brick: '🧱',
-        sheep: '🐑',
-        wheat: '🌾',
-        ore: '⛏️'
+        wood: '🪵', brick: '🧱', sheep: '🐑', wheat: '🌾', ore: '⛏️'
     };
 
     const resourceNames = {
-        wood: 'Wood',
-        brick: 'Brick',
-        sheep: 'Sheep',
-        wheat: 'Wheat',
-        ore: 'Ore'
+        wood: 'Wood', brick: 'Brick', sheep: 'Sheep', wheat: 'Wheat', ore: 'Ore'
     };
 
     return (

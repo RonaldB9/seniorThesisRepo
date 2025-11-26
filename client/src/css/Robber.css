@@ -116,7 +116,7 @@
     filter: brightness(1.2);
 }
 
-/* Black outer hexagon border - MUCH THICKER */
+/* Black outer hexagon border */
 .tile-selectable::before {
     content: '';
     position: absolute;
@@ -135,7 +135,7 @@
     );
 }
 
-/* Gold middle hexagon border - THICKER */
+/* Gold middle hexagon border */
 .tile-selectable::after {
     content: '';
     position: absolute;

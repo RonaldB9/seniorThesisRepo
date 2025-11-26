@@ -41,13 +41,13 @@ function ActionButtons({
     showPortTradeDialog,
     setShowPortTradeDialog
 }) {
-    // Check if it's the current player's turn
+    //Check if it's the current player's turn
     const isMyTurn = userId === currentTurnUserId;
     
-    // Check if dice have been rolled (only relevant in playing phase)
+    //Check if dice have been rolled (only relevant in playing phase)
     const hasDiceRoll = gamePhase === 'playing' ? diceRoll !== null : true;
 
-    // Don't show action buttons container at all if not your turn
+    //Don't show action buttons container at all if not your turn
     if (!isMyTurn) {
         return null;
     }

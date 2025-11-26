@@ -1,4 +1,3 @@
-// client/src/MainGamePage/TradeDialog.js
 import React, { useState } from 'react';
 import '../css/TradeDialog.css';
 
@@ -29,12 +28,12 @@ export function PlayerTradeDialog({
         const maxAmount = currentPlayer?.resources?.[resource] || 0;
         const newAmount = Math.min(Math.max(0, amount), maxAmount);
         setOffering(prev => ({ ...prev, [resource]: newAmount }));
-        setError(''); // Clear error when user makes changes
+        setError(''); //Clear error when user makes changes
     };
 
     const handleRequestingChange = (resource, amount) => {
         setRequesting(prev => ({ ...prev, [resource]: Math.max(0, amount) }));
-        setError(''); // Clear error when user makes changes
+        setError(''); //Clear error when user makes changes
     };
 
     const handleProposeTrade = () => {
@@ -43,7 +42,7 @@ export function PlayerTradeDialog({
         console.log('Offering:', offering);
         console.log('Requesting:', requesting);
 
-        // Validation 1: Player selected
+        //Validation 1: Player selected
         if (!selectedPlayer) {
             const errorMsg = 'Please select a player to trade with';
             console.warn('❌ ' + errorMsg);
@@ -51,7 +50,7 @@ export function PlayerTradeDialog({
             return;
         }
 
-        // Validation 2: Has offering
+        //Validation 2: Has offering
         const hasOffering = Object.values(offering).some(v => v > 0);
         if (!hasOffering) {
             const errorMsg = 'You must offer at least one resource';
@@ -60,7 +59,7 @@ export function PlayerTradeDialog({
             return;
         }
 
-        // Validation 3: Has requesting
+        //Validation 3: Has requesting
         const hasRequesting = Object.values(requesting).some(v => v > 0);
         if (!hasRequesting) {
             const errorMsg = 'You must request at least one resource';
@@ -71,7 +70,7 @@ export function PlayerTradeDialog({
 
         console.log('✅ All validations passed, emitting trade proposal');
         
-        // Call the callback
+        //Call the callback
         onProposeTrade({
             responderId: selectedPlayer.userId,
             offering,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import socket from '../socket';
 
-// Helper function to get adjacent houses
+//Helper function to get adjacent houses
 const getAdjacentHouses = (houseIndex) => {
     const adjacencyMap = {
         0: [3, 4], 1: [4, 5], 2: [5, 6],
@@ -59,13 +59,13 @@ export function useGameLogic() {
     const [longestRoadPlayer, setLongestRoadPlayer] = useState(null);
     //Track if a dev card has been played this turn
     const [devCardPlayedThisTurn, setDevCardPlayedThisTurn] = useState(false);
-    // Discard state
+    //Discard state
     const [needsToDiscard, setNeedsToDiscard] = useState(false);
     const [cardsToDiscard, setCardsToDiscard] = useState(0);
     const [newlyPurchasedCards, setNewlyPurchasedCards] = useState({knight: false, yearOfPlenty: false, monopoly: false, roadBuilding: false, victoryPoint: false});
     const [highlightedTiles, setHighlightedTiles] = useState(new Set());
 
-    // Update unavailable houses based on placed houses
+    //Update unavailable houses based on placed houses
     const updateUnavailableHouses = (placedHousesObj) => {
         const unavailable = new Set();
         Object.keys(placedHousesObj).forEach(houseIndexStr => {
@@ -77,7 +77,7 @@ export function useGameLogic() {
         setUnavailableHouses(unavailable);
     };
 
-    // Update unavailable roads based on placed roads
+    //Update unavailable roads based on placed roads
     const updateUnavailableRoads = (placedRoadsObj) => {
         const unavailable = new Set();
         Object.keys(placedRoadsObj).forEach(roadIndexStr => {
@@ -95,7 +95,7 @@ export function useGameLogic() {
         console.log(`🎉 Game won by ${data.winnerName}!`);
     };
 
-    // Get userId on mount
+    //Get userId on mount
     useEffect(() => {
         const id = localStorage.getItem('userId');
         const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://catan-game-server.onrender.com';
@@ -113,7 +113,7 @@ export function useGameLogic() {
         }
     }, []);
 
-    // Fetch board data
+    //Fetch board data
     useEffect(() => {
         const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://catan-game-server.onrender.com';
         fetch(`${API_BASE_URL}/api/board`)
@@ -171,13 +171,13 @@ export function useGameLogic() {
             .catch(err => console.error('Failed to fetch longest road:', err));
     }, []);
 
-    // Socket listeners for deck updates
+    //Socket listeners for deck updates
     useEffect(() => {
         const handleDeckUpdate = (data) => {
             setDevCardDeckCount(data.cardsRemaining);
         };
 
-        // Listen for board updates (when new game starts)
+        //Listen for board updates (when new game starts)
         const handleBoardUpdated = (newBoard) => {
             console.log('🎲 Board updated! New tiles:', newBoard.resourceTiles);
             setResourceTiles(newBoard.resourceTiles);
@@ -186,11 +186,11 @@ export function useGameLogic() {
             setRoadData(newBoard.roadData);
             setPortRoadData(newBoard.portRoadData);
             
-            // Find and set new robber position
+            //Find and set new robber position
             const desertIndex = newBoard.resourceTiles.findIndex(tile => tile === 'Desert');
             setRobberTileIndex(desertIndex);
             
-            // Reset all placed items
+            //Reset all placed items
             setPlacedHouses({});
             setPlacedRoads({});
             setPlacedCities({});
@@ -221,7 +221,7 @@ export function useGameLogic() {
         };
     }, []);
 
-    // Reset selection when turn changes
+    //Reset selection when turn changes
     useEffect(() => {
         setSelectedHouseIndex(null);
         setSelectedRoadIndex(null);
@@ -241,7 +241,7 @@ export function useGameLogic() {
         setNewlyPurchasedCards({knight: false, yearOfPlenty: false, monopoly: false, roadBuilding: false, victoryPoint: false});
     }, [currentTurnUserId]);
 
-    // Check if setup phase is complete
+    //Check if setup phase is complete
     useEffect(() => {
         const totalHouses = Object.keys(placedHouses).length;
         const totalRoads = Object.keys(placedRoads).length;
@@ -253,7 +253,7 @@ export function useGameLogic() {
         }
     }, [placedHouses, placedRoads, allPlayers.length, gamePhase]);
 
-    // Socket listeners
+    //Socket listeners
     useEffect(() => {
         const handleCurrentTurn = (turnUserId) => {
             setCurrentTurnUserId(turnUserId);
@@ -301,18 +301,18 @@ export function useGameLogic() {
             setDiceRoll(data);
             setIsRolling(false);
             
-            // If rolled a 7, need to move robber (don't highlight tiles)
+            //If rolled a 7, need to move robber (don't highlight tiles)
             if (data.total === 7) {
                 console.log('🎲 Rolled 7 - moving robber');
                 setMovingRobber(true);
                 setHighlightedTiles(new Set());
             } else {
                 console.log('🎲 Highlighting tiles that produce', data.total);
-                // Highlight tiles that produce on this roll
+                //Highlight tiles that produce on this roll
                 if (resourceTokens && resourceTokens.length > 0) {
                     const producingTiles = new Set();
                     resourceTokens.forEach((token, tileIndex) => {
-                        // Skip robber tile and desert tiles (null tokens)
+                        //Skip robber tile and desert tiles (null tokens)
                         if (token === data.total && tileIndex !== robberTileIndex) {
                             console.log(`   ✅ Tile ${tileIndex} has token ${token}`);
                             producingTiles.add(tileIndex);
@@ -324,7 +324,7 @@ export function useGameLogic() {
                     console.log('📊 Producing tiles set:', producingTiles);
                     setHighlightedTiles(producingTiles);
                     
-                    // Clear highlight after 3 seconds
+                    //Clear highlight after 3 seconds
                     setTimeout(() => {
                         console.log('⏱️ Clearing highlights after 3 seconds');
                         setHighlightedTiles(new Set());
@@ -339,7 +339,7 @@ export function useGameLogic() {
             setRobberTileIndex(data.tileIndex);
             setMovingRobber(false);
             
-            // If current player and there are players to steal from
+            //If current player and there are players to steal from
             if (data.userId === userId && data.playersToStealFrom && data.playersToStealFrom.length > 0) {
                 setPlayersToStealFrom(data.playersToStealFrom);
                 setShowStealDialog(true);
@@ -376,7 +376,7 @@ export function useGameLogic() {
 
         const handleCardBought = (data) => {
             alert(`You received a ${data.cardType} card!`);
-            // Mark this card type as newly purchased
+            //Mark this card type as newly purchased
             setNewlyPurchasedCards(prev => ({
                 ...prev,
                 [data.cardType]: true

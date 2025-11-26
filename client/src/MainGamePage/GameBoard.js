@@ -6,21 +6,21 @@ import sheepTile from '../Images/Tiles/sheepTile.png';
 import wheatTile from '../Images/Tiles/wheatTile.png';
 import desertTile from '../Images/Tiles/desertTile.png';
 import chooseCircle from '../Images/chooseCircle.png';
-// House images for all 6 players
+//House images for all 6 players
 import redHouse from '../Images/Houses/redHouse.png';
 import greenHouse from '../Images/Houses/greenHouse.png';
 import blueHouse from '../Images/Houses/blueHouse.png';
 import orangeHouse from '../Images/Houses/orangeHouse.png';
 import purpleHouse from '../Images/Houses/purpleHouse.png';
 import pinkHouse from '../Images/Houses/pinkHouse.png';
-// Road images for all 6 players
+//Road images for all 6 players
 import redRoad from '../Images/redRoad.png';
 import greenRoad from '../Images/greenRoad.png';
 import blueRoad from '../Images/blueRoad.png';
 import orangeRoad from '../Images/orangeRoad.png';
 import purpleRoad from '../Images/purpleRoad.png';
 import pinkRoad from '../Images/pinkRoad.png';
-// Port and other images
+//Port and other images
 import portRoad from '../Images/Ports/portRoad.png';
 import robber from '../Images/robber.jpg';
 import ThreetoOnePort from '../Images/Ports/3to1Port.png';
@@ -39,7 +39,7 @@ const resourceImages = {
     Desert: desertTile
 };
 
-// Map player colors to house images
+//Map player colors to house images
 const houseImages = {
     red: redHouse,
     green: greenHouse,
@@ -49,7 +49,7 @@ const houseImages = {
     pink: pinkHouse
 };
 
-// Map player colors to road images
+//Map player colors to road images
 const roadImages = {
     red: redRoad,
     green: greenRoad,
@@ -422,7 +422,7 @@ function GameBoard({
 
                 {/* Placed Roads */}
                 {Array.isArray(roadData) && Object.entries(placedRoads).map(([index, road]) => {
-                    // Get the appropriate road image based on player color
+                    //Get the appropriate road image based on player color
                     const roadImage = roadImages[road.playerColor] || greenRoad;
                     
                     const roadIdx = parseInt(index);
