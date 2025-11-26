@@ -205,15 +205,15 @@ function GameBoard({
                 </div>
 
                 {/* Ports */}
-                <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% - 300px)`, left: `calc(50% + 10px)`}} alt="3To1Port"/>
+                <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% - 300px)`, left: `calc(50% + 25px)`}} alt="3To1Port"/>
                 <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% - 210px)`, left: `calc(50% + 210px)`}} alt="3To1Port2"/>
-                <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% + 250px)`, left: `calc(50% + 10px)`}} alt="3To1Port3"/>
-                <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% + 65px)`, left: `calc(50% - 310px)`}} alt="3To1Port4"/>
+                <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% + 250px)`, left: `calc(50% + 30px)`}} alt="3To1Port3"/>
+                <img className="ports" src={ThreetoOnePort} style={{ top: `calc(50% + 65px)`, left: `calc(50% - 315px)`}} alt="3To1Port4"/>
                 <img className="ports" src={TwotoOneBrick} style={{ top: `calc(50% - 300px)`, left: `calc(50% - 200px)`}} alt="2To1Brick"/>
                 <img className="ports" src={TwotoOneSheep} style={{ top: `calc(50% - 25px)`, left: `calc(50% + 330px)`}} alt="2To1Sheep"/>
-                <img className="ports" src={TwotoOneStone} style={{ top: `calc(50% - 130px)`, left: `calc(50% - 310px)`}} alt="2To1Stone"/>
+                <img className="ports" src={TwotoOneStone} style={{ top: `calc(50% - 125px)`, left: `calc(50% - 315px)`}} alt="2To1Stone"/>
                 <img className="ports" src={TwotoOneWood} style={{ top: `calc(50% + 250px)`, left: `calc(50% - 200px)`}} alt="2To1Wood"/>
-                <img className="ports" src={TwotoOneWheat} style={{ top: `calc(50% + 150px)`, left: `calc(50% + 210px)`}} alt="2To1Wheat"/>
+                <img className="ports" src={TwotoOneWheat} style={{ top: `calc(50% + 160px)`, left: `calc(50% + 210px)`}} alt="2To1Wheat"/>
                 
                 {/* Port Roads */}
                 {Array.isArray(portRoadData) && portRoadData.map((portRoadMapping, portIndex) => (
