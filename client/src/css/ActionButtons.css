@@ -115,7 +115,10 @@
 .play-year-button,
 .play-monopoly-button,
 .play-road-building-button,
-.play-victory-button {
+.play-victory-button,
+.trade-button,
+.trade-player-button,
+.trade-port-button {
     padding: 10px 10px;
     font-size: 14px;
     font-weight: bold;
@@ -146,23 +149,33 @@
     .play-year-button,
     .play-monopoly-button,
     .play-road-building-button,
-    .play-victory-button {
+    .play-victory-button,
+    .trade-button,
+    .trade-player-button,
+    .trade-port-button {
         font-size: 12px;
     }
 }
 
-.trade-button {
-    background-color: #FF9800;
+/* Trade Buttons */
+.trade-button,
+.trade-player-button,
+.trade-port-button {
+    background-color: #2196F3;
     color: white;
 }
 
-.trade-button:hover:not(:disabled) {
-    background-color: #F57C00;
+.trade-button:hover:not(:disabled),
+.trade-player-button:hover:not(:disabled),
+.trade-port-button:hover:not(:disabled) {
+    background-color: #1976D2;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.trade-button:disabled {
+.trade-button:disabled,
+.trade-player-button:disabled,
+.trade-port-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
     opacity: 0.6;
