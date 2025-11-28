@@ -156,12 +156,12 @@
 @media screen and (max-width: 768px) {
   .playerStartUp {
     width: 80%;
-    margin-left: 10%;
+    margin-left: 0%;
   }
 
   .startGame {
     width: 80%;
-    margin-left: 10%;
+    margin-left: 0%;
     margin-top: 20px;
   }
 
