@@ -163,11 +163,11 @@ function resetAllPlayerStats() {
       ready: false,
       score: 0,
       resources: {
-        wood: 20,
-        brick: 20,
-        sheep: 20,
-        wheat: 20,
-        ore: 20
+        wood: 5,
+        brick: 5,
+        sheep: 5,
+        wheat: 5,
+        ore: 5
       },
       developmentCards: {
         knight: 0,

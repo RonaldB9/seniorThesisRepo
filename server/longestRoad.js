@@ -1,18 +1,17 @@
-// server/longestRoad.js
-// Longest Road calculation and management
+//Longest Road calculation and management
 
 const playerData = require('./playerData');
 const { checkForWin } = require('./DevelopmentCards');
 
-/**
- * Calculate the longest continuous road for a player
- * A continuous road must be connected through houses or directly to other roads
- * Returns the length of the longest road found
+/*
+ Calculate the longest continuous road for a player
+ A continuous road must be connected through houses or directly to other roads
+ Returns the length of the longest road found
  */
 function calculateLongestRoad(userId, placedRoads, placedHouses, roadData) {
   if (!roadData || roadData.length === 0) return 0;
 
-  // Get all roads owned by this player
+  //Get all roads owned by this player
   const playerRoads = new Set();
   Object.entries(placedRoads).forEach(([roadIndex, road]) => {
     if (road.userId === userId) {
@@ -22,7 +21,7 @@ function calculateLongestRoad(userId, placedRoads, placedHouses, roadData) {
 
   if (playerRoads.size === 0) return 0;
 
-  // Get all houses owned by this player (including cities)
+  //Get all houses owned by this player (including cities)
   const playerHouses = new Set();
   Object.entries(placedHouses).forEach(([houseIndex, house]) => {
     if (house.userId === userId) {
@@ -32,7 +31,7 @@ function calculateLongestRoad(userId, placedRoads, placedHouses, roadData) {
 
   let longestPath = 0;
 
-  // Start DFS from each road owned by the player
+  //Start DFS from each road owned by the player
   playerRoads.forEach(startRoad => {
     const visited = new Set();
     const length = dfsLongestRoad(
@@ -50,9 +49,9 @@ function calculateLongestRoad(userId, placedRoads, placedHouses, roadData) {
   return longestPath;
 }
 
-/**
- * DFS to find longest path from a given road
- * Explores all connected roads without revisiting
+/*
+ DFS to find longest path from a given road
+ Explores all connected roads without revisiting
  */
 function dfsLongestRoad(
   currentRoadIndex,
@@ -71,15 +70,15 @@ function dfsLongestRoad(
     return 0;
   }
 
-  let maxLength = 1; // Current road counts as 1
+  let maxLength = 1; //Current road counts as 1
 
-  // Get connected roads through houses or direct connections
+  //Get connected roads through houses or direct connections
   const connectedRoads = new Set();
 
-  // Check houses connected to this road
+  //Check houses connected to this road
   if (currentRoad.connectedHouses) {
     currentRoad.connectedHouses.forEach(houseIndex => {
-      // Check if player owns this house
+      //Check if player owns this house
       if (playerHouses.has(houseIndex)) {
         const houseRoads = roadData.filter(road =>
           road.connectedHouses && road.connectedHouses.includes(houseIndex)
@@ -89,19 +88,19 @@ function dfsLongestRoad(
           if (
             playerRoads.has(roadIdx) &&
             !visited.has(roadIdx) &&
-            road.userId !== undefined // Make sure it's a placed road
+            road.userId !== undefined //Make sure it's a placed road
           ) {
             connectedRoads.add(roadIdx);
           }
         });
       } else {
-        // If opponent owns this house, we can't continue past it
-        // This breaks the road chain
+        //If opponent owns this house, we can't continue past it
+        //This breaks the road chain
       }
     });
   }
 
-  // Check directly connected roads
+  //Check directly connected roads
   if (currentRoad.connectedRoads) {
     currentRoad.connectedRoads.forEach(roadIdx => {
       if (playerRoads.has(roadIdx) && !visited.has(roadIdx)) {
@@ -110,7 +109,7 @@ function dfsLongestRoad(
     });
   }
 
-  // Explore each connected road
+  //Explore each connected road
   connectedRoads.forEach(nextRoad => {
     const length = dfsLongestRoad(
       nextRoad,
@@ -128,10 +127,10 @@ function dfsLongestRoad(
   return maxLength;
 }
 
-/**
- * Update longest road holder
- * A player needs at least 5 continuous roads to qualify
- * Awards 2 points to the player with the longest road
+/*
+ Update longest road holder
+ A player needs at least 5 continuous roads to qualify
+ Awards 2 points to the player with the longest road
  */
 function updateLongestRoad(
   allPlayers,
@@ -146,7 +145,7 @@ function updateLongestRoad(
   let maxLength = 0;
   let maxLengthPlayerId = null;
 
-  // Calculate longest road for each player
+  //Calculate longest road for each player
   const roadLengths = {};
   allPlayers.forEach(player => {
     const length = calculateLongestRoad(player.userId, placedRoads, placedHouses, roadData);
@@ -160,9 +159,9 @@ function updateLongestRoad(
 
   console.log(`📊 Road lengths:`, roadLengths);
 
-  // Check if longest road holder changed
+  //Check if longest road holder changed
   if (maxLengthPlayerId !== currentLongestRoadPlayer) {
-    // Remove points from previous holder
+    //Remove points from previous holder
     if (currentLongestRoadPlayer) {
       const prevHolder = playerData.findPlayer(currentLongestRoadPlayer);
       if (prevHolder && prevHolder.score >= 2) {
@@ -172,7 +171,7 @@ function updateLongestRoad(
       }
     }
 
-    // Award points to new holder
+    //Award points to new holder
     if (maxLengthPlayerId) {
       const newHolder = playerData.findPlayer(maxLengthPlayerId);
       if (newHolder) {
@@ -191,7 +190,7 @@ function updateLongestRoad(
           roadLength: maxLength
         });
 
-        // ✅ CHECK FOR WIN after awarding Longest Road points
+        //CHECK FOR WIN after awarding Longest Road points
         const updatedPlayer = playerData.findPlayer(maxLengthPlayerId);
         checkForWin(updatedPlayer, io);
       }
